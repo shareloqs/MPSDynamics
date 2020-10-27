@@ -1,0 +1,14 @@
+using Documenter
+
+makedocs(
+#    root    = "<current-directory>",
+    source  = "include",
+    build   = "build",
+    clean   = true,
+    doctest = true,
+    modules = Module[],
+    repo    = "",
+    highlightsig = true,
+    sitename = "Documentation",
+    expandfirst = [],
+)
