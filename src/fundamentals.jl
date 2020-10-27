@@ -1,4 +1,4 @@
-pyplot(size = (800,600), reuse = true)
+default(size = (800,600), reuse = true)
 
 crea(d) = diagm(-1 => [sqrt(i) for i=1:d-1])
 anih(d) = Matrix(crea(d)')

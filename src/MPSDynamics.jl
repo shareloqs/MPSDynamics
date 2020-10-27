@@ -1,6 +1,6 @@
 module MPSDynamics
 
-using JLD, Random, Dates, Plots, PyPlot, Printf, Distributed, LinearAlgebra, DelimitedFiles, KrylovKit, ITensors, TensorOperations, GraphRecipes, SpecialFunctions
+using JLD, Random, Dates, Plots, Printf, Distributed, LinearAlgebra, DelimitedFiles, KrylovKit, ITensors, TensorOperations, GraphRecipes, SpecialFunctions
 
 include("config.jl")
 include("fundamentals.jl")
