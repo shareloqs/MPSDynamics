@@ -74,6 +74,8 @@ function run(sims::Vector{TensorSim}, machines::Vector{Machine})
 #    runtdvp_fixed!()
 end
 
+f(x)=x-3
+
 export
     sz,
     sx,
