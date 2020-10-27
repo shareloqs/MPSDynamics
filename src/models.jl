@@ -280,7 +280,6 @@ function getchaincoeffs(nummodes, α, s, beta, ωc=1)
     return [es[1:nummodes], ts[1:nummodes-1], c0]
 end
 
-
 function ibmmpo(ω0, d, N, chainparams; tree=false)
     u = unitmat(2)
     

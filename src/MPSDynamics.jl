@@ -68,9 +68,9 @@ end
 
 function run(sims::Vector{TensorSim}, machines::Vector{Machine})
     for mach in machines
-        addprocs((mach.name, mach.nprocs), exename=mach.exename)
+        addprocs([(mach.name, mach.nproc)], exename=mach.exename)
     end
-#    @everywhere using MPSDynamics # replace with git repo
+    @everywhere eval(using MPSDynamics) # replace with git repo
 #    runtdvp_fixed!()
 end
 
@@ -101,5 +101,7 @@ export
     Ndown,
     SZ,
     SX,
-    SY
+    SY,
+    Machine,
+    init
 end
