@@ -66,15 +66,13 @@ function TensorSim(dt, T, A, H;
     TensorSim(dt,T,A,H,savedir,params,obs,convobs,savemps,verbose,save,saveplot,timed,log,Dmax,lightcone,lightconerad,lightconethresh,unid)
 end
 
-function run(sims::Vector{TensorSim}, machines::Vector{Machine})
-    for mach in machines
-        addprocs([(mach.name, mach.nproc)], exename=mach.exename)
-    end
-    @everywhere eval(using MPSDynamics) # replace with git repo
-#    runtdvp_fixed!()
-end
+function runsim(sim::TensorSim, mach::Machine)
+    launch_workers(mach) do pid
+        @everywhere [pid] eval(using MPSDynamics)
 
-f(x)=x-3
+    end
+
+end
 
 export
     sz,
@@ -89,14 +87,14 @@ export
     methylenebluempo,
     productstatemps,
     TensorSim,
-    run,
+    runsim,
     runtdvp_fixed!,
     runtdvp_dynamic!,
     physdims,
     measure1siteoperator,
     measure2siteoperator,
     measurempo,
-    OneSiteObervable,
+    OneSiteObservable,
     TwoSiteObservable,
     Ntot,
     Nup,
@@ -105,5 +103,7 @@ export
     SX,
     SY,
     Machine,
-    init
+    init_machines,
+    update_machines,
+    launch_workers
 end

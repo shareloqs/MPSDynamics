@@ -28,61 +28,14 @@ function runtdvp_fixed!(dt, T, A, H;
     isdir(savedir) || throw("save directory $savedir doesn't exist")
     
     if typeof(Dmax) <: Vector
-        if length(Dmax)==1
-            Dmax = Dmax[1]
-            convcheck = false
-        else
-            convcheck = true
-            numDmax = length(Dmax)
-        end
+        convcheck = true
+        numDmax = length(Dmax)
     else
         convcheck = false
     end
 
     if log
-        try
-            f = open(string(savedir,"info.txt"))
-            close(f)
-        catch
-            touch(string(savedir,"info.txt"))
-        end
-        
-        endpos = open(string(savedir,"info.txt"), append=true) do f
-            writeprintln(f); writeprintln(f)
-            writeprintln(f, "start time : $(now())")
-            writeprintln(f, "unid : $unid")
-            writeprintln(f, "dt = $dt, tmax = $T")
-            writeprintln(f, "parameters : ")
-            writeprint(f, "\t")
-            for par in params
-                writeprint(f, string(par[1], " = ", par[2]), ", ")
-            end
-            writeprintln(f)
-            
-            writeprintln(f, "observables : ")
-            writeprint(f, "\t")
-            for ob in obs
-                writeprint(f, ob.name, ", ")
-            end
-            writeprintln(f)
-
-            if convcheck
-                writeprintln(f, "convergence observables : ")
-                writeprint(f, "\t")
-                for ob in convobs
-                    writeprint(f, ob.name, ", ")
-                end
-                writeprintln(f)
-            end
-
-            writeprintln(f, "Dmax : $Dmax")
-            
-            println()
-            write(f,"\n >>>>>>>>>>>>>>>>>>>>")
-            endpos = position(f)
-            write(f,"<<<<<<<<<<<<<<<<<<<<                                                        ")
-            return endpos
-        end
+        endpos = open_log(savedir, dt, T, Damx, unid, par, obs, convobs)
     end
     
     numsteps = length(collect(0:dt:T))-1
@@ -167,6 +120,7 @@ function runtdvp_fixed!(dt, T, A, H;
     timed && push!(datalist, ("tdvptime", ttdvp))
 
     datadict = Dict(datalist)
+    dat = [("data", datadict)]
     if convcheck
         lastprec = map(x->datadict[x.name], convobs)
 
@@ -181,40 +135,89 @@ function runtdvp_fixed!(dt, T, A, H;
         
         convdatadict = Dict(convdatalist)
 
-        if saveplot
-            pyplot(size = (800,600), reuse = true, title = unid, legend = true)
-            for ob in filter(x->ndims(x)==0, convobs)
-                if eltype(convdatadict[ob.name][1]) <: Complex
-                    plt = plot(hcat(convdatadict[ob.name]...); labels=transpose(Dmax), xlabel="Re($(ob.name))", ylabel="Im($(ob.name))")
-                else
-                    plt = plot(times, convdatadict[ob.name]; labels=transpose(Dmax), xlabel="t", ylabel=ob.name)
-                end
-                savefig(plt, string(savedir,"convplot_",ob.name,"_",unid,".pdf"))
-            end
-        end
+        saveplot && save_plot(savedir, convdatadict, Dmax, convobs)
+
+        push!(dat, ("convdata", convdatadict))
     end
 
-    if save
-        jldopen(string(savedir,"dat_",unid,".jld"), "w") do file
-            write(file, "data", datadict)
-            convcheck && write(file, "convdata", convdatadict)
-        end
-    end
-
+    save && save_data(savedir, datadict, convdatadict)
     telapsed = canonicalize(Dates.CompoundPeriod(now() - tstart))
+    log && close_log(savedir, endpos, telapsed)
+    return A, Dict(dat)
+end
 
-    if log
-        open(string(savedir,"info.txt"), "a+") do f
-            seek(f, endpos)
-            write(f,"run completed at $(now())<<<<<<<<<<<<<<<<<<<<\n")
-            write(f,string("run time : ", telapsed, "\n"))
-            println(string("run time : ", telapsed))
-        end
+
+function open_log(savedir, dt, T, Damx, unid, par, obs, convobs)
+    try
+        f = open(string(savedir,"info.txt"))
+        close(f)
+    catch
+        touch(string(savedir,"info.txt"))
     end
+    
+    endpos = open(string(savedir,"info.txt"), append=true) do f
+        writeprintln(f); writeprintln(f)
+        writeprintln(f, "start time : $(now())")
+        writeprintln(f, "unid : $unid")
+        writeprintln(f, "dt = $dt, tmax = $T")
+        writeprintln(f, "parameters : ")
+        writeprint(f, "\t")
+        for par in params
+            writeprint(f, string(par[1], " = ", par[2]), ", ")
+        end
+        writeprintln(f)
+        
+        writeprintln(f, "observables : ")
+        writeprint(f, "\t")
+        for ob in obs
+            writeprint(f, ob.name, ", ")
+        end
+        writeprintln(f)
 
-    if convcheck
-        return A, datadict, convdatadict
-    else
-        return A, datadict
+        if convcheck
+            writeprintln(f, "convergence observables : ")
+            writeprint(f, "\t")
+            for ob in convobs
+                writeprint(f, ob.name, ", ")
+            end
+            writeprintln(f)
+        end
+
+        writeprintln(f, "Dmax : $Dmax")
+        
+        println()
+        write(f,"\n >>>>>>>>>>>>>>>>>>>>")
+        endpos = position(f)
+        write(f,"<<<<<<<<<<<<<<<<<<<<                                                        ")
+        return endpos
+    end
+    return endpos
+end
+
+function close_log(savedir, endpos, telapsed)
+    open(string(savedir,"info.txt"), "a+") do f
+        seek(f, endpos)
+        write(f,"run completed at $(now())<<<<<<<<<<<<<<<<<<<<\n")
+        write(f,string("run time : ", telapsed, "\n"))
+        println(string("run time : ", telapsed))
+    end
+end
+
+function save_data(savedir, datadict, convdatadict)
+    jldopen(string(savedir,"dat_",unid,".jld"), "w") do file
+        write(file, "data", datadict)
+        convcheck && write(file, "convdata", convdatadict)
+    end
+end
+
+function save_plot(savedir, convdatadict, Dmax, convobs)
+    default(size = (800,600), reuse = true, title = unid, legend = true)
+    for ob in filter(x->ndims(x)==0, convobs)
+        if eltype(convdatadict[ob.name][1]) <: Complex
+            plt = plot(hcat(convdatadict[ob.name]...); labels=transpose(Dmax), xlabel="Re($(ob.name))", ylabel="Im($(ob.name))")
+        else
+            plt = plot(times, convdatadict[ob.name]; labels=transpose(Dmax), xlabel="t", ylabel=ob.name)
+        end
+        savefig(plt, string(savedir,"convplot_",ob.name,"_",unid,".pdf"))
     end
 end
