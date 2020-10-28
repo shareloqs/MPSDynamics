@@ -4,6 +4,10 @@ struct Machine
     nproc::Int
     wdir::String
 end
+struct LocalMachine
+    name::String
+end
+LocalMachine() = LocalMachine("local")
 
 rmworkers() = rmprocs(workers())
 
@@ -21,10 +25,11 @@ end
 function launch_workers(f::Function, args...)
     pids = launch_workers(args...)
     try
-        f(pids)
+        ret = f(pids)
     finally
         rmprocs(pids)
     end
+    return ret
 end
 
 function init_machines(machs::Vector{Machine})

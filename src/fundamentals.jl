@@ -400,10 +400,6 @@ function writeprintln(f::IO, str...)
     write(f, string(str...,"\n"))
 end
 
-macro LogParams(vars...)
-    [[string(v), eval(v)] for v in vars]
-end
-
 function MPOtoVector(mpo::MPO)
     N = length(mpo)
     H = [Array(mpo[i],mpo[i].inds...) for i=1:N]

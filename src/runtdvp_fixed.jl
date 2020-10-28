@@ -21,12 +21,13 @@ function runtdvp_fixed!(dt, T, A, H;
 
     obs = union(obs, convobs)
 
-    if savedir[end] != '/'
-        savedir = string(savedir,"/")
+    if save || saveplot
+        if savedir[end] != '/'
+            savedir = string(savedir,"/")
+        end
+        isdir(savedir) || throw("save directory $savedir doesn't exist")
     end
 
-    isdir(savedir) || throw("save directory $savedir doesn't exist")
-    
     if typeof(Dmax) <: Vector
         convcheck = true
         numDmax = length(Dmax)
@@ -35,7 +36,7 @@ function runtdvp_fixed!(dt, T, A, H;
     end
 
     if log
-        endpos = open_log(savedir, dt, T, Damx, unid, par, obs, convobs)
+        endpos = open_log(savedir, dt, T, Dmax, unid, params, obs, convobs, convcheck)
     end
     
     numsteps = length(collect(0:dt:T))-1
@@ -146,8 +147,7 @@ function runtdvp_fixed!(dt, T, A, H;
     return A, Dict(dat)
 end
 
-
-function open_log(savedir, dt, T, Damx, unid, par, obs, convobs)
+function open_log(savedir, dt, T, Dmax, unid, params, obs, convobs, convcheck, machine=LocalMachine())
     try
         f = open(string(savedir,"info.txt"))
         close(f)
@@ -159,6 +159,7 @@ function open_log(savedir, dt, T, Damx, unid, par, obs, convobs)
         writeprintln(f); writeprintln(f)
         writeprintln(f, "start time : $(now())")
         writeprintln(f, "unid : $unid")
+        writeprintln(f, "running on : $(machine.name)")
         writeprintln(f, "dt = $dt, tmax = $T")
         writeprintln(f, "parameters : ")
         writeprint(f, "\t")
@@ -193,6 +194,7 @@ function open_log(savedir, dt, T, Damx, unid, par, obs, convobs)
     end
     return endpos
 end
+open_log(sim::TensorSim, convcheck, mach=LocalMachine()) = open_log(getfield.(sim, [:savedir, :dt, :T, :Dmax, :unid, :params, :obs, :convobs])..., convcheck, mach)
 
 function close_log(savedir, endpos, telapsed)
     open(string(savedir,"info.txt"), "a+") do f

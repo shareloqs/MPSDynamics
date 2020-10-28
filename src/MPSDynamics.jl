@@ -2,6 +2,28 @@ module MPSDynamics
 
 using JLD, Random, Dates, Plots, Printf, Distributed, LinearAlgebra, DelimitedFiles, KrylovKit, ITensors, TensorOperations, GraphRecipes, SpecialFunctions
 
+struct TensorSim
+    dt
+    T
+    A
+    H
+    savedir
+    params
+    obs
+    convobs
+    savemps
+    verbose
+    save
+    saveplot
+    timed
+    log
+    Dmax
+    lightcone
+    lightconerad
+    lightconethresh
+    unid
+end
+
 include("config.jl")
 include("fundamentals.jl")
 include("tensorOps.jl")
@@ -25,27 +47,6 @@ include("runtdvp_fixed.jl")
 include("runtdvp.jl")
 include("convtdvp.jl")
 
-struct TensorSim
-    dt
-    T
-    A
-    H
-    savedir
-    params
-    obs
-    convobs
-    savemps
-    verbose
-    save
-    saveplot
-    timed
-    log
-    Dmax
-    lightcone
-    lightconerad
-    lightconethresh
-    unid
-end
 function TensorSim(dt, T, A, H;
                    savedir::String = DEFSAVEDIR,
                    params = [],
@@ -67,43 +68,76 @@ function TensorSim(dt, T, A, H;
 end
 
 function runsim(sim::TensorSim, mach::Machine)
-    launch_workers(mach) do pid
-        @everywhere [pid] eval(using MPSDynamics)
-
+    if sim.save || sim.saveplot
+        if sim.savedir[end] != '/'
+            sim.savedir = string(sim.savedir,"/")
+        end
+        isdir(sim.savedir) || throw("save directory $sim.savedir doesn't exist")
     end
-
+    if typeof(Dmax) <: Vector
+        convcheck = true
+        numDmax = length(Dmax)
+    else
+        convcheck = false
+    end
+    sim.log && (endpos = open_log(sim, convcheck, mach))
+    A, dat = launch_workers(mach) do pid
+        tstart = now()
+        @everywhere [pid] eval(import MPSDynamics)
+        A, dat = fetch(@spawnat pid MPSDynamics.runtdvp_fixed!(sim.dt, sim.T, sim.A, sim.H,
+                                                   params=sim.params,
+                                                   obs=sim.obs,
+                                                   convobs=sim.convobs,
+                                                   savemps=sim.savemps,
+                                                   verbose=sim.savemps,
+                                                   save=false,
+                                                   saveplot=false,
+                                                   log=false,
+                                                   timed=sim.timed,
+                                                   Dmax=sim.Dmax,
+                                                   lightcone=sim.lightcone,
+                                                   lightconerad=sim.lightconerad,
+                                                   lightconethresh=sim.lightconethresh,
+                                                   unid=sim.unid
+                                                   ))
+        telapsed = canonicalize(Dates.CompoundPeriod(now() - tstart))
+        sim.save && save_data(sim.savedir, dat["data"], dat["convdata"])
+        sim.saveplot && save_plot(sim.savedir, dat["convdata"], sim.Dmax, sim.convobs)
+        sim.log && close_log(sim.savedir, endpos, telapsed)
+        return A, dat
+    end
+    return A, dat
 end
+runsim(sim::TensorSim) = runtdvp_fixed!(sim.dt, sim.T, sim.A, sim.H,
+                                        params=sim.params,
+                                        obs=sim.obs,
+                                        savedir=sim.savedir,
+                                        convobs=sim.convobs,
+                                        savemps=sim.savemps,
+                                        verbose=sim.verbose,
+                                        save=sim.save,
+                                        saveplot=sim.saveplot,
+                                        log=sim.log,
+                                        timed=sim.timed,
+                                        Dmax=sim.Dmax,
+                                        lightcone=sim.lightcone,
+                                        lightconerad=sim.lightconerad,
+                                        lightconethresh=sim.lightconethresh,
+                                        unid=sim.unid
+                                        )
+runsim(sim::TensorSim, mach::LocalMachine) = runsim(sim)
+    
 
-export
-    sz,
-    sx,
-    sy,
-    numb,
-    crea,
-    anih,
-    unitcol,
-    chaincoeffs_ohmic,
-    spinbosonmpo,
-    methylenebluempo,
-    productstatemps,
-    TensorSim,
-    runsim,
-    runtdvp_fixed!,
-    runtdvp_dynamic!,
-    physdims,
-    measure1siteoperator,
-    measure2siteoperator,
-    measurempo,
-    OneSiteObservable,
-    TwoSiteObservable,
-    Ntot,
-    Nup,
-    Ndown,
-    SZ,
-    SX,
-    SY,
-    Machine,
-    init_machines,
-    update_machines,
-    launch_workers
+export sz, sx, sy, numb, crea, anih, unitcol
+
+export chaincoeffs_ohmic, spinbosonmpo, methylbluempo
+
+export productstatemps, physdims
+
+export measure, OneSiteObservable, TwoSiteObservable
+
+export TensorSim, runsim
+
+export Machine, init_machines, update_machines, launch_workers
+    
 end
