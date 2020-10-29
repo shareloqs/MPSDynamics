@@ -68,6 +68,7 @@ function TensorSim(dt, T, A, H;
 end
 
 function runsim(sim::TensorSim, mach::Machine)
+    update_machines([mach])
     if sim.save || sim.saveplot
         if sim.savedir[end] != '/'
             sim.savedir = string(sim.savedir,"/")

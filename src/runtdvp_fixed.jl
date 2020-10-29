@@ -194,7 +194,7 @@ function open_log(savedir, dt, T, Dmax, unid, params, obs, convobs, convcheck, m
     end
     return endpos
 end
-open_log(sim::TensorSim, convcheck, mach=LocalMachine()) = open_log(getfield.(sim, [:savedir, :dt, :T, :Dmax, :unid, :params, :obs, :convobs])..., convcheck, mach)
+open_log(sim::TensorSim, convcheck, mach=LocalMachine()) = open_log(sim.savedir, sim.dt, sim.T, sim.Dmax, sim.unid, sim.params, sim.obs, sim.convobs, convcheck, mach)
 
 function close_log(savedir, endpos, telapsed)
     open(string(savedir,"info.txt"), "a+") do f
