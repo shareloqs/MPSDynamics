@@ -84,7 +84,9 @@ function runsim(sim::TensorSim, mach::Machine)
     sim.log && (endpos = open_log(sim, convcheck, mach))
     A, dat = launch_workers(mach) do pid
         tstart = now()
+        print("\n loading MPSDynamics............")
         @everywhere pid eval(import MPSDynamics)
+        println("done")
         A, dat = fetch(@spawnat only(pid) MPSDynamics.runtdvp_fixed!(sim.dt, sim.T, sim.A, sim.H,
                                                    params=sim.params,
                                                    obs=sim.obs,
@@ -140,8 +142,6 @@ export measure, OneSiteObservable, TwoSiteObservable
 export TensorSim, runsim
 
 export Machine, init_machines, update_machines, launch_workers
-
-f(x) = x*undefinedvar
 
 end
 

@@ -35,9 +35,7 @@ function runtdvp_fixed!(dt, T, A, H;
         convcheck = false
     end
 
-    if log
-        endpos = open_log(savedir, dt, T, Dmax, unid, params, obs, convobs, convcheck)
-    end
+    endpos = log ? open_log(savedir, dt, T, Dmax, unid, params, obs, convobs, convcheck) : nothing
     
     numsteps = length(collect(0:dt:T))-1
     times = [(i-1)*dt for i=1:numsteps]
