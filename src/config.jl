@@ -1,12 +1,12 @@
-try
-    MATDIR=ENV["MATDIR"]
+MATDIR = try
+    ENV["MATDIR"]
 catch
-    MATDIR="~/"
+    "~/"
 end
-try
-    DEFSAVEDIR=ENV["DEFSAVEDIR"]
+DEFSAVEDIR = try
+    ENV["DEFSAVEDIR"]
 catch
-    DEFSAVEDIR="~/"
+    "~/"
 end
 DEFCONVTHRESH = 10^-3
 DEFLCTHRESH = 10^-3 # smaller threshold means faster lightcone

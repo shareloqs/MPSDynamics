@@ -84,7 +84,7 @@ function runsim(sim::TensorSim, mach::Machine)
     sim.log && (endpos = open_log(sim, convcheck, mach))
     A, dat = launch_workers(mach) do pid
         tstart = now()
-        @everywhere [pid] eval(import MPSDynamics)
+        @everywhere pid eval(import MPSDynamics)
         A, dat = fetch(@spawnat only(pid) MPSDynamics.runtdvp_fixed!(sim.dt, sim.T, sim.A, sim.H,
                                                    params=sim.params,
                                                    obs=sim.obs,

@@ -34,15 +34,15 @@ end
 
 function init_machines(machs::Vector{Machine})
     launch_workers(machs) do pid
-        @everywhere [pid...] eval(using Pkg)
-        @everywhere [pid...] Pkg.add(PackageSpec(url="https://angus-dunnett@bitbucket.org/angus-dunnett/mpsdynamics.git", rev="master"))
+        @everywhere pid eval(using Pkg)
+        @everywhere pid Pkg.add(PackageSpec(url="https://angus-dunnett@bitbucket.org/angus-dunnett/mpsdynamics.git", rev="master"))
     end
 end
 
 function update_machines(machs::Vector{Machine})
     launch_workers(machs) do pid
-        @everywhere [pid...] eval(using Pkg)
-        @everywhere [pid...] Pkg.update("MPSDynamics")
+        @everywhere pid eval(using Pkg)
+        @everywhere pid Pkg.update("MPSDynamics")
     end
 end
 
