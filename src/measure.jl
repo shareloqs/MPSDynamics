@@ -884,8 +884,10 @@ function measure(A::Vector, O::CdagCdn, ρ::Vector)
 end
 
 function measure(A::Vector, Os::Vector{T}; kwargs...) where T<:Observable
+    numobs = length(Os)
+    numobs==0 && return Any[]
     N = max(reach.((A,), Os)...)
-    res = Vector{Any}(undef, length(Os))
+    res = Vector{Any}(undef, numobs)
     ρ = Vector{Any}(undef, N)
     ρ[1] = ones(ComplexF64, 1, 1)
     for i=2:N

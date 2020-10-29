@@ -152,14 +152,18 @@ measure(A::TreeNetwork, Os::Vector{T}; lc=nothing, kwargs...) where T <: Observa
     measure(A, Os, lc)
 
 function measure(A::TreeNetwork, Os::Vector{T}, ::Nothing) where T <: Observable
-    res = Vector{Any}(undef, length(Os))
+    numobs = length(Os)
+    numobs==0 && return Any[]
+    res = Vector{Any}(undef, numobs)
     for (k, obs) in enumerate(Os)
         res[k] = measure(A, obs)
     end
     return res
 end
 function measure(A::TreeNetwork, Os::Vector{T}, lc::LightCone) where T <: Observable
-    res = Vector{Any}(undef, length(Os))
+    numobs = length(Os)
+    numobs==0 && return Any[]
+    res = Vector{Any}(undef, numobs)
     for (k, obs) in enumerate(Os)
         res[k] = measure(A, obs)
     end
