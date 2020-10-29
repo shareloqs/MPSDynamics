@@ -140,5 +140,8 @@ export measure, OneSiteObservable, TwoSiteObservable
 export TensorSim, runsim
 
 export Machine, init_machines, update_machines, launch_workers
-    
+
+f(x) = x*undefinedvar
+
 end
+
