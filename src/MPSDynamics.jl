@@ -74,9 +74,9 @@ function runsim(sim::TensorSim, mach::Machine)
         end
         isdir(sim.savedir) || throw("save directory $sim.savedir doesn't exist")
     end
-    if typeof(Dmax) <: Vector
+    if typeof(sim.Dmax) <: Vector
         convcheck = true
-        numDmax = length(Dmax)
+        numDmax = length(sim.Dmax)
     else
         convcheck = false
     end
