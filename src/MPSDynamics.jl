@@ -89,7 +89,7 @@ function runsim(sim::TensorSim, mach::Machine)
                                                    obs=sim.obs,
                                                    convobs=sim.convobs,
                                                    savemps=sim.savemps,
-                                                   verbose=sim.savemps,
+                                                   verbose=sim.verbose,
                                                    save=false,
                                                    saveplot=false,
                                                    log=false,

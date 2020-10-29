@@ -24,8 +24,8 @@ function launch_workers(machs::Vector{Machine}, nworkers::Int=1)
 end
 function launch_workers(f::Function, args...)
     pids = launch_workers(args...)
-    try
-        ret = f(pids)
+    ret = try
+        f(pids)
     finally
         rmprocs(pids)
     end
