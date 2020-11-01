@@ -12,7 +12,7 @@ LocalMachine() = LocalMachine("local")
 rmworkers() = rmprocs(workers())
 
 function launch_workers(mach::Machine, nworkers::Int=1)
-    pids = addprocs([(mach.name, nworkers)], exename=mach.exename, dir=mach.wdir)
+    pids = addprocs([(mach.name, nworkers)], exename=mach.exename, dir=mach.wdir, tunnel=true)
     return pids
 end
 function launch_workers(machs::Vector{Machine}, nworkers::Int=1)
