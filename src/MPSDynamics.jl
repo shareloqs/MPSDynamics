@@ -104,8 +104,8 @@ function runsim(sim::TensorSim, mach::Machine)
                                                    unid=sim.unid
                                                    ))
         telapsed = canonicalize(Dates.CompoundPeriod(now() - tstart))
-        sim.save && save_data(sim.savedir, dat["data"], dat["convdata"])
-        sim.saveplot && save_plot(sim.savedir, dat["convdata"], sim.Dmax, sim.convobs)
+        sim.save && save_data(sim.savedir, sim.unid, dat["data"], dat["convdata"])
+        sim.saveplot && save_plot(sim.savedir, sim.unid, dat["convdata"], sim.Dmax, sim.convobs)
         sim.log && close_log(sim.savedir, endpos, telapsed)
         return A, dat
     end

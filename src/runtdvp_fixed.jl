@@ -134,12 +134,12 @@ function runtdvp_fixed!(dt, T, A, H;
         
         convdatadict = Dict(convdatalist)
 
-        saveplot && save_plot(savedir, convdatadict, Dmax, convobs)
+        saveplot && save_plot(savedir, unid, convdatadict, Dmax, convobs)
 
         push!(dat, ("convdata", convdatadict))
     end
 
-    save && save_data(savedir, datadict, convdatadict)
+    save && save_data(savedir, unid, datadict, convdatadict)
     telapsed = canonicalize(Dates.CompoundPeriod(now() - tstart))
     log && close_log(savedir, endpos, telapsed)
     return A, Dict(dat)
@@ -203,14 +203,14 @@ function close_log(savedir, endpos, telapsed)
     end
 end
 
-function save_data(savedir, datadict, convdatadict)
+function save_data(savedir, unid, datadict, convdatadict)
     jldopen(string(savedir,"dat_",unid,".jld"), "w") do file
         write(file, "data", datadict)
         convcheck && write(file, "convdata", convdatadict)
     end
 end
 
-function save_plot(savedir, convdatadict, Dmax, convobs)
+function save_plot(savedir, unid, convdatadict, Dmax, convobs)
     default(size = (800,600), reuse = true, title = unid, legend = true)
     for ob in filter(x->ndims(x)==0, convobs)
         if eltype(convdatadict[ob.name][1]) <: Complex
