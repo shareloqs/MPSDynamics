@@ -139,7 +139,7 @@ function runtdvp_fixed!(dt, T, A, H;
         push!(dat, ("convdata", convdatadict))
     end
 
-    save && save_data(savedir, unid, datadict, convdatadict)
+    save && save_data(savedir, unid, convcheck, datadict, convdatadict)
     telapsed = canonicalize(Dates.CompoundPeriod(now() - tstart))
     log && close_log(savedir, endpos, telapsed)
     return A, Dict(dat)
@@ -203,7 +203,7 @@ function close_log(savedir, endpos, telapsed)
     end
 end
 
-function save_data(savedir, unid, datadict, convdatadict)
+function save_data(savedir, unid, convcheck, datadict, convdatadict)
     jldopen(string(savedir,"dat_",unid,".jld"), "w") do file
         write(file, "data", datadict)
         convcheck && write(file, "convdata", convdatadict)

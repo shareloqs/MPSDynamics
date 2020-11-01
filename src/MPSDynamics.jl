@@ -88,23 +88,24 @@ function runsim(sim::TensorSim, mach::Machine)
         @everywhere pid eval(using MPSDynamics)
         println("done")
         A, dat = fetch(@spawnat only(pid) MPSDynamics.runtdvp_fixed!(sim.dt, sim.T, sim.A, sim.H,
-                                                   params=sim.params,
-                                                   obs=sim.obs,
-                                                   convobs=sim.convobs,
-                                                   savemps=sim.savemps,
-                                                   verbose=sim.verbose,
-                                                   save=false,
-                                                   saveplot=false,
-                                                   log=false,
-                                                   timed=sim.timed,
-                                                   Dmax=sim.Dmax,
-                                                   lightcone=sim.lightcone,
-                                                   lightconerad=sim.lightconerad,
-                                                   lightconethresh=sim.lightconethresh,
-                                                   unid=sim.unid
-                                                   ))
+                                                                     params=sim.params,
+                                                                     obs=sim.obs,
+                                                                     convobs=sim.convobs,
+                                                                     savemps=sim.savemps,
+                                                                     verbose=sim.verbose,
+                                                                     save=false,
+                                                                     savedir="~/",
+                                                                     saveplot=false,
+                                                                     log=false,
+                                                                     timed=sim.timed,
+                                                                     Dmax=sim.Dmax,
+                                                                     lightcone=sim.lightcone,
+                                                                     lightconerad=sim.lightconerad,
+                                                                     lightconethresh=sim.lightconethresh,
+                                                                     unid=sim.unid
+                                                                     ))
         telapsed = canonicalize(Dates.CompoundPeriod(now() - tstart))
-        sim.save && save_data(sim.savedir, sim.unid, dat["data"], dat["convdata"])
+        sim.save && save_data(sim.savedir, sim.unid, convcheck, dat["data"], dat["convdata"])
         sim.saveplot && save_plot(sim.savedir, sim.unid, dat["convdata"], sim.Dmax, sim.convobs)
         sim.log && close_log(sim.savedir, endpos, telapsed)
         return A, dat
