@@ -144,5 +144,9 @@ export TensorSim, runsim
 
 export Machine, LocalMachine, init_machines, update_machines, launch_workers, rmworkers
 
+export loaddat
+
+export VarT, VarX, plot, scatter
+
 end
 

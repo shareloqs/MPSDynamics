@@ -1,3 +1,4 @@
+
 function xyzmpo(N::Int; Jx=1.0, Jy=Jx, Jz=Jx, hx=0., hz=0.)
     u = unitmat(2)
 
@@ -265,7 +266,7 @@ function chaincoeffs_ohmic(nummodes, α, s, beta="inf"; ωc=1, soft=false)
 end
 
 function getchaincoeffs(nummodes, α, s, beta, ωc=1)
-    matlabdir = MATDIR
+    matlabdir = ENV["MATDIR"]
     astr = paramstring(α, 2)
     bstr = paramstring(beta, 3)
     datfname = string("jacerg_","a",astr,"s$s","beta",bstr,".csv")

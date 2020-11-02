@@ -214,10 +214,10 @@ function save_plot(savedir, unid, convdatadict, Dmax, convobs)
     default(size = (800,600), reuse = true, title = unid, legend = true)
     for ob in filter(x->ndims(x)==0, convobs)
         if eltype(convdatadict[ob.name][1]) <: Complex
-            plt = plot(hcat(convdatadict[ob.name]...); labels=transpose(Dmax), xlabel="Re($(ob.name))", ylabel="Im($(ob.name))")
+            plt = plot(hcat(convdatadict[ob.name]...); labels=transpose(Dmax), xlabel="Re($(ob.name))", ylabel="Im($(ob.name))");
         else
-            plt = plot(times, convdatadict[ob.name]; labels=transpose(Dmax), xlabel="t", ylabel=ob.name)
+            plt = plot(times, convdatadict[ob.name]; labels=transpose(Dmax), xlabel="t", ylabel=ob.name);
         end
-        savefig(plt, string(savedir,"convplot_",ob.name,"_",unid,".pdf"))
+        savefig(plt, string(savedir,"convplot_",ob.name,"_",unid,".pdf"));
     end
 end
