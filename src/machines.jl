@@ -46,3 +46,7 @@ function update_machines(machs::Vector{Machine})
     end
 end
 
+alexpc = Machine("alexpc","/home/angus/bin/julia", 1, "/home/angus/")
+hp = Machine("hp","/home/angus/julia-1.4.2/bin/julia", 1, "/home/angus/")
+asusnew = Machine("asusnew","/home/angus/julia-1.4.2/bin/julia", 1, "/home/angus/")
+asusold = Machine("asusold","/home/angus/julia-1.4.2/bin/julia", 1, "/home/angus/")

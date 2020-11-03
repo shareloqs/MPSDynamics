@@ -153,6 +153,8 @@ export TensorSim, runsim, DelayedFunction, evaluate
 
 export Machine, LocalMachine, init_machines, update_machines, launch_workers, rmworkers
 
+export alexpc, hp, asusold, asusnew
+
 export loaddat
 
 export VarT, VarX, plot, scatter
