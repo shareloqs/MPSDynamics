@@ -155,9 +155,7 @@ export Machine, LocalMachine, init_machines, update_machines, launch_workers, rm
 
 export alexpc, hp, asusold, asusnew
 
-export loaddat
-
-export VarT, VarX, plot, scatter
+export VarT, VarX, plot, scatter, loaddat
 
 end
 
