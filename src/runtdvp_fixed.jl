@@ -134,7 +134,7 @@ function runtdvp_fixed!(dt, T, A, H;
         
         convdatadict = Dict(convdatalist)
 
-        saveplot && save_plot(savedir, unid, convdatadict, Dmax, convobs)
+        saveplot && save_plot(savedir, unid, times, convdatadict, Dmax, convobs)
 
         push!(dat, ("convdata", convdatadict))
     end
@@ -210,7 +210,7 @@ function save_data(savedir, unid, convcheck, datadict, convdatadict)
     end
 end
 
-function save_plot(savedir, unid, convdatadict, Dmax, convobs)
+function save_plot(savedir, unid, times, convdatadict, Dmax, convobs)
     default(size = (800,600), reuse = true, title = unid, legend = true)
     for ob in filter(x->ndims(x)==0, convobs)
         if eltype(convdatadict[ob.name][1]) <: Complex
