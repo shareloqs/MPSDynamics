@@ -2,6 +2,13 @@ module MPSDynamics
 
 using JLD, Random, Dates, Plots, Printf, Distributed, LinearAlgebra, DelimitedFiles, KrylovKit, ITensors, TensorOperations, GraphRecipes, SpecialFunctions
 
+struct DelayedFunction
+    f::Function
+    params::Vector
+end
+evaluate(df::DelayedFunction) = df.f(f.params...)
+evaluate(any::Any) = any
+
 struct TensorSim
     dt
     T
@@ -87,7 +94,9 @@ function runsim(sim::TensorSim, mach::Machine)
         print("\n loading MPSDynamics............")
         @everywhere pid eval(using MPSDynamics)
         println("done")
-        A, dat = fetch(@spawnat only(pid) MPSDynamics.runtdvp_fixed!(sim.dt, sim.T, sim.A, sim.H,
+        A, dat = fetch(@spawnat only(pid) MPSDynamics.runtdvp_fixed!(sim.dt, sim.T,
+                                                                     evaluate(sim.A),
+                                                                     evaluate(sim.H),
                                                                      params=sim.params,
                                                                      obs=sim.obs,
                                                                      convobs=sim.convobs,
@@ -140,7 +149,7 @@ export productstatemps, physdims
 
 export measure, OneSiteObservable, TwoSiteObservable
 
-export TensorSim, runsim
+export TensorSim, runsim, evaluate
 
 export Machine, LocalMachine, init_machines, update_machines, launch_workers, rmworkers
 
