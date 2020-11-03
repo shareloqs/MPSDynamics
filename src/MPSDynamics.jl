@@ -149,7 +149,7 @@ export productstatemps, physdims
 
 export measure, OneSiteObservable, TwoSiteObservable
 
-export TensorSim, runsim, evaluate
+export TensorSim, runsim, DelayedFunction, evaluate
 
 export Machine, LocalMachine, init_machines, update_machines, launch_workers, rmworkers
 
