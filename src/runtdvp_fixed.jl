@@ -18,8 +18,10 @@ function runtdvp_fixed!(dt, T, A, H;
     numsteps = length(collect(0:dt:T))-1
     times = [(i-1)*dt for i=1:numsteps]
 
-    datalist = Any[(par[1], par[2]) for par in params]
-    push!(datalist, ("times", times))
+    paramdatalist = Any[(par[1], par[2]) for par in params]
+    push!(paramdatalist, ("dt", dt))
+    push!(paramdatalist, ("tmax", T))
+    datalist = Any[("times", times)]
 
     if typeof(Dmax) <: Vector
         convcheck = true
@@ -92,7 +94,7 @@ function runtdvp_fixed!(dt, T, A, H;
             A, F = tdvp1sweep!(dt, A, H, F, lc; verbose=verbose, kwargs...)
         end
     end
-
+    
     tdata = Vector{Any}(undef, length(obs))
     for ob=1:length(obs)
         m = data[1][ob]
@@ -110,16 +112,18 @@ function runtdvp_fixed!(dt, T, A, H;
     if convcheck
         lastprec = map(x->datadict[x.name], convobs)
 
-        #cat causes stack overflow for large numbers of time steps!
-        if numDmax != 1
-            tconvdata =
-                [
-                    [
-                        [cat([convdata[p][t][ob] for t=1:numsteps]..., dims=ndims(convobs[ob])+1) for p=1:numDmax-1]..., lastprec[ob]
-                    ] for ob=1:length(convobs)
-                ]
-        else
-            tconvdata = [[lastprec[ob]] for ob=1:length(convobs)]
+        tconvdata = Vector{Any}(undef, length(convobs))
+        for ob=1:length(convobs)
+            mp = Vector{Any}(undef, numDmax)
+            for p=1:numDmax-1
+                m = convdata[p][1][ob]
+                for t=2:numsteps
+                    m = cat(m, convdata[p][t][ob]; dims=ndims(convobs[ob])+1)
+                end
+                mp[p] = m
+            end
+            mp[end] = lastprec[ob]
+            tconvdata[ob] = hcat(mp...)
         end
 
         convdatalist = Any[(ob.name, tconvdata[i]) for (i,ob) in enumerate(convobs)]
@@ -129,6 +133,7 @@ function runtdvp_fixed!(dt, T, A, H;
         convdatadict = Dict(convdatalist)
         push!(dat, ("convdata", convdatadict))
     end
+    push!(dat, ("parameters", Dict(paramdatalist)))
     return A, Dict(dat)
 end
 
@@ -190,10 +195,22 @@ function close_log(savedir, unid, output, telapsed)
     end
 end
 
-function save_data(savedir, unid, convcheck, datadict, convdatadict)
+function save_data(savedir, unid, convcheck, datadict, convdatadict, paramdatadict)
     jldopen(string(savedir,unid,"/","dat_",unid,".jld"), "w") do file
-        write(file, "data", datadict)
-        convcheck && write(file, "convdata", convdatadict)
+        g1 = g_create(file, "data")
+        for el in datadict
+            g1[el.first] = el.second
+        end
+        if convcheck
+            g2 = g_create(file, "convdata")
+            for el in convdatadict
+                g2[el.first] = el.second
+            end
+        end
+        g3 = g_create(file, "parameters")
+        for el in paramdatadict
+            g3[el.first] = el.second
+        end
     end
 end
 
@@ -201,7 +218,7 @@ function save_plot(savedir, unid, times, convdatadict, Dmax, convobs)
     default(size = (800,600), reuse = true, title = unid, legend = true)
     for ob in filter(x->ndims(x)==0, convobs)
         if eltype(convdatadict[ob.name][1]) <: Complex
-            plt = plot(hcat(convdatadict[ob.name]...); labels=transpose(Dmax), xlabel="Re($(ob.name))", ylabel="Im($(ob.name))");
+            plt = plot(convdatadict[ob.name]; labels=transpose(Dmax), xlabel="Re($(ob.name))", ylabel="Im($(ob.name))");
         else
             plt = plot(times, convdatadict[ob.name]; labels=transpose(Dmax), xlabel="t", ylabel=ob.name);
         end

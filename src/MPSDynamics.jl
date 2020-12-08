@@ -1,6 +1,6 @@
 module MPSDynamics
 
-using JLD, Random, Dates, Plots, Printf, Distributed, LinearAlgebra, DelimitedFiles, KrylovKit, ITensors, TensorOperations, GraphRecipes, SpecialFunctions, Logging
+using JLD, HDF5, Random, Dates, Plots, Printf, Distributed, LinearAlgebra, DelimitedFiles, KrylovKit, ITensors, TensorOperations, GraphRecipes, SpecialFunctions, Logging
 
 struct DelayedFunction
     f::Function
@@ -74,65 +74,6 @@ function TensorSim(dt, T, A, H;
     TensorSim(dt,T,A,H,savedir,params,obs,convobs,savemps,verbose,save,saveplot,timed,log,Dmax,lightcone,lightconerad,lightconethresh,unid)
 end
 
-# function runsim(sim::TensorSim, mach::Machine)
-#     update_machines([mach])
-#     if sim.save || sim.saveplot
-#         if sim.savedir[end] != '/'
-#             sim.savedir = string(sim.savedir,"/")
-#         end
-#         isdir(sim.savedir) || throw("save directory $sim.savedir doesn't exist")
-#     end
-
-#     if typeof(sim.Dmax) <: Vector
-#         convcheck = true
-#         numDmax = length(sim.Dmax)
-#     else
-#         convcheck = false
-#     end
-
-#     if sim.log
-#         open_log(sim, convcheck, mach)
-#         mkdir(string(sim.savedir, sim.unid))
-#     end
-#     errorfile = "$(sim.unid).e"
-    
-#     tstart = now()
-#     A = dat = nothing
-
-#     try
-#         A, dat = launch_workers(mach) do pid
-#             tstart = now()
-#             print("\n loading MPSDynamics............")
-#             @everywhere pid eval(using MPSDynamics)
-#             println("done")
-#             A, dat = fetch(@spawnat only(pid) MPSDynamics.runtdvp_fixed!(sim.dt, sim.T,
-#                                                                          evaluate(sim.A),
-#                                                                          evaluate(sim.H),
-#                                                                          params=sim.params,
-#                                                                          obs=sim.obs,
-#                                                                          convobs=sim.convobs,
-#                                                                          savemps=sim.savemps,
-#                                                                          verbose=sim.verbose,
-#                                                                          timed=sim.timed,
-#                                                                          Dmax=sim.Dmax,
-#                                                                          lightcone=sim.lightcone,
-#                                                                          lightconerad=sim.lightconerad,
-#                                                                          lightconethresh=sim.lightconethresh,
-#                                                                          unid=sim.unid
-#                                                                          ))
-#             telapsed = canonicalize(Dates.CompoundPeriod(now() - tstart))
-#             sim.save && save_data(sim.savedir, sim.unid, convcheck, dat["data"], dat["convdata"])
-#             sim.saveplot && save_plot(sim.savedir, sim.unid, dat["data"]["times"], dat["convdata"], sim.Dmax, sim.convobs)
-#             sim.log && close_log(sim.savedir, sim.unid, sim.save, telapsed)
-#             return A, dat
-            
-#         catch
-#         finally
-#         end
-#     end
-#     return A, dat
-# end
-
 function runsim(sim::TensorSim, mach::Machine)
     remote = typeof(mach) == RemoteMachine
     remote && update_machines([mach])
@@ -160,7 +101,7 @@ function runsim(sim::TensorSim, mach::Machine)
     A = dat = nothing
     try
         A, dat = launch_workers(mach) do pid
-            print("\n loading MPSDynamics............")
+            print("loading MPSDynamics............")
             @everywhere pid eval(using MPSDynamics)
             println("done")
             A, dat = fetch(@spawnat only(pid) MPSDynamics.runtdvp_fixed!(sim.dt, sim.T, sim.A, sim.H,
@@ -176,7 +117,7 @@ function runsim(sim::TensorSim, mach::Machine)
                                                                          lightconethresh=sim.lightconethresh,
                                                                          unid=sim.unid
                                                                          ))
-            sim.save && save_data(sim.savedir, sim.unid, convcheck, dat["data"], dat["convdata"])
+            sim.save && save_data(sim.savedir, sim.unid, convcheck, dat["data"], dat["convdata"], dat["parameters"])
             sim.saveplot && save_plot(sim.savedir, sim.unid, dat["data"]["times"], dat["convdata"], sim.Dmax, sim.convobs)
             return A, dat
         end
