@@ -4,7 +4,7 @@ crea(d) = diagm(-1 => [sqrt(i) for i=1:d-1])
 anih(d) = Matrix(crea(d)')
 numb(d) = crea(d)*anih(d)
 disp(d) = crea(d)+anih(d)
-mome(d) = crea(d)-anih(d)
+mome(d) = im*(crea(d)-anih(d))
 sx = [0. 1.; 1. 0.]
 sz = [1. 0.; 0. -1.]
 sy = [0. -im; im 0.]
@@ -121,7 +121,7 @@ function savecsv(dir, fname, dat)
     writedlm(string(dir, fname,".csv"), dat, ',')
 end
 
-function eigenchain(cparams...; nummodes=nothing)
+function eigenchain(cparams; nummodes=nothing)
     if nummodes==nothing
         nummodes = length(cparams[1])
     end

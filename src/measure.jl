@@ -111,7 +111,7 @@ function measure(A, O::OneSiteObservable, acs::Vector, ::Nothing)
         sites = span(A, O)
     end
     N = length(sites)
-    expval = Vector{T}(undef, N)
+    expval = zeros(T, N)
     for (i, k) in enumerate(sites)
         v = ACOAC(acs[k], O.op)
         T<:Real && (v=real(v))
@@ -130,7 +130,7 @@ function measure(A, O::OneSiteObservable, ::Nothing, ρ::Vector)
         sites = span(A, O)
     end
     N = length(sites)
-    expval = Vector{T}(undef, N)
+    expval = zeros(T, N)
     for (i, k) in enumerate(sites)
         v = rhoAOAstar(ρ[k], A[k], O.op, nothing)
         T<:Real && (v=real(v))
@@ -157,7 +157,7 @@ function measure1siteoperator(A::Vector, O, sites::Vector{Int})
     N = length(A)
     ρ = ones(ComplexF64, 1, 1)
     T = ishermitian(O) ? Float64 : ComplexF64
-    expval = Vector{T}(undef, N)
+    expval = zeros(T, N)
     for i=1:N
         if in(i, sites)
             v = rhoAOAstar(ρ, A[i], O, nothing)
@@ -178,7 +178,7 @@ function measure1siteoperator(A::Vector, O, chainsection::Tuple{Int64,Int64})
     r=max(chainsection...)#rightmost site in section
     rev = l != chainsection[1]
     N = r-l+1
-    expval = Vector{T}(undef, N)
+    expval = zeros(T, N)
 
     for i=1:l-1
         ρ = rhoAAstar(ρ, A[i])
@@ -202,7 +202,7 @@ function measure1siteoperator(A::Vector, O)
     N = length(A)
     ρ = ones(ComplexF64, 1, 1)
     T = ishermitian(O) ? Float64 : ComplexF64
-    expval = Vector{T}(undef, N)
+    expval = zeros(T, N)
     for i=1:N
         v = rhoAOAstar(ρ, A[i], O, nothing)
         T<:Real && (v=real(v))
@@ -278,16 +278,17 @@ end
 function measure2siteoperator(A::Vector, M1, M2)
     herm_cis = ishermitian(M1*M2)
     herm_trans = ishermitian(M1) && ishermitian(M2)
-    conjpair = M1 == M2'
-    if conjpair
-        return measure2siteoperator_herm(A, M1, M2)
+    pair = M1 == M2
+    cpair = M1 == M2'
+    if pair || cpair
+        return measure2siteoperator_pair(A, M1, conjugate=!pair)
     else
         N = length(A)
         ρ = ones(ComplexF64, 1, 1)
         
         T = (herm_cis && herm_trans) ? Float64 : ComplexF64
         
-        expval = Array{T,2}(undef, N, N)
+        expval = zeros(T, N, N)
 
         for i in 1:N
             v = rhoAOAstar(ρ, A[i], M1*M2, nothing)
@@ -313,15 +314,16 @@ end
 function measure2siteoperator(A::Vector, M1, M2, ρ::Vector)
     herm_cis = ishermitian(M1*M2)
     herm_trans = ishermitian(M1) && ishermitian(M2)
-    conjpair = M1 == M2'
-    if conjpair
-        return measure2siteoperator_herm(A, M1, M2, ρ)
+    pair = M1 == M2
+    cpair = M1 == M2'
+    if pair || cpair
+        return measure2siteoperator_pair(A, M1, ρ, conjugate=!pair)
     else
         N = length(A)
         
         T = (herm_cis && herm_trans) ? Float64 : ComplexF64
         
-        expval = Array{T,2}(undef, N, N)
+        expval = zeros(T, N, N)
 
         for i in 1:N
             v = rhoAOAstar(ρ[i], A[i], M1*M2, nothing)
@@ -347,7 +349,8 @@ measure2siteoperator(A::Vector, M1, M2, ::Nothing, ::Nothing) = measure2siteoper
 measure2siteoperator(A::Vector, M1, M2, ::Nothing, ::Nothing, ρ::Vector) =
     measure2siteoperator(A, M1, M2, ρ)
 
-function measure2siteoperator_herm(A::Vector, M1, M2)
+function measure2siteoperator_pair(A::Vector, M1; conjugate=false)
+    M2 = conjugate ? Matrix(M1') : M1    
     herm_cis = ishermitian(M1*M2)
     herm_trans = ishermitian(M1) && ishermitian(M2)
 
@@ -356,7 +359,7 @@ function measure2siteoperator_herm(A::Vector, M1, M2)
 
     T = (herm_cis && herm_trans) ? Float64 : ComplexF64
     
-    expval = Array{T,2}(undef, N, N)
+    expval = zeros(T, N, N)
     for i in 1:N
         v = rhoAOAstar(ρ, A[i], M1*M2, nothing)
         herm_cis && (v=real(v))
@@ -370,9 +373,11 @@ function measure2siteoperator_herm(A::Vector, M1, M2)
         end
         ρ = rhoAAstar(ρ, A[i])
     end
-    return expval + (expval' - diagm(0 => diag(expval)))
+    dia = diagm(0 => diag(expval))
+    return expval + (conjugate ? expval' : transpose(expval)) - dia
 end
-function measure2siteoperator_herm(A::Vector, M1, M2, ρ::Vector)
+function measure2siteoperator_pair(A::Vector, M1, ρ::Vector; conjugate=false)
+    M2 = conjugate ? Matrix(M1') : M1
     herm_cis = ishermitian(M1*M2)
     herm_trans = ishermitian(M1) && ishermitian(M2)
 
@@ -380,7 +385,7 @@ function measure2siteoperator_herm(A::Vector, M1, M2, ρ::Vector)
 
     T = (herm_cis && herm_trans) ? Float64 : ComplexF64
     
-    expval = Array{T,2}(undef, N, N)
+    expval = zeros(T, N, N)
     for i in 1:N
         v = rhoAOAstar(ρ[i], A[i], M1*M2, nothing)
         herm_cis && (v=real(v))
@@ -393,7 +398,8 @@ function measure2siteoperator_herm(A::Vector, M1, M2, ρ::Vector)
             ρ12 = rhoAAstar(ρ12, A[j])
         end
     end
-    return expval + (expval' - diagm(0 => diag(expval)))
+    dia = diagm(0 => diag(expval))
+    return expval + (conjugate ? expval' : transpose(expval)) - dia
 end
 
 function measure2siteoperator(A::Vector, M1, M2, sites1::Vector{Int}, sites2::Vector{Int})
@@ -405,7 +411,7 @@ function measure2siteoperator(A::Vector, M1, M2, sites1::Vector{Int}, sites2::Ve
 
     T = (herm_cis && herm_trans) ? Float64 : ComplexF64
 
-    expval = Array{T,2}(undef, N, N)
+    expval = zeros(T, N, N)
     for i in 1:N
         if in(i, sites1)
             if in(i, sites2)
@@ -447,7 +453,7 @@ function measure2siteoperator(A::Vector, M1, M2, sites1::Vector{Int}, sites2::Ve
 
     T = (herm_cis && herm_trans) ? Float64 : ComplexF64
 
-    expval = Array{T,2}(undef, N, N)
+    expval = zeros(T, N, N)
     for i in 1:N
         if in(i, sites1)
             if in(i, sites2)
@@ -482,17 +488,19 @@ function measure2siteoperator(A::Vector, M1, M2, sites1::Vector{Int}, sites2::Ve
 end
 
 function measure2siteoperator(A::Vector, M1, M2, sites::Vector{Int})
-    conjpair = M1 == M2'
-    if conjpair
-        return measure2siteoperator_herm(A, M1, M2, sites)
+    pair = M1 == M2
+    cpair = M1 == M2'
+    if pair || cpair
+        return measure2siteoperator_pair(A, M1, sites, conjugate=!pair)
     else
         return measure2siteoperator(A, M1, M2, sites, sites)
     end
 end
 function measure2siteoperator(A::Vector, M1, M2, sites::Vector{Int}, ρ::Vector)
-    conjpair = M1 == M2'
-    if conjpair
-        return measure2siteoperator_herm(A, M1, M2, sites, ρ)
+    pair = M1 == M2
+    cpair = M1 == M2'
+    if pair || cpair
+        return measure2siteoperator_pair(A, M1, sites, ρ, conjugate=!pair)
     else
         return measure2siteoperator(A, M1, M2, sites, sites, ρ)
     end
@@ -502,16 +510,17 @@ measure2siteoperator(A::Vector, M1, M2, sites::Vector{Int}, ::Nothing) =
 measure2siteoperator(A::Vector, M1, M2, sites::Vector{Int}, ::Nothing, ρ::Vector) =
     measure2siteoperator(A, M1, M2, sites, ρ)
 
-function measure2siteoperator_herm(A::Vector, M1, M2, sites::Vector{Int})
+function measure2siteoperator_pair(A::Vector, M1, sites::Vector{Int}; conjugate=false)
+    M2 = conjugate ? Matrix(M1') : M1
     herm_cis = ishermitian(M1*M2)
     herm_trans = ishermitian(M1) && ishermitian(M2)
-
+    
     N = length(A)
     ρ = ones(ComplexF64, 1, 1)
 
     T = (herm_cis && herm_trans) ? Float64 : ComplexF64
 
-    expval = Array{T,2}(undef, N, N)
+    expval = zeros(T, N, N)
     for i in 1:N
         if in(i, sites)
             v = rhoAOAstar(ρ, A[i], M1*M2, nothing)
@@ -531,10 +540,11 @@ function measure2siteoperator_herm(A::Vector, M1, M2, sites::Vector{Int})
         ρ = rhoAAstar(ρ, A[i])
     end
     expval = expval[sites, sites]
-    expval = expval + expval' - diagm(0 => diag(expval))
-    return expval
+    dia = diagm(0 => diag(expval))
+    return expval + (conjugate ? expval' : transpose(expval)) - dia
 end
-function measure2siteoperator_herm(A::Vector, M1, M2, sites::Vector{Int}, ρ::Vector)
+function measure2siteoperator_pair(A::Vector, M1, sites::Vector{Int}, ρ::Vector; conjugate=false)
+    M2 = conjugate ? Matrix(M1') : M1
     herm_cis = ishermitian(M1*M2)
     herm_trans = ishermitian(M1) && ishermitian(M2)
 
@@ -542,7 +552,7 @@ function measure2siteoperator_herm(A::Vector, M1, M2, sites::Vector{Int}, ρ::Ve
 
     T = (herm_cis && herm_trans) ? Float64 : ComplexF64
 
-    expval = Array{T,2}(undef, N, N)
+    expval = zeros(T, N, N)
     for i in 1:N
         if in(i, sites)
             v = rhoAOAstar(ρ[i], A[i], M1*M2, nothing)
@@ -561,17 +571,17 @@ function measure2siteoperator_herm(A::Vector, M1, M2, sites::Vector{Int}, ρ::Ve
         end
     end
     expval = expval[sites, sites]
-    expval = expval + expval' - diagm(0 => diag(expval))
-    return expval
+    dia = diagm(0 => diag(expval))
+    return expval + (conjugate ? expval' : transpose(expval)) - dia
 end
 
 function measure2siteoperator(A::Vector, M1, M2, chainsection::Tuple{Int,Int})
     herm_cis = ishermitian(M1*M2)
     herm_trans = ishermitian(M1) && ishermitian(M2)
-    conjpair = M1 == M2'
-
-    if conjpair
-        return measure2siteoperator_herm(A, M1, M2, chainsection)
+    pair = M1 == M2
+    cpair = M1 == M2'
+    if pair || cpair
+        return measure2siteoperator_pair(A, M1, chainsection; conjugate=!pair)
     end
     N = length(A)
     ρ = ones(ComplexF64, 1, 1)
@@ -583,7 +593,7 @@ function measure2siteoperator(A::Vector, M1, M2, chainsection::Tuple{Int,Int})
 
     T = (herm_cis && herm_trans) ? Float64 : ComplexF64
 
-    expval = Array{T,2}(undef, N, N)
+    expval = zeros(T, N, N)
 
     for i in 1:l-1
         ρ = rhoAAstar(ρ, A[i])
@@ -614,10 +624,10 @@ end
 function measure2siteoperator(A::Vector, M1, M2, chainsection::Tuple{Int,Int}, ρ::Vector)
     herm_cis = ishermitian(M1*M2)
     herm_trans = ishermitian(M1) && ishermitian(M2)
-    conjpair = M1 == M2'
-
-    if conjpair
-        return measure2siteoperator_herm(A, M1, M2, chainsection, ρ)
+    pair = M1 == M2
+    cpair = M1 == M2'
+    if pair || cpair
+        return measure2siteoperator_pair(A, M1, chainsection, ρ, conjugate=!pair)
     end
     N = length(A)
     
@@ -628,12 +638,12 @@ function measure2siteoperator(A::Vector, M1, M2, chainsection::Tuple{Int,Int}, �
 
     T = (herm_cis && herm_trans) ? Float64 : ComplexF64
 
-    expval = Array{T,2}(undef, N, N)
+    expval = zeros(T, N, N)
 
     for i in l:r
         v = rhoAOAstar(ρ[i], A[i], M1*M2, nothing)
         herm_cis && (v=real(v))
-        expval[i-l+1,i-l+1] = v
+                expval[i-l+1,i-l+1] = v
         ρ12 = rhoAOAstar(ρ[i], A[i], M1)
         ρ21 = rhoAOAstar(ρ[i], A[i], M2)
         for j in i+1:r
@@ -655,7 +665,8 @@ end
 measure2siteoperator(A, M1, M2, chainsection::Tuple{Int,Int}, ::Nothing) =
     measure2siteoperator(A, M1, M2, chainsection)
 
-function measure2siteoperator_herm(A::Vector, M1, M2, chainsection::Tuple{Int,Int})
+function measure2siteoperator_pair(A::Vector, M1, chainsection::Tuple{Int,Int}; conjugate=false)
+    M2 = conjugate ? Matrix(M1') : M1
     herm_cis = ishermitian(M1*M2)
     herm_trans = ishermitian(M1) && ishermitian(M2)
 
@@ -669,7 +680,7 @@ function measure2siteoperator_herm(A::Vector, M1, M2, chainsection::Tuple{Int,In
 
     T = (herm_cis && herm_trans) ? Float64 : ComplexF64
 
-    expval = Array{T,2}(undef, N, N)
+    expval = zeros(T, N, N)
 
     for i in 1:l-1
         ρ = rhoAAstar(ρ, A[i])
@@ -687,13 +698,15 @@ function measure2siteoperator_herm(A::Vector, M1, M2, chainsection::Tuple{Int,In
         end
         ρ = rhoAAstar(ρ, A[i])
     end
-    expval = expval + (expval' - diagm(0 => diag(expval)))
+    dia = diagm(0 => diag(expval))
+    expval = expval + (conjugate ? expval' : transpose(expval)) - dia
     if rev
         expval = reverse(reverse(expval, dims=1), dims=2)
     end
     return expval
 end
-function measure2siteoperator_herm(A::Vector, M1, M2, chainsection::Tuple{Int,Int}, ρ::Vector)
+function measure2siteoperator_pair(A::Vector, M1, chainsection::Tuple{Int,Int}, ρ::Vector; conjugate=false)
+    M2 = conjugate ? Matrix(M1') : M1
     herm_cis = ishermitian(M1*M2)
     herm_trans = ishermitian(M1) && ishermitian(M2)
 
@@ -706,7 +719,7 @@ function measure2siteoperator_herm(A::Vector, M1, M2, chainsection::Tuple{Int,In
 
     T = (herm_cis && herm_trans) ? Float64 : ComplexF64
 
-    expval = Array{T,2}(undef, N, N)
+    expval = zeros(T, N, N)
 
     for i in l:r
         v = rhoAOAstar(ρ[i], A[i], M1*M2, nothing)
@@ -720,7 +733,8 @@ function measure2siteoperator_herm(A::Vector, M1, M2, chainsection::Tuple{Int,In
             ρ12 = rhoAAstar(ρ12, A[j])
         end
     end
-    expval = expval + (expval' - diagm(0 => diag(expval)))
+    dia = diagm(0 => diag(expval))
+    expval = expval + (conjugate ? expval' : transpose(expval)) - dia
     if rev
         expval = reverse(reverse(expval, dims=1), dims=2)
     end
@@ -749,7 +763,7 @@ function measure(A::Vector, O::CdagCup, ::Nothing)
     ρ1 = ones(ComplexF64, 1, 1)
     ρ = ones(ComplexF64, 1, 1)
     
-    expval = Array{ComplexF64,2}(undef, N, N)
+    expval = zeros(ComplexF64, N, N)
 
     for i=1:nearest-1
         ρ = rhoAAstar(ρ, A[i])
@@ -788,7 +802,7 @@ function measure(A::Vector, O::CdagCup, ρ::Vector)
 
     ρ1 = ones(ComplexF64, 1, 1)
     
-    expval = Array{ComplexF64,2}(undef, N, N)
+    expval = zeros(ComplexF64, N, N)
 
     for i=nearest:farthest
         v = rhoAOAstar(ρ[i], A[i], Adagup*Aup, nothing)
@@ -825,7 +839,7 @@ function measure(A::Vector, O::CdagCdn, ::Nothing)
     ρ1 = ones(ComplexF64, 1, 1)
     ρ = ones(ComplexF64, 1, 1)
     
-    expval = Array{ComplexF64,2}(undef, N, N)
+    expval = zeros(ComplexF64, N, N)
 
     for i=1:nearest-1
         ρ = rhoAAstar(ρ, A[i])
@@ -864,7 +878,7 @@ function measure(A::Vector, O::CdagCdn, ρ::Vector)
 
     ρ1 = ones(ComplexF64, 1, 1)
     
-    expval = Array{ComplexF64,2}(undef, N, N)
+    expval = zeros(ComplexF64, N, N)
 
     for i=nearest:farthest
         v = rhoAOAstar(ρ[i], A[i], Adagdn*Adn, nothing)
@@ -888,16 +902,30 @@ function measure(A::Vector, Os::Vector{T}; kwargs...) where T<:Observable
     numobs==0 && return Any[]
     N = max(reach.((A,), Os)...)
     res = Vector{Any}(undef, numobs)
+    ρ = leftcontractmps(A, N)
+    for (k, obs) in enumerate(Os)
+        res[k] = measure(A, obs; ρ=ρ, kwargs...)
+    end
+    return res
+end
+
+function leftcontractmps(A, N::Int=length(A))
     ρ = Vector{Any}(undef, N)
     ρ[1] = ones(ComplexF64, 1, 1)
     for i=2:N
         ρ[i] = rhoAAstar(ρ[i-1], A[i-1])
     end
-    for (k, obs) in enumerate(Os)
-        res[k] = measure(A, obs, ρ=ρ, kwargs...)
-    end
-    return res
+    return ρ
 end
-
-
-
+function leftcontractmps(A, O::Vector, N::Int=length(A))
+    ρ = Vector{Any}(undef, N)
+    ρ[1] = ones(ComplexF64, 1, 1)
+    numops = length(O)
+    for i=2:numops
+        ρ[i] = rhoAOAstar(ρ[i-1], A[i-1], O[i-1])
+    end
+    for i=numops+1:N
+        ρ[i] = rhoAAstar(ρ[i-1], A[i-1])
+    end
+    return ρ
+end

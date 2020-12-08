@@ -1,6 +1,6 @@
 module MPSDynamics
 
-using JLD, Random, Dates, Plots, Printf, Distributed, LinearAlgebra, DelimitedFiles, KrylovKit, ITensors, TensorOperations, GraphRecipes, SpecialFunctions
+using JLD, Random, Dates, Plots, Printf, Distributed, LinearAlgebra, DelimitedFiles, KrylovKit, ITensors, TensorOperations, GraphRecipes, SpecialFunctions, Logging
 
 struct DelayedFunction
     f::Function
@@ -74,13 +74,74 @@ function TensorSim(dt, T, A, H;
     TensorSim(dt,T,A,H,savedir,params,obs,convobs,savemps,verbose,save,saveplot,timed,log,Dmax,lightcone,lightconerad,lightconethresh,unid)
 end
 
+# function runsim(sim::TensorSim, mach::Machine)
+#     update_machines([mach])
+#     if sim.save || sim.saveplot
+#         if sim.savedir[end] != '/'
+#             sim.savedir = string(sim.savedir,"/")
+#         end
+#         isdir(sim.savedir) || throw("save directory $sim.savedir doesn't exist")
+#     end
+
+#     if typeof(sim.Dmax) <: Vector
+#         convcheck = true
+#         numDmax = length(sim.Dmax)
+#     else
+#         convcheck = false
+#     end
+
+#     if sim.log
+#         open_log(sim, convcheck, mach)
+#         mkdir(string(sim.savedir, sim.unid))
+#     end
+#     errorfile = "$(sim.unid).e"
+    
+#     tstart = now()
+#     A = dat = nothing
+
+#     try
+#         A, dat = launch_workers(mach) do pid
+#             tstart = now()
+#             print("\n loading MPSDynamics............")
+#             @everywhere pid eval(using MPSDynamics)
+#             println("done")
+#             A, dat = fetch(@spawnat only(pid) MPSDynamics.runtdvp_fixed!(sim.dt, sim.T,
+#                                                                          evaluate(sim.A),
+#                                                                          evaluate(sim.H),
+#                                                                          params=sim.params,
+#                                                                          obs=sim.obs,
+#                                                                          convobs=sim.convobs,
+#                                                                          savemps=sim.savemps,
+#                                                                          verbose=sim.verbose,
+#                                                                          timed=sim.timed,
+#                                                                          Dmax=sim.Dmax,
+#                                                                          lightcone=sim.lightcone,
+#                                                                          lightconerad=sim.lightconerad,
+#                                                                          lightconethresh=sim.lightconethresh,
+#                                                                          unid=sim.unid
+#                                                                          ))
+#             telapsed = canonicalize(Dates.CompoundPeriod(now() - tstart))
+#             sim.save && save_data(sim.savedir, sim.unid, convcheck, dat["data"], dat["convdata"])
+#             sim.saveplot && save_plot(sim.savedir, sim.unid, dat["data"]["times"], dat["convdata"], sim.Dmax, sim.convobs)
+#             sim.log && close_log(sim.savedir, sim.unid, sim.save, telapsed)
+#             return A, dat
+            
+#         catch
+#         finally
+#         end
+#     end
+#     return A, dat
+# end
+
 function runsim(sim::TensorSim, mach::Machine)
-    update_machines([mach])
+    remote = typeof(mach) == RemoteMachine
+    remote && update_machines([mach])
     if sim.save || sim.saveplot
         if sim.savedir[end] != '/'
             sim.savedir = string(sim.savedir,"/")
         end
-        isdir(sim.savedir) || throw("save directory $sim.savedir doesn't exist")
+        sim.log || error("the run must be logged if output data is saved") 
+        isdir(sim.savedir) || error("save directory $sim.savedir doesn't exist")
     end
     if typeof(sim.Dmax) <: Vector
         convcheck = true
@@ -88,74 +149,71 @@ function runsim(sim::TensorSim, mach::Machine)
     else
         convcheck = false
     end
-    sim.log && (endpos = open_log(sim, convcheck, mach))
-    A, dat = launch_workers(mach) do pid
-        tstart = now()
-        print("\n loading MPSDynamics............")
-        @everywhere pid eval(using MPSDynamics)
-        println("done")
-        A, dat = fetch(@spawnat only(pid) MPSDynamics.runtdvp_fixed!(sim.dt, sim.T,
-                                                                     evaluate(sim.A),
-                                                                     evaluate(sim.H),
-                                                                     params=sim.params,
-                                                                     obs=sim.obs,
-                                                                     convobs=sim.convobs,
-                                                                     savemps=sim.savemps,
-                                                                     verbose=sim.verbose,
-                                                                     save=false,
-                                                                     savedir="~/",
-                                                                     saveplot=false,
-                                                                     log=false,
-                                                                     timed=sim.timed,
-                                                                     Dmax=sim.Dmax,
-                                                                     lightcone=sim.lightcone,
-                                                                     lightconerad=sim.lightconerad,
-                                                                     lightconethresh=sim.lightconethresh,
-                                                                     unid=sim.unid
-                                                                     ))
+
+    if sim.log
+        open_log(sim, convcheck, mach)
+        mkdir(string(sim.savedir, sim.unid))
+    end
+    errorfile = "$(sim.unid).e"
+    
+    tstart = now()
+    A = dat = nothing
+    try
+        A, dat = launch_workers(mach) do pid
+            print("\n loading MPSDynamics............")
+            @everywhere pid eval(using MPSDynamics)
+            println("done")
+            A, dat = fetch(@spawnat only(pid) MPSDynamics.runtdvp_fixed!(sim.dt, sim.T, sim.A, sim.H,
+                                                                         params=sim.params,
+                                                                         obs=sim.obs,
+                                                                         convobs=sim.convobs,
+                                                                         savemps=sim.savemps,
+                                                                         verbose=sim.verbose,
+                                                                         timed=sim.timed,
+                                                                         Dmax=sim.Dmax,
+                                                                         lightcone=sim.lightcone,
+                                                                         lightconerad=sim.lightconerad,
+                                                                         lightconethresh=sim.lightconethresh,
+                                                                         unid=sim.unid
+                                                                         ))
+            sim.save && save_data(sim.savedir, sim.unid, convcheck, dat["data"], dat["convdata"])
+            sim.saveplot && save_plot(sim.savedir, sim.unid, dat["data"]["times"], dat["convdata"], sim.Dmax, sim.convobs)
+            return A, dat
+        end
+    catch e
+        sim.log && error_log(sim.savedir, sim.unid)
+        showerror(stdout, e, catch_backtrace())                
+        println()
+        sim.log && open(string(sim.savedir, sim.unid, "/", errorfile), "w+") do io
+            showerror(io, e, catch_backtrace())
+        end
+    finally
+        output = length(filter(x->x!= errorfile, readdir(string(sim.savedir, sim.unid)))) > 0 #### exculde error file
         telapsed = canonicalize(Dates.CompoundPeriod(now() - tstart))
-        sim.save && save_data(sim.savedir, sim.unid, convcheck, dat["data"], dat["convdata"])
-        sim.saveplot && save_plot(sim.savedir, sim.unid, dat["data"]["times"], dat["convdata"], sim.Dmax, sim.convobs)
-        sim.log && close_log(sim.savedir, endpos, telapsed)
-        return A, dat
+        sim.log && close_log(sim.savedir, sim.unid, output, telapsed)
     end
     return A, dat
 end
-runsim(sim::TensorSim) = runtdvp_fixed!(sim.dt, sim.T, sim.A, sim.H,
-                                        params=sim.params,
-                                        obs=sim.obs,
-                                        savedir=sim.savedir,
-                                        convobs=sim.convobs,
-                                        savemps=sim.savemps,
-                                        verbose=sim.verbose,
-                                        save=sim.save,
-                                        saveplot=sim.saveplot,
-                                        log=sim.log,
-                                        timed=sim.timed,
-                                        Dmax=sim.Dmax,
-                                        lightcone=sim.lightcone,
-                                        lightconerad=sim.lightconerad,
-                                        lightconethresh=sim.lightconethresh,
-                                        unid=sim.unid
-                                        )
-runsim(sim::TensorSim, mach::LocalMachine) = runsim(sim)
-    
+runsim(sim::TensorSim) = runsim(sim, LocalMachine())
 
-export sz, sx, sy, numb, crea, anih, unitcol
+
+export sz, sx, sy, numb, crea, anih, unitcol, unitrow, unitmat
 
 export chaincoeffs_ohmic, spinbosonmpo, methylbluempo
 
-export productstatemps, physdims
+export productstatemps, physdims, randmps
 
-export measure, OneSiteObservable, TwoSiteObservable
+export measure, OneSiteObservable, TwoSiteObservable, FockError, errorbar
 
 export TensorSim, runsim, DelayedFunction, evaluate
 
 export Machine, LocalMachine, init_machines, update_machines, launch_workers, rmworkers
 
-export alexpc, hp, asusold, asusnew
+export alexpc, hp, asusold, asusnew, anguspc
 
 export VarT, VarX, plot, scatter, loaddat
+
+export printlog, noprintlog
 
 end
 

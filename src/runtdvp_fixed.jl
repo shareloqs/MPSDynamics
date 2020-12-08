@@ -1,14 +1,10 @@
 function runtdvp_fixed!(dt, T, A, H;
-                        savedir::String = DEFSAVEDIR,
                         params = [],
                         obs = Observable[],
                         convobs = Observable[],
                         savemps = 0,
                         verbose = false,
-                        save = false,
-                        saveplot = save,
                         timed = false,
-                        log = save,
                         Dmax = throw(error("Dmax must be specified")),
                         lightcone=false,
                         lightconerad=2,
@@ -17,16 +13,13 @@ function runtdvp_fixed!(dt, T, A, H;
                         kwargs...
                         )
 
-    tstart = now()
-
     obs = union(obs, convobs)
 
-    if save || saveplot
-        if savedir[end] != '/'
-            savedir = string(savedir,"/")
-        end
-        isdir(savedir) || throw("save directory $savedir doesn't exist")
-    end
+    numsteps = length(collect(0:dt:T))-1
+    times = [(i-1)*dt for i=1:numsteps]
+
+    datalist = Any[(par[1], par[2]) for par in params]
+    push!(datalist, ("times", times))
 
     if typeof(Dmax) <: Vector
         convcheck = true
@@ -34,14 +27,6 @@ function runtdvp_fixed!(dt, T, A, H;
     else
         convcheck = false
     end
-
-    endpos = log ? open_log(savedir, dt, T, Dmax, unid, params, obs, convobs, convcheck) : nothing
-    
-    numsteps = length(collect(0:dt:T))-1
-    times = [(i-1)*dt for i=1:numsteps]
-
-    datalist = Any[(par[1], par[2]) for par in params]
-    push!(datalist, ("times", times))
 
     if convcheck
         convdata = Vector{Any}(undef, numDmax-1)
@@ -60,12 +45,13 @@ function runtdvp_fixed!(dt, T, A, H;
                 lc = nothing
             end
             for tstep=1:numsteps
-                @printf("time = %.3f ", times[tstep])
+                @printf("%i/%i, t = %.3f ", tstep, numsteps, times[tstep])
                 lightcone && print(", LCE = $(lc.edge)")
                 println()
-                data[tstep] = measure(A0, convobs)
+                data[tstep] = measure(A0, convobs; t=times[tstep])
                 if timed
                     val, t, bytes, gctime, memallocs = @timed tdvp1sweep!(dt, A0, H, F, lc; verbose=verbose, kwargs...)
+                    println("\t","ΔT = ", t)
                     A0, F = val
                     ttdvp[tstep] = t
                 else
@@ -93,12 +79,13 @@ function runtdvp_fixed!(dt, T, A, H;
     end
 
     for tstep=1:numsteps
-        @printf("time = %.3f ", times[tstep])
+        @printf("%i/%i, t = %.3f ", tstep, numsteps, times[tstep])
         lightcone && print(", LCE = $(lc.edge)")
         println()
-        data[tstep] = measure(A, obs)
+        data[tstep] = measure(A, obs; t=times[tstep])
         if timed
             val, t, bytes, gctime, memallocs = @timed tdvp1sweep!(dt, A, H, F, lc; verbose=verbose, kwargs...)
+            println("\t","ΔT = ", t)
             A, F = val
             ttdvp[tstep] = t
         else
@@ -119,92 +106,92 @@ function runtdvp_fixed!(dt, T, A, H;
     timed && push!(datalist, ("tdvptime", ttdvp))
 
     datadict = Dict(datalist)
-    dat = [("data", datadict)]
+    dat = Any[("data", datadict)]
     if convcheck
         lastprec = map(x->datadict[x.name], convobs)
 
-        #cat causes stack overflow for large numbers of time steps! 
-        tconvdata = [[[
-            cat([convdata[p][t][ob] for t=1:numsteps]..., dims=ndims(convobs[ob])+1)
-            for p=1:numDmax-1]..., lastprec[ob]] for ob=1:length(convobs)]
+        #cat causes stack overflow for large numbers of time steps!
+        if numDmax != 1
+            tconvdata =
+                [
+                    [
+                        [cat([convdata[p][t][ob] for t=1:numsteps]..., dims=ndims(convobs[ob])+1) for p=1:numDmax-1]..., lastprec[ob]
+                    ] for ob=1:length(convobs)
+                ]
+        else
+            tconvdata = [[lastprec[ob]] for ob=1:length(convobs)]
+        end
 
         convdatalist = Any[(ob.name, tconvdata[i]) for (i,ob) in enumerate(convobs)]
         timed && push!(convdatalist, ("tdvptime", [convttdvp..., ttdvp]))
         push!(convdatalist, ("Dmax", Dmax))
         
         convdatadict = Dict(convdatalist)
-
-        saveplot && save_plot(savedir, unid, times, convdatadict, Dmax, convobs)
-
         push!(dat, ("convdata", convdatadict))
     end
-
-    save && save_data(savedir, unid, convcheck, datadict, convdatadict)
-    telapsed = canonicalize(Dates.CompoundPeriod(now() - tstart))
-    log && close_log(savedir, endpos, telapsed)
     return A, Dict(dat)
 end
 
 function open_log(savedir, dt, T, Dmax, unid, params, obs, convobs, convcheck, machine=LocalMachine())
     try
-        f = open(string(savedir,"info.txt"))
+        f = open(string(savedir,"log.txt"))
         close(f)
     catch
-        touch(string(savedir,"info.txt"))
+        touch(string(savedir,"log.txt"))
     end
     
-    endpos = open(string(savedir,"info.txt"), append=true) do f
-        writeprintln(f); writeprintln(f)
-        writeprintln(f, "start time : $(now())")
-        writeprintln(f, "unid : $unid")
-        writeprintln(f, "running on : $(machine.name)")
-        writeprintln(f, "dt = $dt, tmax = $T")
-        writeprintln(f, "parameters : ")
-        writeprint(f, "\t")
+    open(string(savedir,"log.txt"), append=true) do f
+        writeprintln(f, "[$(now())] => RUN <$unid> START")
+        writeprintln(f, "\t machine : $(machine.name)")
+        writeprintln(f, "\t dt = $dt")
+        writeprintln(f, "\t tmax = $T")
+        writeprint(f, "\t parameters : ")
         for par in params
             writeprint(f, string(par[1], " = ", par[2]), ", ")
         end
-        writeprintln(f)
-        
-        writeprintln(f, "observables : ")
-        writeprint(f, "\t")
+        writeprintln(f)        
+
+        writeprint(f, "\t observables : ")
         for ob in obs
             writeprint(f, ob.name, ", ")
         end
         writeprintln(f)
 
         if convcheck
-            writeprintln(f, "convergence observables : ")
-            writeprint(f, "\t")
+            writeprint(f, "\t convergence observables : ")
             for ob in convobs
                 writeprint(f, ob.name, ", ")
             end
             writeprintln(f)
         end
-
-        writeprintln(f, "Dmax : $Dmax")
-        
-        println()
-        write(f,"\n >>>>>>>>>>>>>>>>>>>>")
-        endpos = position(f)
-        write(f,"<<<<<<<<<<<<<<<<<<<<                                                        ")
-        return endpos
+        writeprintln(f, "\t Dmax : $Dmax")
+        writeprintln(f)
     end
-    return endpos
 end
 open_log(sim::TensorSim, convcheck, mach=LocalMachine()) = open_log(sim.savedir, sim.dt, sim.T, sim.Dmax, sim.unid, sim.params, sim.obs, sim.convobs, convcheck, mach)
 
-function close_log(savedir, endpos, telapsed)
-    open(string(savedir,"info.txt"), "a+") do f
-        seek(f, endpos)
-        write(f,"run completed at $(now())<<<<<<<<<<<<<<<<<<<<\n")
-        write(f,string("run time : ", telapsed, "\n"))
-        println(string("run time : ", telapsed))
+function error_log(savedir, unid)
+    open(string(savedir,"log.txt"), append=true) do f
+        write(f, "[$(now())] => RUN <$unid> ERROR\n")
+        write(f, "\t see $(unid)/$(unid).e for details\n")
+    end
+end
+
+function close_log(savedir, unid, output, telapsed)
+    open(string(savedir,"log.txt"), append=true) do f
+        writeprintln(f, "[$(now())] => RUN <$unid> END")
+        if output
+            writeprintln(f, "\t output files produced")
+        else
+            writeprintln(f, "\t no output files produced")
+        end
+        writeprintln(f, "\t total run time : $telapsed")
+        writeprintln(f)
     end
 end
 
 function save_data(savedir, unid, convcheck, datadict, convdatadict)
-    jldopen(string(savedir,"dat_",unid,".jld"), "w") do file
+    jldopen(string(savedir,unid,"/","dat_",unid,".jld"), "w") do file
         write(file, "data", datadict)
         convcheck && write(file, "convdata", convdatadict)
     end
@@ -218,6 +205,6 @@ function save_plot(savedir, unid, times, convdatadict, Dmax, convobs)
         else
             plt = plot(times, convdatadict[ob.name]; labels=transpose(Dmax), xlabel="t", ylabel=ob.name);
         end
-        savefig(plt, string(savedir,"convplot_",ob.name,"_",unid,".pdf"));
+        savefig(plt, string(savedir,unid,"/","convplot_",ob.name,"_",unid,".pdf"));
     end
 end
