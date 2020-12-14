@@ -281,6 +281,20 @@ function getchaincoeffs(nummodes, α, s, beta, ωc=1)
     return [es[1:nummodes], ts[1:nummodes-1], c0]
 end
 
+function readchaincoeffs(fdir, params...)
+    n = length(params)
+    dat = h5open(fdir, "r") do fid
+        g = fid
+        for i=1:n
+            vars = keys(g)
+            ind = only(findall(x->x==params[i], parse.(Float64, vars)))
+            g = g[vars[ind]]
+        end
+        return [read(g["e"]), read(g["t"]), read(g["c"])]
+    end
+    return dat
+end
+
 function ibmmpo(ω0, d, N, chainparams; tree=false)
     u = unitmat(2)
     

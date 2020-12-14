@@ -36,7 +36,6 @@ include("fundamentals.jl")
 include("tensorOps.jl")
 include("measure.jl")
 include("observables.jl")
-include("datiters.jl")
 include("logiter.jl")
 include("machines.jl")
 include("treeBasics.jl")
@@ -155,6 +154,10 @@ export alexpc, hp, asusold, asusnew, anguspc
 export VarT, VarX, plot, scatter, loaddat
 
 export printlog, noprintlog
+
+export randtree
+
+export readchaincoeffs
 
 end
 

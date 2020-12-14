@@ -123,7 +123,7 @@ function runtdvp_fixed!(dt, T, A, H;
                 mp[p] = m
             end
             mp[end] = lastprec[ob]
-            tconvdata[ob] = hcat(mp...)
+            tconvdata[ob] = cat(mp...; dims=ndims(convobs[ob])+2)
         end
 
         convdatalist = Any[(ob.name, tconvdata[i]) for (i,ob) in enumerate(convobs)]
