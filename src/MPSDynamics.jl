@@ -29,6 +29,7 @@ struct TensorSim
     lightconerad
     lightconethresh
     unid
+    name
 end
 
 include("config.jl")
@@ -68,9 +69,10 @@ function TensorSim(dt, T, A, H;
                    lightcone=false,
                    lightconerad=2,
                    lightconethresh=DEFLCTHRESH,
-                   unid = randstring(5),          
+                   unid = randstring(5),
+                   name = nothing
                    )
-    TensorSim(dt,T,A,H,savedir,params,obs,convobs,savemps,verbose,save,saveplot,timed,log,Dmax,lightcone,lightconerad,lightconethresh,unid)
+    TensorSim(dt,T,A,H,savedir,params,obs,convobs,savemps,verbose,save,saveplot,timed,log,Dmax,lightcone,lightconerad,lightconethresh,unid,name)
 end
 
 function runsim(sim::TensorSim, mach::Machine)
@@ -92,7 +94,6 @@ function runsim(sim::TensorSim, mach::Machine)
 
     if sim.log
         open_log(sim, convcheck, mach)
-        mkdir(string(sim.savedir, sim.unid))
     end
     errorfile = "$(sim.unid).e"
     
@@ -116,8 +117,8 @@ function runsim(sim::TensorSim, mach::Machine)
                                                                          lightconethresh=sim.lightconethresh,
                                                                          unid=sim.unid
                                                                          ))
-            sim.save && save_data(sim.savedir, sim.unid, convcheck, dat["data"], dat["convdata"], dat["parameters"])
-            sim.saveplot && save_plot(sim.savedir, sim.unid, dat["data"]["times"], dat["convdata"], sim.Dmax, sim.convobs)
+            sim.save && save_data(sim.savedir, sim.unid, convcheck, dat["data"], convcheck ? dat["convdata"] : nothing, dat["parameters"])
+            convcheck && sim.saveplot && save_plot(sim.savedir, sim.unid, dat["data"]["times"], dat["convdata"], sim.Dmax, sim.convobs)
             return A, dat
         end
     catch e
@@ -128,7 +129,7 @@ function runsim(sim::TensorSim, mach::Machine)
             showerror(io, e, catch_backtrace())
         end
     finally
-        output = length(filter(x->x!= errorfile, readdir(string(sim.savedir, sim.unid)))) > 0 #### exculde error file
+        output = length(filter(x-> x!=errorfile && x!="info.txt", readdir(string(sim.savedir, sim.unid)))) > 0
         telapsed = canonicalize(Dates.CompoundPeriod(now() - tstart))
         sim.log && close_log(sim.savedir, sim.unid, output, telapsed)
     end
@@ -139,9 +140,9 @@ runsim(sim::TensorSim) = runsim(sim, LocalMachine())
 
 export sz, sx, sy, numb, crea, anih, unitcol, unitrow, unitmat
 
-export chaincoeffs_ohmic, spinbosonmpo, methylbluempo
+export chaincoeffs_ohmic, spinbosonmpo, methylbluempo, methylbluempo_correlated
 
-export productstatemps, physdims, randmps
+export productstatemps, physdims, randmps, bonddims
 
 export measure, OneSiteObservable, TwoSiteObservable, FockError, errorbar
 

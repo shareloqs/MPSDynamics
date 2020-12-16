@@ -30,8 +30,8 @@ function measure(A, obs::FockError; t=0, kwargs...)
     c = reshape([real.(ca), -imag.(ca), imag.(ca), real.(ca)], 2, 2)
     γ = reshape(
         [
-            (transpose(transpose(c[1,1][1,:])*c[1,r] + transpose(c[1,2][1,:])*c[2,r]) *
-            (transpose(c[1,1][1,:])*c[1,s] + transpose(c[1,2][1,:])*c[2,s])) -
+            ((transpose(transpose(c[1,1][1,:])*c[1,r] + transpose(c[1,2][1,:])*c[2,r]) *
+            (transpose(c[1,1][1,:])*c[1,s] + transpose(c[1,2][1,:])*c[2,s]))) -
             (r==1 ? unitcol(1,N)*(transpose(c[1,1][1,:])*c[1,s] + transpose(c[1,2][1,:])*c[2,s]) : zero(c[1,1])) -
             (s==1 ? transpose(transpose(c[1,1][1,:])*c[1,r] + transpose(c[1,2][1,:])*c[2,r])*unitrow(1,N) : zero(c[1,1])) +
             (s==1 && r==1 ? unitcol(1,N) * unitrow(1,N) : zero(c[1,1]))
@@ -41,7 +41,7 @@ function measure(A, obs::FockError; t=0, kwargs...)
     ρ = leftcontractmps(A, [h^2])
 
     u = unitmat(d+1)
-    ud=diagm(0=>[fill(1,d)...,0])
+    ud = diagm(0=>[fill(1,d)...,0])
     o = ud*anih(d+1)*(u-ud)*crea(d+1)*ud
     o = o[1:d,1:d]
         
@@ -58,8 +58,10 @@ function measure(A, obs::FockError; t=0, kwargs...)
     h2px = h2xp'
     h2rs = reshape([h2xx, h2px, h2xp, h2pp], 2, 2)
     ϵ1 = sum([γ[r,s][l,q] * h2rs[r,s][l,q] for r=1:2 for s=1:2 for l=1:N for q=1:N])
-    ϵ2 = sum([c[1,r][1,k]*c[1,s][1,k]*ors[r,s][k] for r=1:2 for s=1:2 for k=1:N])
-    return real(ϵ1 + ϵ2)
+    ϵ2 = sum([c[1,r][1,k] * c[1,s][1,k] * ors[r,s][k] for r=1:2 for s=1:2 for k=1:N])
+    return [γ[r,s][l,q] * h2rs[r,s][l,q] for r=1:2 for s=1:2 for l=1:N for q=1:N]
+    #    return ϵ1+ϵ2
+#    return h2pp
 end
 
 function errorbar(op, e, t)

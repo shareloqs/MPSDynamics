@@ -399,6 +399,14 @@ function writeprintln(f::IO, str...)
     println(string(str...))
     write(f, string(str...,"\n"))
 end
+function writeprint(f::Vector{T}, str...) where T <: IO
+    print(string(str...))
+    write.(f, string(str...))
+end
+function writeprintln(f::Vector{T}, str...) where T <: IO
+    println(string(str...))
+    write.(f, string(str...,"\n"))
+end
 
 function MPOtoVector(mpo::MPO)
     N = length(mpo)

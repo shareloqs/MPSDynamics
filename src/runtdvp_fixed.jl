@@ -137,43 +137,48 @@ function runtdvp_fixed!(dt, T, A, H;
     return A, Dict(dat)
 end
 
-function open_log(savedir, dt, T, Dmax, unid, params, obs, convobs, convcheck, machine=LocalMachine())
+function open_log(savedir, name, dt, T, Dmax, unid, params, obs, convobs, convcheck, machine=LocalMachine())
+    mkdir(string(savedir, unid))
     try
         f = open(string(savedir,"log.txt"))
         close(f)
     catch
         touch(string(savedir,"log.txt"))
     end
-    
-    open(string(savedir,"log.txt"), append=true) do f
-        writeprintln(f, "[$(now())] => RUN <$unid> START")
-        writeprintln(f, "\t machine : $(machine.name)")
-        writeprintln(f, "\t dt = $dt")
-        writeprintln(f, "\t tmax = $T")
-        writeprint(f, "\t parameters : ")
-        for par in params
-            writeprint(f, string(par[1], " = ", par[2]), ", ")
-        end
-        writeprintln(f)        
 
-        writeprint(f, "\t observables : ")
-        for ob in obs
-            writeprint(f, ob.name, ", ")
-        end
-        writeprintln(f)
-
-        if convcheck
-            writeprint(f, "\t convergence observables : ")
-            for ob in convobs
-                writeprint(f, ob.name, ", ")
+    named = typeof(name) <: String
+    open(string(savedir,"$unid/","info.txt"), "w") do f0
+        open(string(savedir,"log.txt"), append=true) do f
+            writeprintln(f, "[$(now())] => RUN <$unid> START")
+            named && writeprintln([f,f0], "\t name : $name")
+            writeprintln([f,f0], "\t machine : $(machine.name)")
+            writeprintln([f,f0], "\t dt = $dt")
+            writeprintln([f,f0], "\t tmax = $T")
+            writeprint([f,f0], "\t parameters : ")
+            for par in params
+                writeprint([f,f0], string(par[1], " = ", par[2]), ", ")
             end
-            writeprintln(f)
+            writeprintln([f,f0])        
+
+            writeprint([f,f0], "\t observables : ")
+            for ob in obs
+                writeprint([f,f0], ob.name, ", ")
+            end
+            writeprintln([f,f0])
+
+            if convcheck
+                writeprint([f,f0], "\t convergence observables : ")
+                for ob in convobs
+                    writeprint([f,f0], ob.name, ", ")
+                end
+                writeprintln([f,f0])
+            end
+            writeprintln([f,f0], "\t Dmax : $Dmax")
+            writeprintln([f,f0])
         end
-        writeprintln(f, "\t Dmax : $Dmax")
-        writeprintln(f)
     end
 end
-open_log(sim::TensorSim, convcheck, mach=LocalMachine()) = open_log(sim.savedir, sim.dt, sim.T, sim.Dmax, sim.unid, sim.params, sim.obs, sim.convobs, convcheck, mach)
+open_log(sim::TensorSim, convcheck, mach=LocalMachine()) = open_log(sim.savedir, sim.name, sim.dt, sim.T, sim.Dmax, sim.unid, sim.params, sim.obs, sim.convobs, convcheck, mach)
 
 function error_log(savedir, unid)
     open(string(savedir,"log.txt"), append=true) do f
@@ -197,17 +202,17 @@ end
 
 function save_data(savedir, unid, convcheck, datadict, convdatadict, paramdatadict)
     jldopen(string(savedir,unid,"/","dat_",unid,".jld"), "w") do file
-        g1 = g_create(file, "data")
+        g1 = create_group(file, "data")
         for el in datadict
             g1[el.first] = el.second
         end
         if convcheck
-            g2 = g_create(file, "convdata")
+            g2 = create_group(file, "convdata")
             for el in convdatadict
                 g2[el.first] = el.second
             end
         end
-        g3 = g_create(file, "parameters")
+        g3 = create_group(file, "parameters")
         for el in paramdatadict
             g3[el.first] = el.second
         end
