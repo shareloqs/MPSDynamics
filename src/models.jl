@@ -150,9 +150,9 @@ hbathchain(N::Int, d::Int, e::Int, t::Int; tree=false) = hbathchain(N, d, (fill(
 function methylbluempo(e1, e2, δ, N1, N2, N3, d1, d2, d3, cparS1, cparS2, cparS1S2)
     u = unitmat(3)
     
-    c1 = cparS1[3]
-    c2 = cparS2[3]
-    c3 = cparS1S2[3]
+    c1 = only(cparS1[3])
+    c2 = only(cparS2[3])
+    c3 = only(cparS1S2[3])
 
     s2 = unitcol(1, 3)
     s1 = unitcol(2, 3)
@@ -177,8 +177,8 @@ function methylbluempo_correlated(e1, e2, δ, N1, N2, d1, d2, cparS1, ccS2, cpar
     s2 = unitcol(1, 3)
     s1 = unitcol(2, 3)
 
-    c1 = cparS1[3]
-    c3 = cparS1S2[3]
+    c1 = only(cparS1[3])
+    c3 = only(cparS1S2[3])
 
     Hs = (e2-e1)*s2*s2' + δ*(s1*s2' + s2*s1') # e^(-is1*s1't)He^(is1*s1't)
 
