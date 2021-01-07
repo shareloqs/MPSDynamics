@@ -137,7 +137,7 @@ function runtdvp_fixed!(dt, T, A, H;
     return A, Dict(dat)
 end
 
-function open_log(savedir, name, dt, T, Dmax, unid, params, obs, convobs, convcheck, machine=LocalMachine())
+function open_log(savedir, lc, name, dt, T, Dmax, unid, params, obs, convobs, convcheck, machine=LocalMachine())
     mkdir(string(savedir, unid))
     try
         f = open(string(savedir,"log.txt"))
@@ -154,6 +154,7 @@ function open_log(savedir, name, dt, T, Dmax, unid, params, obs, convobs, convch
             writeprintln([f,f0], "\t machine : $(machine.name)")
             writeprintln([f,f0], "\t dt = $dt")
             writeprintln([f,f0], "\t tmax = $T")
+            writeprintln([f,f0], "lightcone : $lc")
             writeprint([f,f0], "\t parameters : ")
             for par in params
                 writeprint([f,f0], string(par[1], " = ", par[2]), ", ")
@@ -178,7 +179,7 @@ function open_log(savedir, name, dt, T, Dmax, unid, params, obs, convobs, convch
         end
     end
 end
-open_log(sim::TensorSim, convcheck, mach=LocalMachine()) = open_log(sim.savedir, sim.name, sim.dt, sim.T, sim.Dmax, sim.unid, sim.params, sim.obs, sim.convobs, convcheck, mach)
+open_log(sim::TensorSim, convcheck, mach=LocalMachine()) = open_log(sim.savedir, sim.lightcone, sim.name, sim.dt, sim.T, sim.Dmax, sim.unid, sim.params, sim.obs, sim.convobs, convcheck, mach)
 
 function error_log(savedir, unid)
     open(string(savedir,"log.txt"), append=true) do f
