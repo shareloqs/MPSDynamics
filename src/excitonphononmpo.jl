@@ -8,6 +8,15 @@ xmax, nmax = size(coeffs)
 coeffs = [sqrt(2*α*(2*(n-1) + s + 1))*coeffs[x, n] for x=1:xmax, n=1:nmax]
 chainparams = chaincoeffs_ohmic(500, α, s)
 
+function MPOtoVector(mpo::MPO)
+    N = length(mpo)
+    H = [Array(mpo[i],mpo[i].inds...) for i=1:N]
+    dims=size(H[1])
+    H[1] = reshape(H[1], 1, dims...)
+    dims=size(H[N])
+    H[N] = reshape(H[N], dims[1], 1, dims[2], dims[3])
+    return H
+end
 
 function electronphononmpo(Ne::Int, Nph::Int, d::Int, U=1.0, e=1.0, es=1.0, ts=1.0;
                            phonons = true,
