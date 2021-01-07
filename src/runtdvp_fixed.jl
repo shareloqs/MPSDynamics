@@ -139,16 +139,17 @@ end
 
 function open_log(savedir, lc, name, dt, T, Dmax, unid, params, obs, convobs, convcheck, machine=LocalMachine())
     mkdir(string(savedir, unid))
+    logname = string(savedir,"log-",gethostname(),".txt")
     try
-        f = open(string(savedir,"log.txt"))
+        f = open(logname)
         close(f)
     catch
-        touch(string(savedir,"log.txt"))
+        touch(logname)
     end
 
     named = typeof(name) <: String
     open(string(savedir,"$unid/","info.txt"), "w") do f0
-        open(string(savedir,"log.txt"), append=true) do f
+        open(logname, append=true) do f
             writeprintln(f, "[$(now())] => RUN <$unid> START")
             named && writeprintln([f,f0], "\t name : $name")
             writeprintln([f,f0], "\t machine : $(machine.name)")
@@ -182,14 +183,16 @@ end
 open_log(sim::TensorSim, convcheck, mach=LocalMachine()) = open_log(sim.savedir, sim.lightcone, sim.name, sim.dt, sim.T, sim.Dmax, sim.unid, sim.params, sim.obs, sim.convobs, convcheck, mach)
 
 function error_log(savedir, unid)
-    open(string(savedir,"log.txt"), append=true) do f
+    logname = string(savedir,"log-",gethostname(),".txt")
+    open(logname, append=true) do f
         write(f, "[$(now())] => RUN <$unid> ERROR\n")
         write(f, "\t see $(unid)/$(unid).e for details\n")
     end
 end
 
 function close_log(savedir, unid, output, telapsed)
-    open(string(savedir,"log.txt"), append=true) do f
+    logname = string(savedir,"log-",gethostname(),".txt")
+    open(logname, append=true) do f
         writeprintln(f, "[$(now())] => RUN <$unid> END")
         if output
             writeprintln(f, "\t output files produced")
@@ -206,16 +209,28 @@ function save_data(savedir, unid, convcheck, datadict, convdatadict, paramdatadi
         g1 = create_group(file, "data")
         for el in datadict
             g1[el.first] = el.second
+            if eltype(el.second) <: Complex
+                g1[string(el.first,"-re")] = real.(el.second)
+                g1[string(el.first,"-im")] = imag.(el.second)
+            end
         end
         if convcheck
             g2 = create_group(file, "convdata")
             for el in convdatadict
                 g2[el.first] = el.second
+                if eltype(el.second) <: Complex
+                    g2[string(el.first,"-re")] = real.(el.second)
+                    g2[string(el.first,"-im")] = imag.(el.second)
+                end
             end
         end
         g3 = create_group(file, "parameters")
         for el in paramdatadict
             g3[el.first] = el.second
+            if eltype(el.second) <: Complex
+                g3[string(el.first,"-re")] = real.(el.second)
+                g3[string(el.first,"-im")] = imag.(el.second)
+            end
         end
     end
 end
@@ -223,7 +238,7 @@ end
 function save_plot(savedir, unid, times, convdatadict, Dmax, convobs)
     default(size = (800,600), reuse = true, title = unid, legend = true)
     for ob in filter(x->ndims(x)==0, convobs)
-        if eltype(convdatadict[ob.name][1]) <: Complex
+        if eltype(convdatadict[ob.name]) <: Complex
             plt = plot(convdatadict[ob.name]; labels=transpose(Dmax), xlabel="Re($(ob.name))", ylabel="Im($(ob.name))");
         else
             plt = plot(times, convdatadict[ob.name]; labels=transpose(Dmax), xlabel="t", ylabel=ob.name);
