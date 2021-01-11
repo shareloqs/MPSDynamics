@@ -5,7 +5,7 @@ Tensor network simulations for finite tempetature open system dynamics
 # Publications
 
 * Simulating quantum vibronic dynamics at finite temperatures with many body wave functions at 0K
-     * [https://arxiv.org/abs/2101.01098](https://arxiv.org/abs/2101.01098)
+     * [https://doi.org/10.3389/fchem.2020.600731](https://doi.org/10.3389/fchem.2020.600731)
 
 # Data Repositories
 
