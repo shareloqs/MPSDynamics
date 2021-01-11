@@ -7,6 +7,9 @@ Tensor network simulations for finite tempetature open system dynamics
 * Simulating quantum vibronic dynamics at finite temperatures with many body wave functions at 0K
      * [https://doi.org/10.3389/fchem.2020.600731](https://doi.org/10.3389/fchem.2020.600731)
 
+* Matrix Product State Simulations of Non-Equilibrium Steady States and Transient Heat Flows in the Two-Bath Spin-Boson Model at Finite Temperatures
+     * [https://doi.org/10.3390/e23010077](https://doi.org/10.3390/e23010077)
+
 # Data Repositories
 
 * Exact Spin-Boson-Model Tunnelling Dynamics with Time Dependent Variation Matrix Product States (TDVMPS). Barrier height and temperature parameter.
