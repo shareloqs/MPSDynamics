@@ -1,5 +1,7 @@
 # MPSDynamics.jl
 
+Tensor network simulations for finite tempetature open system dynamics
+
 # Publications
 
 * Simulating quantum vibronic dynamics at finite temperatures with many body wave functions at 0K
