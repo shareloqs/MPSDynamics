@@ -155,7 +155,7 @@ function open_log(savedir, lc, name, dt, T, Dmax, unid, params, obs, convobs, co
             writeprintln([f,f0], "\t machine : $(machine.name)")
             writeprintln([f,f0], "\t dt = $dt")
             writeprintln([f,f0], "\t tmax = $T")
-            writeprintln([f,f0], "lightcone : $lc")
+            writeprintln([f,f0], "\t lightcone : $lc")
             writeprint([f,f0], "\t parameters : ")
             for par in params
                 writeprint([f,f0], string(par[1], " = ", par[2]), ", ")
