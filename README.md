@@ -1,6 +1,6 @@
 # MPSDynamics.jl
 
-Tensor network simulations for finite tempetature open system dynamics
+Tensor network simulations for finite temperature open quantum system dynamics
 
 # Publications
 
