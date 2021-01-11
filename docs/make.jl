@@ -10,7 +10,7 @@ makedocs(
     repo   = "git@github.com:angusdunnett/MPSDynamics.git",
     highlightsig = true,
     sitename = "MPSDynamics.jl",
-    authors = "Angus Dunnett"
+    authors = "Angus Dunnett",
     expandfirst = [],
 )
 
