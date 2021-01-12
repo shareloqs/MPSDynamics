@@ -10,11 +10,14 @@ makedocs(
     repo   = "git@github.com:angusdunnett/MPSDynamics.git",
     highlightsig = true,
     sitename = "MPSDynamics.jl",
-    authors = "Angus Dunnett"
+    authors = "Angus Dunnett",
     expandfirst = [],
 )
 
-deploydocs(repo = "git@github.com:angusdunnett/MPSDynamics.git")
+deploydocs(repo = "git@github.com:angusdunnett/MPSDynamics.git",
+           branch = "gh-pages",
+           devurl = "dev"
+           )
 
 # bitbucket = "/home/angus/Documents/Julia/angus-dunnett.bitbucket.io/"
 # build = "/home/angus/Documents/Julia/mps2.0/docs/build/"
