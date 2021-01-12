@@ -15,8 +15,7 @@ makedocs(
 )
 
 deploydocs(repo = "git@github.com:angusdunnett/MPSDynamics.git",
-           branch = "gh-pages",
-           devurl = "dev"
+           devurl = "docs"
            )
 
 # bitbucket = "/home/angus/Documents/Julia/angus-dunnett.bitbucket.io/"
