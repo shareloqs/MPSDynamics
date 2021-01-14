@@ -41,7 +41,7 @@ end
 function init_machines(machs::Vector{T}) where T <: Machine
     launch_workers(machs) do pid
         @everywhere pid eval(using Pkg)
-        @everywhere pid Pkg.add(PackageSpec(url="https://angus-dunnett@bitbucket.org/angus-dunnett/mpsdynamics.git", rev="master"))
+        @everywhere pid Pkg.add(PackageSpec(url="https://github.com/angusdunnett/MPSDynamics.git", rev="master"))
     end
 end
 
