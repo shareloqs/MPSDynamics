@@ -1,4 +1,4 @@
-# MPSDynamics Documentation
+# MPSDynamics.jl Documentation
 
 ```@autodocs
 Modules = [MPSDynamics]

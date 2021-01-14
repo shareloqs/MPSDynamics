@@ -155,7 +155,7 @@ function measuremodes(A, chainsection::Tuple{Int64,Int64}, e::Array{Float64,1}, 
 end
 #for longer chains it can be worth calculating U in advance
 function measuremodes(A, chainsection::Tuple{Int64,Int64}, U::AbstractArray)
-    d=size(A[chainsection[1]])[2]#assumes constant number of Foch states
+rnaem    d=size(A[chainsection[1]])[2]#assumes constant number of Foch states
     bd=crea(d)
     b=anih(d)
     return real.(diag(U' * measure2siteoperator(A, bd, b, chainsection, conj=true, herm_cis=true) * U))
