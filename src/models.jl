@@ -218,7 +218,7 @@ function methylbluempo_nocoupling(e1, e2, N, d, cparS1, cparS2)
 
     Hs = (e2-e1)*s2*s2'
 
-    M=zeros(4,4,3,3)
+    M=zeros(3,3,3,3)
     M[1,:,:,:] = up(Hs, c1*s1*s1', u)
     M[:,1,:,:] = up(Hs, c2*s2*s2', u)
 
