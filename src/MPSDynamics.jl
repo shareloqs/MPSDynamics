@@ -140,7 +140,7 @@ runsim(sim::TensorSim) = runsim(sim, LocalMachine())
 
 export sz, sx, sy, numb, crea, anih, unitcol, unitrow, unitmat
 
-export chaincoeffs_ohmic, spinbosonmpo, methylbluempo, methylbluempo_correlated, methylbluempo_correlated_nocoupling
+export chaincoeffs_ohmic, spinbosonmpo, methylbluempo, methylbluempo_correlated, methylbluempo_correlated_nocoupling, methylbluempo_nocoupling
 
 export productstatemps, physdims, randmps, bonddims
 
