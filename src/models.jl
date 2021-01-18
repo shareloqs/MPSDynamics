@@ -222,7 +222,7 @@ function methylbluempo_nocoupling(e1, e2, N, d, cparS1, cparS2)
     M[1,:,:,:] = up(Hs, c1*s1*s1', u)
     M[:,1,:,:] = up(Hs, c2*s2*s2', u)
 
-    chain1 = hbathchain(N, d, cparS1; coupletox=true)
+    chain1 = hbathchain(N, d, cparS1; coupletox=true, reverse=true)
     chain2 = hbathchain(N, d, cparS2; coupletox=true)
 
     return Any[chain1..., M, chain2...]
