@@ -208,7 +208,7 @@ function methylbluempo_correlated_nocoupling(e1, e2, N, d, cparS1, ccS2)
 
     return Any[M, chain...]
 end
-function methylbluempo_nocoupling(e1, e2, N, d, cparS1, cparS2)
+function methylbluempo_nocoupling(e1, e2, N1, N2, d1, d2, cparS1, cparS2)
     u = unitmat(3)
     s2 = unitcol(1, 3)
     s1 = unitcol(2, 3)
@@ -222,8 +222,8 @@ function methylbluempo_nocoupling(e1, e2, N, d, cparS1, cparS2)
     M[1,:,:,:] = up(Hs, c1*s1*s1', u)
     M[:,1,:,:] = up(Hs, c2*s2*s2', u)
 
-    chain1 = hbathchain(N, d, cparS1; coupletox=true, reverse=true)
-    chain2 = hbathchain(N, d, cparS2; coupletox=true)
+    chain1 = hbathchain(N1, d1, cparS1; coupletox=true, reverse=true)
+    chain2 = hbathchain(N2, d2, cparS2; coupletox=true)
 
     return Any[chain1..., M, chain2...]
 end
