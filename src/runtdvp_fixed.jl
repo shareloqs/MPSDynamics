@@ -12,13 +12,6 @@ function runtdvp_fixed!(dt, T, A, H;
                         unid = randstring(5),
                         kwargs...
                         )
-
-    if length(obs)==0
-        obs = Observable[]
-    end
-    if length(convobs)==0
-        convobs = Observable[]
-    end
     obs = union(obs, convobs)
 
     numsteps = length(collect(0:dt:T))-1

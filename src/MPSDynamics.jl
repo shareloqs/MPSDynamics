@@ -72,6 +72,13 @@ function TensorSim(dt, T, A, H;
                    unid = randstring(5),
                    name = nothing
                    )
+    
+    if length(obs)==0
+        obs = Observable[]
+    end
+    if length(convobs)==0
+        convobs = Observable[]
+    end
     TensorSim(dt,T,A,H,savedir,params,obs,convobs,savemps,verbose,save,saveplot,timed,log,Dmax,lightcone,lightconerad,lightconethresh,unid,name)
 end
 
