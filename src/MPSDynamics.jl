@@ -144,6 +144,16 @@ function runsim(sim::TensorSim, mach::Machine)
 end
 runsim(sim::TensorSim) = runsim(sim, LocalMachine())
 
+function runsim(sims::Vector{TensorSim}, machs::Vector{T}) where T <: Machine
+    nsims = length(sims)
+    f=[]
+    launch_workers(nsims) do pids
+        for (i, pid) in enumerate(pids)
+            push!(f, remotecall(rumsim, pid, sims[i], machs[i]))
+        end
+    end
+    wait.(f)
+end
 
 export sz, sx, sy, numb, crea, anih, unitcol, unitrow, unitmat
 

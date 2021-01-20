@@ -3,14 +3,12 @@ abstract type Machine end
 struct RemoteMachine <: Machine
     name::String
     exename::String
-    nproc::Int
     wdir::String
 end
 struct LocalMachine <: Machine
     name::String
-    nproc::Int
 end
-LocalMachine(nproc=1) = LocalMachine("local", nproc)
+LocalMachine() = LocalMachine("local")
 
 rmworkers() = rmprocs(workers())
 
@@ -18,8 +16,8 @@ function launch_workers(mach::RemoteMachine, nworkers::Int=1)
     pids = addprocs([(mach.name, nworkers)], exename=mach.exename, dir=mach.wdir, tunnel=true)
     return pids
 end
-launch_workers(::LocalMachine) = procs()
-launch_workers(::LocalMachine, nworkers::Int) = addprocs(nworkers)
+launch_workers(::LocalMachine, nworkers::Int=1) = addprocs(nworkers)
+launch_workers(nworkers::Int=1) = launch_workers(::LocalMachine, nworkers)
 
 function launch_workers(machs::Vector{T}, nworkers::Int=1) where T <: Machine
     pids = Int[]
@@ -52,8 +50,8 @@ function update_machines(machs::Vector{T}) where T <: Machine
     end
 end
 
-anguspc = RemoteMachine("anguspc", "julia", 1, "/home/angus/")
-alexpc = RemoteMachine("alexpc", "/home/angus/bin/julia", 1, "/home/angus/")
-hp = RemoteMachine("hp", "/home/angus/julia-1.4.2/bin/julia", 1, "/home/angus/")
-asusnew = RemoteMachine("asusnew", "/home/angus/julia-1.4.2/bin/julia", 1, "/home/angus/")
-asusold = RemoteMachine("asusold", "/home/angus/julia-1.4.2/bin/julia", 1, "/home/angus/")
+anguspc = RemoteMachine("anguspc", "julia", "/home/angus/")
+alexpc = RemoteMachine("alexpc", "/home/angus/bin/julia", "/home/angus/")
+hp = RemoteMachine("hp", "/home/angus/julia-1.4.2/bin/julia", "/home/angus/")
+asusnew = RemoteMachine("asusnew", "/home/angus/julia-1.4.2/bin/julia", "/home/angus/")
+asusold = RemoteMachine("asusold", "/home/angus/julia-1.4.2/bin/julia", "/home/angus/")
