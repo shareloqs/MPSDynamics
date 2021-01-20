@@ -144,7 +144,7 @@ function runsim(sim::TensorSim, mach::Machine)
 end
 runsim(sim::TensorSim) = runsim(sim, LocalMachine())
 
-function runsim(sims::Vector{TensorSim}, machs::Vector{T}) where T <: Machine
+function runsim(sims::Vector, machs::Vector)
     nsims = length(sims)
     f=[]
     launch_workers(nsims) do pids
