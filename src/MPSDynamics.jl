@@ -146,14 +146,16 @@ runsim(sim::TensorSim) = runsim(sim, LocalMachine())
 
 function runsim(sims::Vector, machs::Vector)
     nsims = length(sims)
-    f=[]
+    fs=[]
     launch_workers(nsims) do pids
         @everywhere pids eval(using MPSDynamics)
         for (i, pid) in enumerate(pids)
-            push!(f, remotecall(rumsim, pid, sims[i], machs[i]))
+            f = @spawnat pid runsim(sims[i], machs[i])
+            push!(fs,f)
+#            push!(f, remotecall((x,y)->rumsim(x,y), pid, sims[i], machs[i]))
         end
     end
-    wait.(f)
+    wait.(fs)
 end
 
 export sz, sx, sy, numb, crea, anih, unitcol, unitrow, unitmat
