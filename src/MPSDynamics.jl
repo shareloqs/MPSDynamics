@@ -148,6 +148,7 @@ function runsim(sims::Vector, machs::Vector)
     nsims = length(sims)
     f=[]
     launch_workers(nsims) do pids
+        @everywhere pids eval(using MPSDynamics)
         for (i, pid) in enumerate(pids)
             push!(f, remotecall(rumsim, pid, sims[i], machs[i]))
         end
