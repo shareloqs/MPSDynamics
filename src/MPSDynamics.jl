@@ -144,24 +144,12 @@ function runsim(sim::TensorSim, mach::Machine)
 end
 runsim(sim::TensorSim) = runsim(sim, LocalMachine())
 
-function runsim(sims::Vector, machs::Vector)
-    nsims = length(sims)
-    fs=[]
-    launch_workers(nsims) do pids
-        @everywhere pids eval(using MPSDynamics)
-        for (i, pid) in enumerate(pids)
-            f = @spawnat pid runsim(sims[i], machs[i])
-            push!(fs,f)
-#            push!(f, remotecall((x,y)->rumsim(x,y), pid, sims[i], machs[i]))
-        end
-    end
-    wait.(fs)
-end
-
 Base.println(sim::TensorSim) = println("TensorSim($(sim.unid))")
 Base.print(sim::TensorSim) = print("TensorSim($(sim.unid))")
 Base.show(::IO, sim::TensorSim) = println(sim)
 
+=======
+>>>>>>> 431368d4610cefd8873c38029e5b5ed9d75a232c
 export sz, sx, sy, numb, crea, anih, unitcol, unitrow, unitmat
 
 export chaincoeffs_ohmic, spinbosonmpo, methylbluempo, methylbluempo_correlated, methylbluempo_correlated_nocoupling, methylbluempo_nocoupling

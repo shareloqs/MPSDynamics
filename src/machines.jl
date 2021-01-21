@@ -16,7 +16,7 @@ function launch_workers(mach::RemoteMachine, nworkers::Int=1)
     pids = addprocs([(mach.name, nworkers)], exename=mach.exename, dir=mach.wdir, tunnel=true)
     return pids
 end
-launch_workers(nworkers::Int=1) = addprocs(nworkers)
+launch_workers(nworkers::Int=1) = (nworkers==1 ? [1] : [1, addprocs(nworkers-1)...])
 launch_workers(::LocalMachine, nworkers::Int=1) = launch_workers(nworkers)
 
 
