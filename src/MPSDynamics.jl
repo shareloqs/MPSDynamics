@@ -148,8 +148,6 @@ Base.println(sim::TensorSim) = println("TensorSim($(sim.unid))")
 Base.print(sim::TensorSim) = print("TensorSim($(sim.unid))")
 Base.show(::IO, sim::TensorSim) = println(sim)
 
-=======
->>>>>>> 431368d4610cefd8873c38029e5b5ed9d75a232c
 export sz, sx, sy, numb, crea, anih, unitcol, unitrow, unitmat
 
 export chaincoeffs_ohmic, spinbosonmpo, methylbluempo, methylbluempo_correlated, methylbluempo_correlated_nocoupling, methylbluempo_nocoupling
