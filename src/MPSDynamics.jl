@@ -158,6 +158,10 @@ function runsim(sims::Vector, machs::Vector)
     wait.(fs)
 end
 
+Base.println(sim::TensorSim) = println("TensorSim($(sim.unid))")
+Base.print(sim::TensorSim) = print("TensorSim($(sim.unid))")
+Base.show(::IO, sim::TensorSim) = println(sim)
+
 export sz, sx, sy, numb, crea, anih, unitcol, unitrow, unitmat
 
 export chaincoeffs_ohmic, spinbosonmpo, methylbluempo, methylbluempo_correlated, methylbluempo_correlated_nocoupling, methylbluempo_nocoupling
@@ -179,6 +183,8 @@ export printlog, noprintlog
 export randtree
 
 export readchaincoeffs
+
+export println, print, show
 
 end
 
