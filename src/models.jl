@@ -236,16 +236,16 @@ function methylblue_S1_mpo(e1, N, d, chainparams; tree=false)
     #Hs = e1*s1*s1'
     Hs = zero(u) # e^(-is1*s1't)He^(is1*s1't)
 
-    M=zeros(1,4,2,2)
-    M[1, :, :, :] = up(Hs, c*s1*s1', c*s1*s1', u)
+    M=zeros(1,3,2,2)
+    M[1, :, :, :] = up(Hs, c*s1*s1', u)
 
     if tree
-        chain = hbathchain(N, d, chainparams; tree=true)
+        chain = hbathchain(N, d, chainparams; coupletox=true, tree=true)
         H = TreeNetwork(Any[M])
         addtree!(H, 1, chain)
         return H
     else
-        chain = hbathchain(N, d, chainparams; tree=false)
+        chain = hbathchain(N, d, chainparams; coupletox=true, tree=false)
         return [M, chain...]
     end
 end
