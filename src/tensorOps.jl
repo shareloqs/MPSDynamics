@@ -243,6 +243,9 @@ function updateenv4(A, M, F1, F2, F3)
     @tensor F[a,b,c] := F1[a1,b1,c1]*F2[a2,b2,c2]*F3[a3,b3,c3]*conj(A[a1,a2,a3,a,s'])*M[b1,b2,b3,b,s',s]*A[c1,c2,c3,c,s]
 end
 
+function applyH2(AA, H1, H2, F1, F2)
+    @tensoropt !(b1,b,b2) HAA[a1,s1,a2,s2] := F1[a1,b1,c1]*AA[c1,s1',c2,s2']*H1[b1,b,s1,s1']*H2[b,b2,s2,s2']*F2[a2,b2,c2]
+end
 function applyH1(AC, M, F)
     @tensoropt !(b) HAC[a,s'] := F[a,b,c]*AC[c,s]*M[b,s',s]
 end
@@ -350,6 +353,17 @@ truncAR(A::Array{T, 5}, Dnew) where T = A[1:Dnew,:,:,:,:]
 truncF(F, D) = F[1:D,:,1:D]
 truncF2(F, D) = F[:,:,1:D]
 
+function evolveAC2(dt::Float64, A1, A2, M1, M2, FL, FR; energy = false, kwargs...)
+    @tensor AA[a,sa,b,sb] := A1[a,c,sa] * A2[c,b,sb]
+    AAnew, info = exponentiate(x->applyH2(x, M1, M2, FL, FR), -im*dt, AA; ishermitian = true, kwargs...)
+
+    if energy
+        E = real(dot(AAnewm, applyH2(AAnewm, M1, M2, FL, FR)))
+        return AAnew, (E, info)
+    end
+    return AAnew, info
+end
+
 function evolveAC(dt::Float64, AC, M, FL, FR, energy=false; kwargs...)
     Dlnew, w, Dl = size(FL)
     Drnew, w, Dr = size(FR)
@@ -437,3 +451,29 @@ end
 function LA_FR(LA, FR)
     @tensor PC[a,a'] := LA[a,b',c'] * FR[a',b',c']
 end
+
+import LinearAlgebra: transpose
+function transpose(A::AbstractArray, dim1::Int, dim2::Int)
+    nd=ndims(A)
+    perm=collect(1:nd)
+    perm[dim1]=dim2
+    perm[dim2]=dim1
+    permutedims(A, perm)
+end
+function QR(A::AbstractArray, i::Int)
+    dims = [size(A)...]
+    nd = length(dims)
+    ds = collect(1:nd)
+    AL, C = qr(reshape(permutedims(A, circshift(ds, -i)), :, dims[i]))
+    AL = permutedims(reshape(Matrix(AL), circshift(dims, -i)...), circshift(ds, i))
+    return AL, C
+end
+function QR_full(A::AbstractArray, i::Int)
+    dims = [size(A)...]
+    nd = length(dims)
+    ds = collect(1:nd)
+    AL, C = qr(reshape(permutedims(A, circshift(ds, -i)), :, dims[i]))
+    AL = permutedims(reshape(AL*Matrix(I,size(AL)...), circshift(dims, -i)[1:end-1]..., :), circshift(ds, i))
+    return AL, C
+end
+

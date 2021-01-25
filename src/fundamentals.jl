@@ -334,31 +334,6 @@ function paramstring(x, sf)
     xstr
 end
 
-import LinearAlgebra: transpose
-function transpose(A::AbstractArray, dim1::Int, dim2::Int)
-    nd=ndims(A)
-    perm=collect(1:nd)
-    perm[dim1]=dim2
-    perm[dim2]=dim1
-    permutedims(A, perm)
-end
-function QR(A::AbstractArray, i::Int)
-    dims = [size(A)...]
-    nd = length(dims)
-    ds = collect(1:nd)
-    AL, C = qr(reshape(permutedims(A, circshift(ds, -i)), :, dims[i]))
-    AL = permutedims(reshape(Matrix(AL), circshift(dims, -i)...), circshift(ds, i))
-    return AL, C
-end
-function QR_full(A::AbstractArray, i::Int)
-    dims = [size(A)...]
-    nd = length(dims)
-    ds = collect(1:nd)
-    AL, C = qr(reshape(permutedims(A, circshift(ds, -i)), :, dims[i]))
-    AL = permutedims(reshape(AL*Matrix(I,size(AL)...), circshift(dims, -i)[1:end-1]..., :), circshift(ds, i))
-    return AL, C
-end
-
 """
     randisometry([T=Float64], dims...)
 Construct a random isometry

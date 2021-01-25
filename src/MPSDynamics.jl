@@ -46,6 +46,7 @@ include("treeTDVP.jl")
 include("treeDTDVP.jl")
 include("mpsBasics.jl")
 include("chainTDVP.jl")
+include("chain2TDVP.jl")
 include("chainDMRG.jl")
 include("models.jl")
 
