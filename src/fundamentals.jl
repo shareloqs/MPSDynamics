@@ -352,20 +352,6 @@ function randherm(T::Type, d::Int)
 end
 randherm(d::Int) = randherm(Float64, d)
 
-"""
-    U, S, Vd = svdtrunc(A; truncdim = max(size(A)...), truncerr = 0.)
-Perform a truncated SVD, with maximum number of singular values to keep equal to `truncdim`
-or truncating any singular values smaller than `truncerr`. If both options are provided, the
-smallest number of singular values will be kept.
-Unlike the SVD in Julia, this returns matrix U, a diagonal matrix (not a vector) S, and
-Vt such that A ≈ U * S * Vt
-"""
-function svdtrunc(A; truncdim = max(size(A)...), truncerr = 0.)
-    F = svd(A)
-    d = min(truncdim, count(F.S .>= truncerr))
-    return F.U[:,1:d], diagm(0=>F.S[1:d]), F.Vt[1:d, :]
-end
-
 function writeprint(f::IO, str...)
     print(string(str...))
     write(f, string(str...))

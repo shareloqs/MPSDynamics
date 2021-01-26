@@ -353,12 +353,12 @@ truncAR(A::Array{T, 5}, Dnew) where T = A[1:Dnew,:,:,:,:]
 truncF(F, D) = F[1:D,:,1:D]
 truncF2(F, D) = F[:,:,1:D]
 
-function evolveAC2(dt::Float64, A1, A2, M1, M2, FL, FR; energy = false, kwargs...)
+function evolveAC2(dt::Float64, A1, A2, M1, M2, FL, FR, energy=false; kwargs...)
     @tensor AA[a,sa,b,sb] := A1[a,c,sa] * A2[c,b,sb]
     AAnew, info = exponentiate(x->applyH2(x, M1, M2, FL, FR), -im*dt, AA; ishermitian = true, kwargs...)
 
     if energy
-        E = real(dot(AAnewm, applyH2(AAnewm, M1, M2, FL, FR)))
+        E = real(dot(AAnew, applyH2(AAnew, M1, M2, FL, FR)))
         return AAnew, (E, info)
     end
     return AAnew, info
@@ -475,5 +475,19 @@ function QR_full(A::AbstractArray, i::Int)
     AL, C = qr(reshape(permutedims(A, circshift(ds, -i)), :, dims[i]))
     AL = permutedims(reshape(AL*Matrix(I,size(AL)...), circshift(dims, -i)[1:end-1]..., :), circshift(ds, i))
     return AL, C
+end
+
+"""
+    U, S, Vd = svdtrunc(A; truncdim = max(size(A)...), truncerr = 0.)
+Perform a truncated SVD, with maximum number of singular values to keep equal to `truncdim`
+or truncating any singular values smaller than `truncerr`. If both options are provided, the
+smallest number of singular values will be kept.
+Unlike the SVD in Julia, this returns matrix U, a diagonal matrix (not a vector) S, and
+Vt such that A ≈ U * S * Vt
+"""
+function svdtrunc(A; truncdim = max(size(A)...), truncerr = 0., kwargs...)
+    F = svd(A)
+    d = min(truncdim, count(F.S .>= truncerr))
+    return F.U[:,1:d], diagm(0=>F.S[1:d]), F.Vt[1:d, :]
 end
 
