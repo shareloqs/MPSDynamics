@@ -897,7 +897,7 @@ function measure(A::Vector, O::CdagCdn, ρ::Vector)
     return expval
 end
 
-function measure(A::Vector, Os::Vector{T}; kwargs...) where T<:Observable
+function measure(A::Vector, Os::Vector; kwargs...)
     numobs = length(Os)
     numobs==0 && return Any[]
     N = max(reach.((A,), Os)...)

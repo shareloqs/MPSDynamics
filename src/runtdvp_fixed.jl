@@ -1,7 +1,8 @@
+#Deprecated#
 function runtdvp_fixed!(dt, T, A, H;
                         params = [],
-                        obs = Observable[],
-                        convobs = Observable[],
+                        obs = [],
+                        convobs = [],
                         savemps = 0,
                         verbose = false,
                         timed = false,

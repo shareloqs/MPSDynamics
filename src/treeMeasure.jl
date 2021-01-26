@@ -148,10 +148,9 @@ function measure2siteoperator_herm(net::TreeNetwork, O1, O2, sites::Tuple{Int,In
     end    
 end
 
-measure(A::TreeNetwork, Os::Vector{T}; lc=nothing, kwargs...) where T <: Observable =
-    measure(A, Os, lc)
+measure(A::TreeNetwork, Os::Vector; lc=nothing, kwargs...) = measure(A, Os, lc)
 
-function measure(A::TreeNetwork, Os::Vector{T}, ::Nothing) where T <: Observable
+function measure(A::TreeNetwork, Os::Vector, ::Nothing)
     numobs = length(Os)
     numobs==0 && return Any[]
     res = Vector{Any}(undef, numobs)
@@ -160,7 +159,7 @@ function measure(A::TreeNetwork, Os::Vector{T}, ::Nothing) where T <: Observable
     end
     return res
 end
-function measure(A::TreeNetwork, Os::Vector{T}, lc::LightCone) where T <: Observable
+function measure(A::TreeNetwork, Os::Vector, lc::LightCone)
     numobs = length(Os)
     numobs==0 && return Any[]
     res = Vector{Any}(undef, numobs)
