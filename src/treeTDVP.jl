@@ -330,7 +330,7 @@ function tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, F::Vector, id::Int; ver
     return A, F
 end
 
-function tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, F, lc::TreeLightCone; verbose=false, kwargs...)
+function tdvp1sweep_lc!(dt, A::TreeNetwork, M::TreeNetwork, lc::TreeLightCone, F=nothing; verbose=false, kwargs...)
 
     hn = findheadnode(A)
     if hn != findheadnode(M)
@@ -428,7 +428,7 @@ function tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, F, lc::TreeLightCone; v
     #the tree has now been evolved by one full time step dt
     return A, F
 end
-function tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, F::Vector, lc::TreeLightCone, id::Int; verbose=false, kwargs...)
+function tdvp1sweep_lc!(dt, A::TreeNetwork, M::TreeNetwork, lc::TreeLightCone, F::Vector, id::Int; verbose=false, kwargs...)
 
     children = A.tree[id].children
     parent = A.tree[id].parent
@@ -520,10 +520,6 @@ function tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, F::Vector, lc::TreeLigh
     #node id has now been evolved one full time step
     return A, F
 end
-tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, F::Vector, lc::Nothing; verbose=false, kwargs...) = tdvp1sweep!(dt, A, M, F; verbose=verbose, kwargs...)
-tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, F::Nothing, lc::Nothing; verbose=false, kwargs...) = tdvp1sweep!(dt, A, M, nothing; verbose=verbose, kwargs...)
-tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, F::Vector, lc::Nothing, id::Int; verbose=false, kwargs...) = tdvp1sweep!(dt, A, M, F, id; verbose=verbose, kwargs...)
-tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, lc::TreeLightCone; verbose=false, kwargs...) = tdvp1sweep!(dt, A, M, nothing, lc; verbose=verbose, kwargs...)
 
 function productstatemps(tree_::Tree, physdims::Dims, Dmax::Int=1; state=:Vacuum)
     tree = deepcopy(tree_)

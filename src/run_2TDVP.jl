@@ -1,4 +1,4 @@
-function run_2TDVP(dt, tmax, A, H, truncerr, truncdim; obs=[], verbose=false, timed=false)
+function run_2TDVP(dt, tmax, A, H, truncerr, truncdim; obs=[], timed=false, kwargs...)
 
     numsteps = length(collect(0:dt:tmax))-1
     times = [(i-1)*dt for i=1:numsteps+1]
@@ -16,12 +16,12 @@ function run_2TDVP(dt, tmax, A, H, truncerr, truncdim; obs=[], verbose=false, ti
         @printf("%i/%i, t = %.3f ", tstep, numsteps, times[tstep])
         println()
         if timed
-            val, t, bytes, gctime, memallocs = @timed tdvp2sweep!(dt, A0, H, F; truncerr=truncerr, truncdim=truncdim, verbose=verbose, kwargs...)
+            val, t, bytes, gctime, memallocs = @timed tdvp2sweep!(dt, A0, H, F; truncerr=truncerr, truncdim=truncdim, kwargs...)
             println("\t","ΔT = ", t)
             A0, F = val
             ttdvp[tstep] = t
         else
-            A0, F = tdvp2sweep!(dt, A0, H, F, verbose=verbose, kwargs...)
+            A0, F = tdvp2sweep!(dt, A0, H, F; truncerr=truncerr, truncdim=truncdim, kwargs...)
         end
         exp = measure(A0, obs; t=times[tstep])
         for (i, ob) in enumerate(obs)

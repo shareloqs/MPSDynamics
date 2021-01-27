@@ -304,10 +304,8 @@ function tdvp1sweep!(dt2, A::Vector, M::Vector, F=nothing; verbose=false, kwargs
     A[1] = AC
     return A, F
 end
-tdvp1sweep!(dt2, A::Vector, M::Vector, F, lc::Nothing; verbose=false, kwargs...) = tdvp1sweep!(dt2, A, M, F; verbose=verbose, kwargs...)
-tdvp1sweep!(dt2, A::Vector, M::Vector, lc::ChainLightCone; verbose=false, kwargs...) = tdvp1sweep!(dt2, A, M, nothing, lc::ChainLightCone; verbose=verbose, kwargs...)
 
-function tdvp1sweep!(dt2, A::Vector, M::Vector, F, lc::ChainLightCone; verbose=false, kwargs...)
+function tdvp1sweep_lc!(dt2, A::Vector, M::Vector, lc::ChainLightCone, F=nothing; verbose=false, kwargs...)
 
     N = length(A)
     
