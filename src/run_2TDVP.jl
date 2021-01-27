@@ -1,9 +1,9 @@
-function run_1TDVP(dt, T, A, H, Dmax; obs=[], verbose=false, timed=false)
+function run_2TDVP(dt, T, A, H, truncerr, truncdim; obs=[], verbose=false, timed=false)
 
     numsteps = length(collect(0:dt:T))-1
     times = [(i-1)*dt for i=1:numsteps+1]
     
-    @printf("Dmax : %i \n", Dmax)
+    @printf("Dmax : %i \n", D)
 
     exp = measure(A0, obs; t=times[1])
     data = Dict([obs[i].name => exp[i] for i=1:length(obs)])
@@ -12,17 +12,16 @@ function run_1TDVP(dt, T, A, H, Dmax; obs=[], verbose=false, timed=false)
 
     F=nothing
     A0=deepcopy(A)
-    mpsembed!(A0, Dmax)
     for tstep=1:numsteps
         @printf("%i/%i, t = %.3f ", tstep, numsteps, times[tstep])
         println()
         if timed
-            val, t, bytes, gctime, memallocs = @timed tdvp1sweep!(dt, A0, H, F; verbose=verbose, kwargs...)
+            val, t, bytes, gctime, memallocs = @timed tdvp2sweep!(dt, A0, H, F; truncerr=truncerr, truncdim=truncdim, verbose=verbose, kwargs...)
             println("\t","ΔT = ", t)
             A0, F = val
             ttdvp[tstep] = t
         else
-            A0, F = tdvp1sweep!(dt, A0, H, F, verbose=verbose, kwargs...)
+            A0, F = tdvp2sweep!(dt, A0, H, F, verbose=verbose, kwargs...)
         end
         exp = measure(A0, obs; t=times[tstep])
         for (i, ob) in enumerate(obs)

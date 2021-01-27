@@ -16,7 +16,6 @@ function run_all(dt, T, A, H;
     end
 
     if convcheck
-        convdata = Vector{Any}(undef, numconv)
         for (i, cps) in enumerate(convparams[1:end-1])
             if method==:TDVP1
                 B, dat = run_1TDVP(dt, T, A, H, cps...; obs=convobs, kwargs...)
@@ -31,7 +30,13 @@ function run_all(dt, T, A, H;
             else
                 error("method $method not recognised")
             end
-            convdata[i] = dat
+            if i==1
+                convdat = deepcopy(dat)
+            else
+                for item in keys(dat)
+                    convdat[item] = cat(convdat[item], dat[item], dims=ndims(dat[item])+1)
+                end
+            end
         end
     end
 
@@ -49,5 +54,13 @@ function run_all(dt, T, A, H;
     else
         error("method $method not recognised")
     end
+    if convcheck
+        for item in keys(convdat)
+            convdat[item] = cat(convdat[item], dat[item], dims=ndims(dat[item])+1)
+        end
+    end
 
+    data = Dict(["data" => dat])
+    convcheck && push!(data, "convdata" => convdat)
+    return B, data
 end
