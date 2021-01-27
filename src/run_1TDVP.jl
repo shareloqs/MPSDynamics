@@ -1,6 +1,6 @@
-function run_1TDVP(dt, T, A, H, Dmax; obs=[], verbose=false, timed=false)
+function run_1TDVP(dt, tmax, A, H, Dmax; obs=[], verbose=false, timed=false)
 
-    numsteps = length(collect(0:dt:T))-1
+    numsteps = length(collect(0:dt:tmax))-1
     times = [(i-1)*dt for i=1:numsteps+1]
     
     @printf("Dmax : %i \n", Dmax)

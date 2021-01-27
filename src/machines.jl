@@ -51,8 +51,3 @@ function update_machines(machs::Vector{T}) where T <: Machine
     end
 end
 
-anguspc = RemoteMachine("anguspc", "julia", "/home/angus/")
-alexpc = RemoteMachine("alexpc", "/home/angus/bin/julia", "/home/angus/")
-hp = RemoteMachine("hp", "/home/angus/julia-1.4.2/bin/julia", "/home/angus/")
-asusnew = RemoteMachine("asusnew", "/home/angus/julia-1.4.2/bin/julia", "/home/angus/")
-asusold = RemoteMachine("asusold", "/home/angus/julia-1.4.2/bin/julia", "/home/angus/")

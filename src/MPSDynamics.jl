@@ -2,37 +2,6 @@ module MPSDynamics
 
 using JLD, HDF5, Random, Dates, Plots, Printf, Distributed, LinearAlgebra, DelimitedFiles, KrylovKit, TensorOperations, GraphRecipes, SpecialFunctions, Logging
 
-struct DelayedFunction
-    f::Function
-    params::Vector
-end
-evaluate(df::DelayedFunction) = df.f(f.params...)
-evaluate(any::Any) = any
-
-struct TensorSim
-    dt
-    T
-    A
-    H
-    savedir
-    params
-    obs
-    convobs
-    savemps
-    verbose
-    save
-    saveplot
-    timed
-    log
-    Dmax
-    lightcone
-    lightconerad
-    lightconethresh
-    unid
-    name
-end
-
-include("config.jl")
 include("fundamentals.jl")
 include("tensorOps.jl")
 include("measure.jl")
@@ -49,61 +18,53 @@ include("chainTDVP.jl")
 include("chain2TDVP.jl")
 include("chainDMRG.jl")
 include("models.jl")
-
-include("runtdvp_dynamic.jl")
-include("runtdvp_fixed.jl")
-include("runtdvp.jl")
-include("convtdvp.jl")
-
-function TensorSim(dt, T, A, H;
-                   savedir::String = DEFSAVEDIR,
-                   params = [],
-                   obs = Observable[],
-                   convobs = Observable[],
-                   savemps = 0,
-                   verbose = false,
-                   save = false,
-                   saveplot = save,
-                   timed = false,
-                   log = save,
-                   Dmax = throw(error("Dmax must be specified")),
-                   lightcone=false,
-                   lightconerad=2,
-                   lightconethresh=DEFLCTHRESH,
-                   unid = randstring(5),
-                   name = nothing
-                   )
-    
-    if length(obs)==0
-        obs = Observable[]
-    end
-    if length(convobs)==0
-        convobs = Observable[]
-    end
-    TensorSim(dt,T,A,H,savedir,params,obs,convobs,savemps,verbose,save,saveplot,timed,log,Dmax,lightcone,lightconerad,lightconethresh,unid,name)
-end
-
-function runsim(sim::TensorSim, mach::Machine)
-    remote = typeof(mach) == RemoteMachine
-    remote && update_machines([mach])
-    if sim.save || sim.saveplot
-        if sim.savedir[end] != '/'
-            sim.savedir = string(sim.savedir,"/")
+include("logging.jl")
+include("run_all.jl")
+include("run_1TDVP.jl")
+include("run_2TDVP.jl")
+ 
+function runsim(dt, tmax, A, H;
+                method=:TDVP1,
+                machine=LocalMachine(),
+                params=[],
+                obs=[],
+                convobs=[],
+                convparams=error("Must specify convergence parameters"),
+                save=true,
+                saveplot=save,
+                savedir="~/MPSDynamics/",
+                unid=randstring(5),
+                name=nothing,
+                kwargs...
+    )
+    remote = typeof(machine) == RemoteMachine
+    remote && update_machines([machine])
+    if save || saveplot
+        if savedir[end] != '/'
+            savedir = string(savedir,"/")
         end
-        sim.log || error("the run must be logged if output data is saved") 
-        isdir(sim.savedir) || error("save directory $sim.savedir doesn't exist")
+        isdir(savedir) || mkdir(savedir)
+        open_log(dt, T, convparams, method, machine, savedir, unid, name, params, obs, convobs, convcheck)
     end
-    if typeof(sim.Dmax) <: Vector
+    if typeof(convparams) <: Vector
         convcheck = true
-        numDmax = length(sim.Dmax)
+        numconv = length(convparams)
     else
         convcheck = false
     end
 
-    if sim.log
-        open_log(sim, convcheck, mach)
-    end
-    errorfile = "$(sim.unid).e"
+    paramdict = Dict([(par[1], par[2]) for par in params]...,
+                     [
+                         ("dt",dt),
+                         ("tmax",tmax),
+                         ("method",method),
+                         ("convparams",convparams),
+                         ("unid",unid),
+                         ("name",name)
+                     ]
+                     )
+
+    errorfile = "$(unid).e"
     
     tstart = now()
     A = dat = nothing
@@ -112,42 +73,30 @@ function runsim(sim::TensorSim, mach::Machine)
             print("loading MPSDynamics............")
             @everywhere pid eval(using MPSDynamics)
             println("done")
-            A, dat = fetch(@spawnat only(pid) MPSDynamics.runtdvp_fixed!(sim.dt, sim.T, sim.A, sim.H,
-                                                                         params=sim.params,
-                                                                         obs=sim.obs,
-                                                                         convobs=sim.convobs,
-                                                                         savemps=sim.savemps,
-                                                                         verbose=sim.verbose,
-                                                                         timed=sim.timed,
-                                                                         Dmax=sim.Dmax,
-                                                                         lightcone=sim.lightcone,
-                                                                         lightconerad=sim.lightconerad,
-                                                                         lightconethresh=sim.lightconethresh,
-                                                                         unid=sim.unid
-                                                                         ))
-            sim.save && save_data(sim.savedir, sim.unid, convcheck, dat["data"], convcheck ? dat["convdata"] : nothing, dat["parameters"])
-            convcheck && sim.saveplot && save_plot(sim.savedir, sim.unid, dat["data"]["times"], dat["convdata"], sim.Dmax, sim.convobs)
+            A, dat = fetch(@spawnat only(pid) run_all(dt, tmax, A, H;
+                                                      method=method,
+                                                      obs=obs,
+                                                      convobs=convobs,
+                                                      convparams=convparams,
+                                                      kwargs...))
+            save && save_data(savedir, unid, convcheck, dat["data"], convcheck ? dat["convdata"] : nothing, paramdict)
+            convcheck && saveplot && save_plot(savedir, unid, dat["data"]["times"], dat["convdata"], convparams, convobs)
             return A, dat
         end
     catch e
-        sim.log && error_log(sim.savedir, sim.unid)
+        save && error_log(savedir, unid)
         showerror(stdout, e, catch_backtrace())                
         println()
-        sim.log && open(string(sim.savedir, sim.unid, "/", errorfile), "w+") do io
+        save && open(string(savedir, unid, "/", errorfile), "w+") do io
             showerror(io, e, catch_backtrace())
         end
     finally
-        output = length(filter(x-> x!=errorfile && x!="info.txt", readdir(string(sim.savedir, sim.unid)))) > 0
+        output = length(filter(x-> x!=errorfile && x!="info.txt", readdir(string(savedir, unid)))) > 0
         telapsed = canonicalize(Dates.CompoundPeriod(now() - tstart))
-        sim.log && close_log(sim.savedir, sim.unid, output, telapsed)
+        save && close_log(savedir, unid, output, telapsed)
     end
     return A, dat
 end
-runsim(sim::TensorSim) = runsim(sim, LocalMachine())
-
-Base.println(sim::TensorSim) = println("TensorSim($(sim.unid))")
-Base.print(sim::TensorSim) = print("TensorSim($(sim.unid))")
-Base.show(::IO, sim::TensorSim) = println(sim)
 
 export sz, sx, sy, numb, crea, anih, unitcol, unitrow, unitmat
 
@@ -157,19 +106,15 @@ export productstatemps, physdims, randmps, bonddims
 
 export measure, OneSiteObservable, TwoSiteObservable, FockError, errorbar
 
-export TensorSim, runsim, DelayedFunction, evaluate
+export runsim, run_all
 
-export Machine, LocalMachine, init_machines, update_machines, launch_workers, rmworkers
+export Machine, RemoteMachine, LocalMachine, init_machines, update_machines, launch_workers, rmworkers
 
-export alexpc, hp, asusold, asusnew, anguspc
-
-export VarT, VarX, plot, scatter, loaddat
-
-export printlog, noprintlog
+export plot, scatter
 
 export randtree
 
-export readchaincoeffs
+export readchaincoeffs, h5read
 
 export println, print, show
 
