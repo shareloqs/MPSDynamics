@@ -1,4 +1,3 @@
-
 function tdvp2sweep!(dt2, A::Vector, M::Vector, F=nothing; verbose=false, kwargs...)
     N = length(A)
     dt = dt2/2

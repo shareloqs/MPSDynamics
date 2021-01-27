@@ -3,6 +3,7 @@ module MPSDynamics
 using JLD, HDF5, Random, Dates, Plots, Printf, Distributed, LinearAlgebra, DelimitedFiles, KrylovKit, TensorOperations, GraphRecipes, SpecialFunctions
 
 include("fundamentals.jl")
+include("reshape.jl")
 include("tensorOps.jl")
 include("measure.jl")
 include("observables.jl")
@@ -32,36 +33,37 @@ function runsim(dt, tmax, A, H;
                 convparams=error("Must specify convergence parameters"),
                 save=true,
                 saveplot=save,
-                savedir="~/MPSDynamics/",
+                savedir=string(homedir(),"/MPSDynamics/"),
                 unid=randstring(5),
                 name=nothing,
                 kwargs...
-    )
+                )
     remote = typeof(machine) == RemoteMachine
     remote && update_machines([machine])
-    if save || saveplot
-        if savedir[end] != '/'
-            savedir = string(savedir,"/")
-        end
-        isdir(savedir) || mkdir(savedir)
-        open_log(dt, T, convparams, method, machine, savedir, unid, name, params, obs, convobs, convcheck)
-    end
-    if typeof(convparams) <: Vector
+
+    if typeof(convparams) <: Vector && length(convparams) > 1
         convcheck = true
         numconv = length(convparams)
     else
         convcheck = false
     end
 
-    paramdict = Dict([(par[1], par[2]) for par in params]...,
-                     [
-                         ("dt",dt),
-                         ("tmax",tmax),
-                         ("method",method),
-                         ("convparams",convparams),
-                         ("unid",unid),
-                         ("name",name)
-                     ]
+    if save || saveplot
+        if savedir[end] != '/'
+            savedir = string(savedir,"/")
+        end
+        isdir(savedir) || mkdir(savedir)
+        open_log(dt, tmax, convparams, method, machine, savedir, unid, name, params, obs, convobs, convcheck)
+    end
+
+    paramdict = Dict([[(par[1], par[2]) for par in params]...,
+                      ("dt",dt),
+                      ("tmax",tmax),
+                      ("method",method),
+                      ("convparams",convparams),
+                      ("unid",unid),
+                      ("name",name)
+                      ]
                      )
 
     errorfile = "$(unid).e"
@@ -69,7 +71,7 @@ function runsim(dt, tmax, A, H;
     tstart = now()
     A = dat = nothing
     try
-        A, dat = launch_workers(mach) do pid
+        A, dat = launch_workers(machine) do pid
             print("loading MPSDynamics............")
             @everywhere pid eval(using MPSDynamics)
             println("done")

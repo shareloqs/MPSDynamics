@@ -8,7 +8,7 @@ function run_all(dt, tmax, A, H;
 
     obs = union(obs, convobs)
 
-    if typeof(convparams) <: Vector
+    if typeof(convparams) <: Vector && length(convparams) > 1
         convcheck = true
         numconv = length(convparams)
     else
@@ -33,10 +33,10 @@ function run_all(dt, tmax, A, H;
                 error("method $method not recognised")
             end
             if i==1
-                convdat = deepcopy(dat)
+                convdat = Dict([(item.first, reshape(item.second, size(item.second)..., 1)) for item in dat])
             else
-                for item in keys(dat)
-                    convdat[item] = cat(convdat[item], dat[item], dims=ndims(dat[item])+1)
+                for item in dat
+                    convdat[item.first] = cat(convdat[item.first], item.second, dims=ndims(item.second)+1)
                 end
             end
         end
@@ -59,8 +59,8 @@ function run_all(dt, tmax, A, H;
         error("method $method not recognised")
     end
     if convcheck
-        for item in keys(convdat)
-            convdat[item] = cat(convdat[item], dat[item], dims=ndims(dat[item])+1)
+        for item in convdat
+            convdat[item.first] = cat(convdat[item.first], item.second, dims=ndims(item.second)+1)
         end
     end
 

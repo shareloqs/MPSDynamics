@@ -1,4 +1,4 @@
-function open_log(dt, T, convparams, method, machine, savedir, unid, name, params, obs, convobs, convcheck)
+function open_log(dt, tmax, convparams, method, machine, savedir, unid, name, params, obs, convobs, convcheck)
     mkdir(string(savedir, unid))
     logname = string(savedir,"log-",gethostname(),".txt")
     try
@@ -16,7 +16,7 @@ function open_log(dt, T, convparams, method, machine, savedir, unid, name, param
             writeprintln([f,f0], "\t machine : $(machine.name)")
             writeprintln([f,f0], "\t method : $(method)")
             writeprintln([f,f0], "\t dt = $dt")
-            writeprintln([f,f0], "\t tmax = $T")
+            writeprintln([f,f0], "\t tmax = $tmax")
             writeprint([f,f0], "\t parameters : ")
             for par in params
                 writeprint([f,f0], string(par[1], " = ", par[2]), ", ")

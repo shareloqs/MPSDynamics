@@ -1,4 +1,5 @@
 function run_2TDVP(dt, tmax, A, H, truncerr, truncdim; obs=[], timed=false, kwargs...)
+    A0=deepcopy(A)
 
     numsteps = length(collect(0:dt:tmax))-1
     times = [(i-1)*dt for i=1:numsteps+1]
@@ -6,12 +7,11 @@ function run_2TDVP(dt, tmax, A, H, truncerr, truncdim; obs=[], timed=false, kwar
     @printf("Dmax : %i \n", D)
 
     exp = measure(A0, obs; t=times[1])
-    data = Dict([obs[i].name => exp[i] for i=1:length(obs)])
+    data = Dict([obs[i].name => reshape(exp[i], size(exp[i])..., 1) for i=1:length(obs)])
 
     timed && (ttdvp = Vector{Float64}(undef, numsteps))
 
     F=nothing
-    A0=deepcopy(A)
     for tstep=1:numsteps
         @printf("%i/%i, t = %.3f ", tstep, numsteps, times[tstep])
         println()

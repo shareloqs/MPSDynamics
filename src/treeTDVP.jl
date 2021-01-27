@@ -233,7 +233,7 @@ function tdvp1sweep_test!(dt, A::TreeNetwork, M::TreeNetwork, F=nothing; verbose
             Fpar = fill!(similar(M[1], (1,1,1)), 1)
         end
             
-        A[i], info = exponentiate(x->applyH1(x, M[i], Fpar, F[children]...), -im*dt/2, A[i]; ishermitian=true, kwargs...)
+        A[i], info = exponentiate(x->applyH1(x, M[i], Fpar, F[children]...), -im*dt/2, A[i]; ishermitian=true)
 
         if verbose
             E = real(dot(A[i], applyH1(A[i], M[i], Fpar, F[children]...)))
@@ -247,7 +247,7 @@ function tdvp1sweep_test!(dt, A::TreeNetwork, M::TreeNetwork, F=nothing; verbose
 
         legs = [par, children...]
         next = legs[dir]
-        C, info = exponentiate(x->applyH0(x, F[i], F[next]), im*dt/2, C; ishermitian=true, kwargs...)
+        C, info = exponentiate(x->applyH0(x, F[i], F[next]), im*dt/2, C; ishermitian=true)
         if verbose
             E = real(dot(C, applyH0(C, F[i], F[next])))
             println("Sweep L->R: C between sites $i and $next, energy = $E")
@@ -273,7 +273,7 @@ function tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, F::Vector, id::Int; ver
 
     #(OC begins on node)
     #evolve node forward half a time step
-    AC, info = exponentiate(x->applyH1(x, M[id], F0, F[children]...), -im*dt/2, AC; ishermitian=true, kwargs...)
+    AC, info = exponentiate(x->applyH1(x, M[id], F0, F[children]...), -im*dt/2, AC; ishermitian=true)
     if verbose
         E = real(dot(AC, applyH1(AC, M[id], F0, F[children]...)))
         println("Sweep L->R: AC on site $id, energy = $E")
@@ -288,7 +288,7 @@ function tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, F::Vector, id::Int; ver
         F[id] = updateleftenv(AL, M[id], i, F0, F[otherchildren]...)
 
         #evolve C backwards half a time step
-        C, info = exponentiate(x->applyH0(x, F[id], F[child]), im*dt/2, C; ishermitian=true, kwargs...)
+        C, info = exponentiate(x->applyH0(x, F[id], F[child]), im*dt/2, C; ishermitian=true)
         if verbose
             E = real(dot(C, applyH0(C, F[id], F[child])))
             println("Sweep L->R: C between sites $id and $child, energy = $E")
@@ -307,7 +307,7 @@ function tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, F::Vector, id::Int; ver
         F[child] = updaterightenv(AR, M[child], F[grandchildren]...)
         
         #evolve C backwards half a time step
-        C, info = exponentiate(x->applyH0(x, F[child], F[id]), im*dt/2, C; ishermitian=true, kwargs...)
+        C, info = exponentiate(x->applyH0(x, F[child], F[id]), im*dt/2, C; ishermitian=true)
         if verbose
             E = real(dot(C, applyH0(C, F[child], F[id])))
             println("Sweep R->L: C between sites $child and $id, energy = $E")
@@ -319,7 +319,7 @@ function tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, F::Vector, id::Int; ver
     end
 
     #evolve node forward half a time step
-    AC, info = exponentiate(x->applyH1(x, M[id], F0, F[children]...), -im*dt/2, AC; ishermitian=true, kwargs...)
+    AC, info = exponentiate(x->applyH1(x, M[id], F0, F[children]...), -im*dt/2, AC; ishermitian=true)
     if verbose
         E = real(dot(AC, applyH1(AC, M[id], F0, F[children]...)))
         println("Sweep R->L: AC on site $id, energy = $E")
@@ -345,7 +345,7 @@ function tdvp1sweep_lc!(dt, A::TreeNetwork, M::TreeNetwork, lc::TreeLightCone, F
 
     #(OC begins on headnode)
     #evolve headnode forward half a time step
-    AC, info = exponentiate(x->applyH1(x, M[hn], F0, F[children]...), -im*dt/2, AC; ishermitian=true, kwargs...)
+    AC, info = exponentiate(x->applyH1(x, M[hn], F0, F[children]...), -im*dt/2, AC; ishermitian=true)
 
     #expand light-cone if necessary
     if in(hn, lc.edge)
@@ -355,7 +355,7 @@ function tdvp1sweep_lc!(dt, A::TreeNetwork, M::TreeNetwork, lc::TreeLightCone, F
             push!(lc.edge, children...)
         else
             #evolve node forward half a time step
-            AC, info = exponentiate(x->applyH1(x, M[hn], F[parent], F[children]...), -im*dt/2, AC; ishermitian=true, kwargs...)
+            AC, info = exponentiate(x->applyH1(x, M[hn], F[parent], F[children]...), -im*dt/2, AC; ishermitian=true)
             if verbose
                 E = real(dot(AC, applyH1(AC, M[hn], F[parent], F[children]...)))
                 println("Sweep R->L: AC on site $hn, energy = $E")
@@ -382,7 +382,7 @@ function tdvp1sweep_lc!(dt, A::TreeNetwork, M::TreeNetwork, lc::TreeLightCone, F
         F[hn] = updateleftenv(AL, M[hn], i, F0, F[otherchildren]...)
 
         #evolve C backwards half a time step
-        C, info = exponentiate(x->applyH0(x, F[hn], F[child]), im*dt/2, C; ishermitian=true, kwargs...)
+        C, info = exponentiate(x->applyH0(x, F[hn], F[child]), im*dt/2, C; ishermitian=true)
         if verbose
             E = real(dot(C, applyH0(C, F[hn], F[child])))
             println("Sweep L->R: C between sites $hn and $child, energy = $E")
@@ -404,7 +404,7 @@ function tdvp1sweep_lc!(dt, A::TreeNetwork, M::TreeNetwork, lc::TreeLightCone, F
         F[child] = updaterightenv(AR, M[child], F[grandchildren]...)
         
         #evolve C backwards half a time step
-        C, info = exponentiate(x->applyH0(x, F[child], F[hn]), im*dt/2, C; ishermitian=true, kwargs...)
+        C, info = exponentiate(x->applyH0(x, F[child], F[hn]), im*dt/2, C; ishermitian=true)
         if verbose
             E = real(dot(C, applyH0(C, F[child], F[hn])))
             println("Sweep R->L: C between sites $child and $hn, energy = $E")
@@ -419,7 +419,7 @@ function tdvp1sweep_lc!(dt, A::TreeNetwork, M::TreeNetwork, lc::TreeLightCone, F
     end
 
     #evolve headnode forwards half a time step
-    AC, info = exponentiate(x->applyH1(x, M[hn], F0, F[children]...), -im*dt/2, AC; ishermitian=true, kwargs...)
+    AC, info = exponentiate(x->applyH1(x, M[hn], F0, F[children]...), -im*dt/2, AC; ishermitian=true)
     if verbose
         E = real(dot(AC, applyH1(AC, M[hn], F0, F[children]...)))
         println("Sweep R->L: AC on site $hn, energy = $E")
@@ -437,7 +437,7 @@ function tdvp1sweep_lc!(dt, A::TreeNetwork, M::TreeNetwork, lc::TreeLightCone, F
 
     #(OC begins on node)
     #evolve node forward half a time step
-    AC, info = exponentiate(x->applyH1(x, M[id], F[parent], F[children]...), -im*dt/2, AC; ishermitian=true, kwargs...)
+    AC, info = exponentiate(x->applyH1(x, M[id], F[parent], F[children]...), -im*dt/2, AC; ishermitian=true)
     if verbose
         E = real(dot(AC, applyH1(AC, M[id], F[parent], F[children]...)))
         println("Sweep L->R: AC on site $id, energy = $E")
@@ -451,7 +451,7 @@ function tdvp1sweep_lc!(dt, A::TreeNetwork, M::TreeNetwork, lc::TreeLightCone, F
             push!(lc.edge, children...)
         else
             #evolve node forward half a time step
-            AC, info = exponentiate(x->applyH1(x, M[id], F[parent], F[children]...), -im*dt/2, AC; ishermitian=true, kwargs...)
+            AC, info = exponentiate(x->applyH1(x, M[id], F[parent], F[children]...), -im*dt/2, AC; ishermitian=true)
             if verbose
                 E = real(dot(AC, applyH1(AC, M[id], F[parent], F[children]...)))
                 println("Sweep R->L: AC on site $id, energy = $E")
@@ -473,7 +473,7 @@ function tdvp1sweep_lc!(dt, A::TreeNetwork, M::TreeNetwork, lc::TreeLightCone, F
         F[id] = updateleftenv(AL, M[id], i, F[parent], F[otherchildren]...)
 
         #evolve C backwards half a time step
-        C, info = exponentiate(x->applyH0(x, F[id], F[child]), im*dt/2, C; ishermitian=true, kwargs...)
+        C, info = exponentiate(x->applyH0(x, F[id], F[child]), im*dt/2, C; ishermitian=true)
         if verbose
             E = real(dot(C, applyH0(C, F[id], F[child])))
             println("Sweep L->R: C between sites $id and $child, energy = $E")
@@ -495,7 +495,7 @@ function tdvp1sweep_lc!(dt, A::TreeNetwork, M::TreeNetwork, lc::TreeLightCone, F
         F[child] = updaterightenv(AR, M[child], F[grandchildren]...)
         
         #evolve C backwards half a time step
-        C, info = exponentiate(x->applyH0(x, F[child], F[id]), im*dt/2, C; ishermitian=true, kwargs...)
+        C, info = exponentiate(x->applyH0(x, F[child], F[id]), im*dt/2, C; ishermitian=true)
         if verbose
             E = real(dot(C, applyH0(C, F[child], F[id])))
             println("Sweep R->L: C between sites $child and $id, energy = $E")
@@ -510,7 +510,7 @@ function tdvp1sweep_lc!(dt, A::TreeNetwork, M::TreeNetwork, lc::TreeLightCone, F
     end
 
     #evolve node forward half a time step
-    AC, info = exponentiate(x->applyH1(x, M[id], F[parent], F[children]...), -im*dt/2, AC; ishermitian=true, kwargs...)
+    AC, info = exponentiate(x->applyH1(x, M[id], F[parent], F[children]...), -im*dt/2, AC; ishermitian=true)
     if verbose
         E = real(dot(AC, applyH1(AC, M[id], F[parent], F[children]...)))
         println("Sweep R->L: AC on site $id, energy = $E")

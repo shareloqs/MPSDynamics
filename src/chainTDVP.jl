@@ -314,7 +314,7 @@ function tdvp1sweep_lc!(dt2, A::Vector, M::Vector, lc::ChainLightCone, F=nothing
 
     k=1
     AC = A[k]
-    AC, info = exponentiate(x->applyH1(x, M[k], F[k], F[k+2]), -im*dt, AC; ishermitian = true, kwargs...)
+    AC, info = exponentiate(x->applyH1(x, M[k], F[k], F[k+2]), -im*dt, AC; ishermitian = true)
     if verbose
         E = real(dot(AC, applyH1(AC, M[k], F[k], F[k+2])))
         println("Sweep L->R: AC site 1, energy $E")
@@ -333,7 +333,7 @@ function tdvp1sweep_lc!(dt2, A::Vector, M::Vector, lc::ChainLightCone, F=nothing
         A[k] = AL
         F[k+1] = updateleftenv(A[k], M[k], F[k])
 
-        C, info = exponentiate(x->applyH0(x,F[k+1],F[k+2]), im*dt, C; ishermitian = true, kwargs...)
+        C, info = exponentiate(x->applyH0(x,F[k+1],F[k+2]), im*dt, C; ishermitian = true)
         if verbose
             E = real(dot(C, applyH0(C, F[k+1], F[k+2])))
             println("Sweep L->R: C between site $k and $(k+1), energy $E")
@@ -341,7 +341,7 @@ function tdvp1sweep_lc!(dt2, A::Vector, M::Vector, lc::ChainLightCone, F=nothing
         
         @tensor AC[:] := C[-1,1] * A[k+1][1,-2,-3]
 
-        AC, info = exponentiate(x->applyH1(x, M[k+1], F[k+1], F[k+3]), -im*dt, AC; ishermitian = true, kwargs...)
+        AC, info = exponentiate(x->applyH1(x, M[k+1], F[k+1], F[k+3]), -im*dt, AC; ishermitian = true)
         if verbose
             E = real(dot(AC, applyH1(AC, M[k+1], F[k+1], F[k+3])))
             println("Sweep L->R: AC site $k, energy $E")
@@ -358,7 +358,7 @@ function tdvp1sweep_lc!(dt2, A::Vector, M::Vector, lc::ChainLightCone, F=nothing
 
     for k = lc.edge-1:-1:1
 
-        AC, info = exponentiate(x->applyH1(x, M[k+1], F[k+1], F[k+3]), -im*dt, AC; ishermitian = true, kwargs...)
+        AC, info = exponentiate(x->applyH1(x, M[k+1], F[k+1], F[k+3]), -im*dt, AC; ishermitian = true)
         if verbose
             E = real(dot(AC, applyH1(AC, M[k+1], F[k+1], F[k+3])))
             println("Sweep R->L: AC site $k, energy $E")
@@ -368,7 +368,7 @@ function tdvp1sweep_lc!(dt2, A::Vector, M::Vector, lc::ChainLightCone, F=nothing
         A[k+1] = AR
         F[k+2] = updaterightenv(A[k+1], M[k+1], F[k+3])
 
-        C, info = exponentiate(x->applyH0(x, F[k+2], F[k+1]), im*dt, C; ishermitian = true, kwargs...)
+        C, info = exponentiate(x->applyH0(x, F[k+2], F[k+1]), im*dt, C; ishermitian = true)
         if verbose
             E = real(dot(C, applyH0(C, F[k+2], F[k+1])))
             println("Sweep R->L: C between site $k and $(k+1), energy $E")
@@ -377,7 +377,7 @@ function tdvp1sweep_lc!(dt2, A::Vector, M::Vector, lc::ChainLightCone, F=nothing
 
     end
     
-    AC, info = exponentiate(x->applyH1(x, M[1], F[1], F[3]), -im*dt, AC; ishermitian = true, kwargs...)
+    AC, info = exponentiate(x->applyH1(x, M[1], F[1], F[3]), -im*dt, AC; ishermitian = true)
     if verbose
         E = real(dot(AC, applyH1(AC, M[1], F[1], F[3])))
         println("Sweep R->L: AC site 1, energy $E")
