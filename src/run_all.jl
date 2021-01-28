@@ -8,13 +8,14 @@ function run_all(dt, tmax, A, H;
 
     obs = union(obs, convobs)
 
-    if typeof(convparams) <: Vector && length(convparams) > 1
+    if typeof(convparams) <: Vector
         convcheck = true
         numconv = length(convparams)
     else
         convcheck = false
     end
 
+    convdat=nothing
     if convcheck
         for (i, cps) in enumerate(convparams[1:end-1])
             if method==:TDVP1
@@ -59,12 +60,15 @@ function run_all(dt, tmax, A, H;
         error("method $method not recognised")
     end
     if convcheck
-        for item in convdat
-            convdat[item.first] = cat(convdat[item.first], item.second, dims=ndims(item.second)+1)
+        for item in keys(convdat)
+            convdat[item] = cat(convdat[item], dat[item], dims=ndims(dat[item])+1)
         end
     end
 
-    data = Dict(["data" => dat])
-    convcheck && push!(data, "convdata" => convdat)
+    if convcheck
+        data = Dict(["data"=>dat, "convdata"=>convdat])
+    else
+        data = Dict(["data"=>dat])
+    end
     return B, data
 end

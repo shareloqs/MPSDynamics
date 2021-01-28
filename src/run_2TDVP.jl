@@ -4,7 +4,7 @@ function run_2TDVP(dt, tmax, A, H, truncerr, truncdim; obs=[], timed=false, kwar
     numsteps = length(collect(0:dt:tmax))-1
     times = [(i-1)*dt for i=1:numsteps+1]
     
-    @printf("Dmax : %i \n", D)
+    @printf("truncerr : %.3e, truncdim : %i \n", truncerr, truncdim)
 
     exp = measure(A0, obs; t=times[1])
     data = Dict([obs[i].name => reshape(exp[i], size(exp[i])..., 1) for i=1:length(obs)])

@@ -95,13 +95,15 @@ function save_data(savedir, unid, convcheck, datadict, convdatadict, paramdatadi
     end
 end
 
-function save_plot(savedir, unid, times, convdatadict, convparams, convobs)
+function save_plot(savedir, convcheck, unid, times, convdatadict, convparams, convobs)
     default(size = (800,600), reuse = true, title = unid, legend = true)
+    numconv = length(convparams)
+    labels = convcheck ? reshape(convparams, 1, numconv) : convparams
     for ob in filter(x->ndims(x)==0, convobs)
         if eltype(convdatadict[ob.name]) <: Complex
-            plt = plot(convdatadict[ob.name]; labels=transpose(convparams), xlabel="Re($(ob.name))", ylabel="Im($(ob.name))");
+            plt = plot(convdatadict[ob.name]; labels=labels, xlabel="Re($(ob.name))", ylabel="Im($(ob.name))");
         else
-            plt = plot(times, convdatadict[ob.name]; labels=transpose(convparams), xlabel="t", ylabel=ob.name);
+            plt = plot(times, convdatadict[ob.name]; labels=labels, xlabel="t", ylabel=ob.name);
         end
         savefig(plt, string(savedir,unid,"/","convplot_",ob.name,"_",unid,".pdf"));
     end

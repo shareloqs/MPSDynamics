@@ -32,7 +32,7 @@ function runsim(dt, tmax, A, H;
                 convobs=[],
                 convparams=error("Must specify convergence parameters"),
                 save=true,
-                saveplot=save,
+                plot=save,
                 savedir=string(homedir(),"/MPSDynamics/"),
                 unid=randstring(5),
                 name=nothing,
@@ -46,6 +46,7 @@ function runsim(dt, tmax, A, H;
         numconv = length(convparams)
     else
         convcheck = false
+        convparams = only(convparams)
     end
 
     if save || saveplot
@@ -67,24 +68,24 @@ function runsim(dt, tmax, A, H;
                      )
 
     errorfile = "$(unid).e"
-    
+ 
     tstart = now()
-    A = dat = nothing
-    try
-        A, dat = launch_workers(machine) do pid
+    A0, dat = try
+        A0, dat = launch_workers(machine) do pid
             print("loading MPSDynamics............")
             @everywhere pid eval(using MPSDynamics)
             println("done")
-            A, dat = fetch(@spawnat only(pid) run_all(dt, tmax, A, H;
-                                                      method=method,
-                                                      obs=obs,
-                                                      convobs=convobs,
-                                                      convparams=convparams,
-                                                      kwargs...))
-            save && save_data(savedir, unid, convcheck, dat["data"], convcheck ? dat["convdata"] : nothing, paramdict)
-            convcheck && saveplot && save_plot(savedir, unid, dat["data"]["times"], dat["convdata"], convparams, convobs)
-            return A, dat
+            A0, dat = fetch(@spawnat only(pid) run_all(dt, tmax, A, H;
+                                                       method=method,
+                                                       obs=obs,
+                                                       convobs=convobs,
+                                                       convparams=convparams,
+                                                       kwargs...))
+            return A0, dat
         end
+        save && save_data(savedir, unid, convcheck, dat["data"], convcheck ? dat["convdata"] : nothing, paramdict)
+        plot && save_plot(savedir, convcheck, unid, dat["data"]["times"], convcheck ? dat["convdata"] : dat["data"], convparams, convobs)
+        return A0, dat
     catch e
         save && error_log(savedir, unid)
         showerror(stdout, e, catch_backtrace())                
@@ -97,7 +98,8 @@ function runsim(dt, tmax, A, H;
         telapsed = canonicalize(Dates.CompoundPeriod(now() - tstart))
         save && close_log(savedir, unid, output, telapsed)
     end
-    return A, dat
+    return A0, dat
+
 end
 
 export sz, sx, sy, numb, crea, anih, unitcol, unitrow, unitmat
@@ -116,7 +118,7 @@ export plot, scatter
 
 export randtree
 
-export readchaincoeffs, h5read
+export readchaincoeffs, h5read, load
 
 export println, print, show
 

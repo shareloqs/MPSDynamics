@@ -6,12 +6,12 @@ function tdvp2sweep!(dt2, A::Vector, M::Vector, F=nothing; verbose=false, kwargs
     for k=1:N-1
         AR = A[k+1]
         Dold = size(AC)[2]
-        AA, info = evolveAC2(dt, AC, AR, M[k], M[k+1], F[k], F[k+3], verbose, kwargs...)
+        AA, info = evolveAC2(dt, AC, AR, M[k], M[k+1], F[k], F[k+3], verbose; kwargs...)
 
         verbose && println("Sweep L->R: updating sites $k and $(k+1), energy $(info[1])")
 
         Dl, dl, Dr, dr = size(AA)
-        U, S, Vt = svdtrunc(reshape(AA, Dl*dl, Dr*dr), kwargs...)
+        U, S, Vt = svdtrunc(reshape(AA, Dl*dl, Dr*dr); kwargs...)
         Dnew = size(S)[1]
 
         verbose && Dnew!=Dold && println("*BondDimension $k-$(k+1) changed from $Dold to $Dnew")
@@ -24,12 +24,12 @@ function tdvp2sweep!(dt2, A::Vector, M::Vector, F=nothing; verbose=false, kwargs
     for k=N-1:-1:1
         AL = A[k]
         Dold = size(AC)[1]
-        AA, info = evolveAC2(dt, AL, AC, M[k], M[k+1], F[k], F[k+3], verbose, kwargs...)
+        AA, info = evolveAC2(dt, AL, AC, M[k], M[k+1], F[k], F[k+3], verbose; kwargs...)
 
         verbose && println("Sweep R->L: updating sites $(k+1) and $k, energy $(info[1])")
         
         Dl, dl, Dr, dr = size(AA)
-        U, S, Vt = svdtrunc(reshape(AA, Dl*dl, Dr*dr), kwargs...)
+        U, S, Vt = svdtrunc(reshape(AA, Dl*dl, Dr*dr); kwargs...)
         Dnew = size(S)[1]
 
         verbose && Dnew!=Dold && println("*BondDimension $(k+1)-$k changed from $Dold to $Dnew")
