@@ -1,4 +1,4 @@
-function run_2TDVP(dt, tmax, A, H, truncerr, truncdim; obs=[], timed=false, kwargs...)
+function run_2TDVP(dt, tmax, A, H, truncerr, truncdim; obs=[], bonddims=false, timed=false, kwargs...)
     A0=deepcopy(A)
 
     numsteps = length(collect(0:dt:tmax))-1
@@ -10,10 +10,14 @@ function run_2TDVP(dt, tmax, A, H, truncerr, truncdim; obs=[], timed=false, kwar
     data = Dict([obs[i].name => reshape(exp[i], size(exp[i])..., 1) for i=1:length(obs)])
 
     timed && (ttdvp = Vector{Float64}(undef, numsteps))
+    bonddims && (bondlist = Vector{Any}(undef, numsteps))
 
     F=nothing
     for tstep=1:numsteps
-        @printf("%i/%i, t = %.3f ", tstep, numsteps, times[tstep])
+        bonds = bonddims(A0)
+        maxbond = max(bonds...)
+        bonddims && (bondlist[tstep] = bonds)
+        @printf("%i/%i, t = %.3f, Dmax = %i ", tstep, numsteps, times[tstep], maxbond)
         println()
         if timed
             val, t, bytes, gctime, memallocs = @timed tdvp2sweep!(dt, A0, H, F; truncerr=truncerr, truncdim=truncdim, kwargs...)
@@ -28,6 +32,7 @@ function run_2TDVP(dt, tmax, A, H, truncerr, truncdim; obs=[], timed=false, kwar
             data[ob.name] = cat(data[ob.name], exp[i], dims=ndims(exp[i])+1)
         end
     end
+    bonddims && push!(data, "bonddims"=>bondlist)
     timed && push!(data, "deltat"=>ttdvp)
     push!(data, "times" => times)
     return A0, data
