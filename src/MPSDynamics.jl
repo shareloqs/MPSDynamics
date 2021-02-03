@@ -68,7 +68,7 @@ function runsim(dt, tmax, A, H;
                      )
 
     errorfile = "$(unid).e"
- 
+
     tstart = now()
     A0, dat = try
         A0, dat = launch_workers(machine) do pid
@@ -99,12 +99,11 @@ function runsim(dt, tmax, A, H;
         save && close_log(savedir, unid, output, telapsed)
     end
     return A0, dat
-
 end
 
 export sz, sx, sy, numb, crea, anih, unitcol, unitrow, unitmat
 
-export chaincoeffs_ohmic, spinbosonmpo, methylbluempo, methylbluempo_correlated, methylbluempo_correlated_nocoupling, methylbluempo_nocoupling
+export chaincoeffs_ohmic, spinbosonmpo, methylbluempo, methylbluempo_correlated, methylbluempo_correlated_nocoupling, methylbluempo_nocoupling, ibmmpo
 
 export productstatemps, physdims, randmps, bonddims
 

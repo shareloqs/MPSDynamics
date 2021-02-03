@@ -368,14 +368,12 @@ function ibmmpo(ω0, d, N, chainparams; tree=false)
     M=zeros(1,4,2,2)
     M[1, :, :, :] = up(Hs, c0*sz, c0*sz, u)
 
-    chain = hbathchain(N, d, chainparams)
+    chain = hbathchain(N, d, chainparams; tree=tree)
     if tree
         H = TreeNetwork(Vector{AbstractArray}([M]))
         addtree!(H, 1, chain)
         return H
     else
-        chain = chain.sites
-        chain[end] = reshape(chain[end],4,1,d,d)
         return Any[M, chain...]
     end
 end
