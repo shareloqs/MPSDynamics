@@ -9,14 +9,14 @@ function run_2TDVP(dt, tmax, A, H, truncerr, truncdim; obs=[], savebonddims=fals
     exp = measure(A0, obs; t=times[1])
     data = Dict([obs[i].name => reshape(exp[i], size(exp[i])..., 1) for i=1:length(obs)])
 
+    bonds = bonddims(A0)
+    savebonddims && push!(data, "bonddims" => reshape([bonds...], length(bonds), 1))
+
     timed && (ttdvp = Vector{Float64}(undef, numsteps))
-    savebonddims && (bondlist = Vector{Any}(undef, numsteps))
 
     F=nothing
     for tstep=1:numsteps
-        bonds = bonddims(A0)
         maxbond = max(bonds...)
-        savebonddims && (bondlist[tstep] = bonds)
         @printf("%i/%i, t = %.3f, Dmax = %i ", tstep, numsteps, times[tstep], maxbond)
         println()
         if timed
@@ -27,12 +27,15 @@ function run_2TDVP(dt, tmax, A, H, truncerr, truncdim; obs=[], savebonddims=fals
         else
             A0, F = tdvp2sweep!(dt, A0, H, F; truncerr=truncerr, truncdim=truncdim, kwargs...)
         end
+        bonds = bonddims(A0)
         exp = measure(A0, obs; t=times[tstep])
         for (i, ob) in enumerate(obs)
             data[ob.name] = cat(data[ob.name], exp[i], dims=ndims(exp[i])+1)
+            if savebonddims
+                data["bonddims"] = cat(data["bonddims"], bonds, dims=2)
+            end
         end
     end
-    savebonddims && push!(data, "bonddims"=>bondlist)
     timed && push!(data, "deltat"=>ttdvp)
     push!(data, "times" => times)
     return A0, data
