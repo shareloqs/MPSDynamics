@@ -231,7 +231,7 @@ end
 function methylblue_S1_mpo(e1, N, d, chainparams; tree=false)
     u = unitmat(2)
 
-    c = chainparams[3]
+    c = only(chainparams[3])
     s1 = unitcol(1, 2)
     #Hs = e1*s1*s1'
     Hs = zero(u) # e^(-is1*s1't)He^(is1*s1't)
@@ -253,7 +253,7 @@ end
 function spinbosonmpo(ω0, Δ, d, N, chainparams; rwa=false, tree=false)
     u = unitmat(2)
     
-    c0 = chainparams[3]
+    c0 = only(chainparams[3])
 
     Hs = (ω0/2)*sz + Δ*sx
 
@@ -274,8 +274,8 @@ end
 function twobathspinmpo(ω0, Δ, Nl, Nr, dl, dr, chainparamsl=[fill(1.0,N),fill(1.0,N-1), 1.0], chainparamsr=chainparamsl; rwar=false, rwal=false, tree=false)
     u = unitmat(2)
 
-    cl = chainparamsl[3]
-    cr = chainparamsr[3]
+    cl = only(chainparamsl[3])
+    cr = only(chainparamsr[3])
 
     Hs = (ω0/2)*sz + Δ*sx
 
@@ -361,7 +361,7 @@ end
 function ibmmpo(ω0, d, N, chainparams; tree=false)
     u = unitmat(2)
     
-    c0 = chainparams[3]
+    c0 = only(chainparams[3])
 
     Hs = (ω0/2)*sz
 
@@ -384,7 +384,7 @@ function tunnelingmpo(ϵ, delta, α, s, β, d::Int, nummodes::Int; tree=false, �
     
     u = unitmat(2)
     
-    c0 = cps[3]
+    c0 = only(cps[3])
 
     Hs = (ϵ/2)*sz + λ*(u + sx)/2
 
