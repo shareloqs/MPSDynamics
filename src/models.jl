@@ -233,8 +233,8 @@ function methylblue_S1_mpo(e1, N, d, chainparams; tree=false)
 
     c = only(chainparams[3])
     s1 = unitcol(1, 2)
-    #Hs = e1*s1*s1'
-    Hs = zero(u) # e^(-is1*s1't)He^(is1*s1't)
+    Hs = e1*s1*s1'
+    #Hs = zero(u) # e^(-is1*s1't)He^(is1*s1't)
 
     M=zeros(1,3,2,2)
     M[1, :, :, :] = up(Hs, c*s1*s1', u)
