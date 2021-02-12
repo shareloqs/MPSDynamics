@@ -219,8 +219,8 @@ function methylbluempo_nocoupling(e1, e2, N1, N2, d1, d2, cparS1, cparS2)
     Hs = (e2-e1)*s2*s2'
 
     M=zeros(3,3,3,3)
-    M[1,:,:,:] = up(Hs, c1*s1*s1', u)
-    M[:,1,:,:] = up(Hs, c2*s2*s2', u)
+    M[:,1,:,:] = up(Hs, c1*s1*s1', u)
+    M[1,:,:,:] = up(Hs, c2*s2*s2', u)
 
     chain1 = hbathchain(N1, d1, cparS1; coupletox=true, reverse=true)
     chain2 = hbathchain(N2, d2, cparS2; coupletox=true)
@@ -231,9 +231,9 @@ end
 function methylblue_S1_mpo(e1, N, d, chainparams; tree=false)
     u = unitmat(2)
 
-    c = chainparams[3]
+    c = only(chainparams[3])
     s1 = unitcol(1, 2)
-    #Hs = e1*s1*s1'
+#    Hs = e1*s1*s1'
     Hs = zero(u) # e^(-is1*s1't)He^(is1*s1't)
 
     M=zeros(1,3,2,2)
@@ -253,7 +253,7 @@ end
 function spinbosonmpo(ω0, Δ, d, N, chainparams; rwa=false, tree=false)
     u = unitmat(2)
     
-    c0 = chainparams[3]
+    c0 = only(chainparams[3])
 
     Hs = (ω0/2)*sz + Δ*sx
 
@@ -274,8 +274,8 @@ end
 function twobathspinmpo(ω0, Δ, Nl, Nr, dl, dr, chainparamsl=[fill(1.0,N),fill(1.0,N-1), 1.0], chainparamsr=chainparamsl; rwar=false, rwal=false, tree=false)
     u = unitmat(2)
 
-    cl = chainparamsl[3]
-    cr = chainparamsr[3]
+    cl = only(chainparamsl[3])
+    cr = only(chainparamsr[3])
 
     Hs = (ω0/2)*sz + Δ*sx
 
@@ -361,12 +361,14 @@ end
 function ibmmpo(ω0, d, N, chainparams; tree=false)
     u = unitmat(2)
     
-    c0 = chainparams[3]
+    c0 = only(chainparams[3])
 
     Hs = (ω0/2)*sz
+#    Hs = (ω0/2)*(sz+u)
 
     M=zeros(1,4,2,2)
     M[1, :, :, :] = up(Hs, c0*sz, c0*sz, u)
+#    M[1, :, :, :] = up(Hs, c0*(sz+u), c0*(sz+u), u)
 
     chain = hbathchain(N, d, chainparams; tree=tree)
     if tree
@@ -384,7 +386,7 @@ function tunnelingmpo(ϵ, delta, α, s, β, d::Int, nummodes::Int; tree=false, �
     
     u = unitmat(2)
     
-    c0 = cps[3]
+    c0 = only(cps[3])
 
     Hs = (ϵ/2)*sz + λ*(u + sx)/2
 
