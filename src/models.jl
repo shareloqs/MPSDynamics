@@ -219,8 +219,8 @@ function methylbluempo_nocoupling(e1, e2, N1, N2, d1, d2, cparS1, cparS2)
     Hs = (e2-e1)*s2*s2'
 
     M=zeros(3,3,3,3)
-    M[1,:,:,:] = up(Hs, c1*s1*s1', u)
-    M[:,1,:,:] = up(Hs, c2*s2*s2', u)
+    M[:,1,:,:] = up(Hs, c1*s1*s1', u)
+    M[1,:,:,:] = up(Hs, c2*s2*s2', u)
 
     chain1 = hbathchain(N1, d1, cparS1; coupletox=true, reverse=true)
     chain2 = hbathchain(N2, d2, cparS2; coupletox=true)
@@ -233,8 +233,8 @@ function methylblue_S1_mpo(e1, N, d, chainparams; tree=false)
 
     c = only(chainparams[3])
     s1 = unitcol(1, 2)
-    Hs = e1*s1*s1'
-    #Hs = zero(u) # e^(-is1*s1't)He^(is1*s1't)
+#    Hs = e1*s1*s1'
+    Hs = zero(u) # e^(-is1*s1't)He^(is1*s1't)
 
     M=zeros(1,3,2,2)
     M[1, :, :, :] = up(Hs, c*s1*s1', u)
@@ -364,9 +364,11 @@ function ibmmpo(ω0, d, N, chainparams; tree=false)
     c0 = only(chainparams[3])
 
     Hs = (ω0/2)*sz
+#    Hs = (ω0/2)*(sz+u)
 
     M=zeros(1,4,2,2)
     M[1, :, :, :] = up(Hs, c0*sz, c0*sz, u)
+#    M[1, :, :, :] = up(Hs, c0*(sz+u), c0*(sz+u), u)
 
     chain = hbathchain(N, d, chainparams; tree=tree)
     if tree
