@@ -105,37 +105,46 @@ function tightbindingmpo(N::Int, d::Int; J=1.0, e=1.0)
     return Any[M[1:1,:,:,:], fill(M, N-2)..., M[:,4:4,:,:]]
 end
 
-function hbathchain(N::Int, d::Int, chainparams, cc=nothing; tree=false, reverse=false, coupletox=false)
+function hbathchain(N::Int, d::Int, chainparams, longrangecc...; tree=false, reverse=false, coupletox=false)
     b = anih(d)
     bd = crea(d)
     n = numb(d)
     u = unitmat(d)
     e = chainparams[1]
     t = chainparams[2]
-    long = cc != nothing
-    D = long ? 5 : 4
+
+    numlong = length(longrangecc)
+    cc = longrangecc
+    D = 3 + (coupletox ? 1 : 2)*(1+numlong)
 
     H=Vector{Any}()
 
-    if !coupletox
-        M=zeros(D, D, d, d)
-        M[D, :, :, :] = long ? up(e[1]*n, t[1]*b, t[1]*bd, u, u) : up(e[1]*n, t[1]*b, t[1]*bd, u)
-        M[:, 1, :, :] = long ? dn(e[1]*n, cc[1]*(b+bd), b, bd, u) : dn(e[1]*n, b, bd, u)
+    if coupletox
+        M=zeros(D-1, D, d, d)
+        M[D-1, :, :, :] = up(e[1]*n, t[1]*b, t[1]*bd, fill(zero(u), numlong)..., u)
+        M[:, 1, :, :] = dn(e[1]*n, [cc[j][1]*(b+bd) for j=1:numlong]..., b+bd, u)
+        for k=1:numlong
+            M[k+2,k+3,:,:] = u
+        end
         push!(H, M)
     else
-        M=zeros(D-1, D, d, d)
-        M[D-1, :, :, :] = long ? up(e[1]*n, t[1]*b, t[1]*bd, u, u) : up(e[1]*n, t[1]*b, t[1]*bd, u)
-        M[:, 1, :, :] = long ? dn(e[1]*n, cc[1]*(b+bd), b+bd, u) : dn(e[1]*n, b+bd, u)
+        M=zeros(D, D, d, d)
+        M[D, :, :, :] = up(e[1]*n, t[1]*b, t[1]*bd, u)
+        M[:, 1, :, :] = dn(e[1]*n, b, bd, u)
+        numlong > 0 && error("haven't yet coded case of long range couplings with non-hermitian coupling")
         push!(H, M)
     end    
     for i=2:N-1
         M=zeros(D, D, d, d)
-        M[D, :, :, :] = long ? up(e[i]*n, t[i]*b, t[i]*bd, u, u) : up(e[i]*n, t[i]*b, t[i]*bd, u)
-        M[:, 1, :, :] = long ? dn(e[i]*n, cc[i]*(b+bd), b, bd, u) : dn(e[i]*n, b, bd, u)
+        M[D, :, :, :] = up(e[i]*n, t[i]*b, t[i]*bd, fill(zero(u), numlong)..., u)
+        M[:, 1, :, :] = dn(e[i]*n, [cc[j][i]*(b+bd) for j=1:numlong]..., b, bd, u)
+        for k=1:numlong
+            M[k+3,k+3,:,:] = u
+        end
         push!(H, M)
     end
     M=zeros(D, d, d)
-    M[:, :, :] = long ? dn(e[N]*n, cc[N]*(b+bd), b, bd, u) : dn(e[N]*n, b, bd, u)
+    M[:, :, :] = dn(e[N]*n, [cc[j][N]*(b+bd) for j=1:numlong]..., b, bd, u)
     push!(H, M)
     if tree
         return TreeNetwork(H)
