@@ -69,9 +69,9 @@ function runsim(dt, tmax, A, H;
 
     errorfile = "$(unid).e"
 
-    tstart = now()
-    A0, dat = try
-        A0, dat = launch_workers(machine) do pid
+     tstart = now()
+     A0, dat = try
+         A0, dat = launch_workers(machine) do pid
             print("loading MPSDynamics............")
             @everywhere pid eval(using MPSDynamics)
             println("done")
