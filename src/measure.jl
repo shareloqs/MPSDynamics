@@ -68,7 +68,7 @@ reach(A, ob::CdagCup) = max(ob.sites...)
 reach(A, ob::CdagCdn) = max(ob.sites...)
 reach(A, ob::Observable) = 1
 
-function measurempo(A::Vector, M::Vector)
+function measure(A::Vector, M::Vector)
     N = length(M)
     N == length(A) || throw(ArgumentError("MPO has $N site while MPS has $(length(A)) sites"))
     F = fill!(similar(M[1], (1,1,1)), 1)
@@ -77,7 +77,7 @@ function measurempo(A::Vector, M::Vector)
     end
     real(only(F))
 end
-function measurempo(A::Vector, M::Vector, sites::Tuple{Int, Int})
+function measure(A::Vector, M::Vector, sites::Tuple{Int, Int})
     N = sites[2] - sites[1] + 1
     F = fill!(similar(M[1], (1,1,1)), 1)
     for k=1:sites[1]-1

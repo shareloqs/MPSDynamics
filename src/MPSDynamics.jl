@@ -23,6 +23,7 @@ include("logging.jl")
 include("run_all.jl")
 include("run_1TDVP.jl")
 include("run_2TDVP.jl")
+include("run_DTDVP.jl")
  
 function runsim(dt, tmax, A, H;
                 method=:TDVP1,
@@ -68,37 +69,42 @@ function runsim(dt, tmax, A, H;
                      )
     
     errorfile = "$(unid).e"
-
-     tstart = now()
-     A0, dat = try
-         A0, dat = launch_workers(machine) do pid
-            print("loading MPSDynamics............")
-            @everywhere pid eval(using MPSDynamics)
-            println("done")
-            A0, dat = fetch(@spawnat only(pid) run_all(dt, tmax, A, H;
-                                                       method=method,
-                                                       obs=obs,
-                                                       convobs=convobs,
-                                                       convparams=convparams,
-                                                       kwargs...))
-            return A0, dat
-        end
-        save && save_data(savedir, unid, convcheck, dat["data"], convcheck ? dat["convdata"] : nothing, paramdict)
-        plot && save_plot(savedir, convcheck, unid, dat["data"]["times"], convcheck ? dat["convdata"] : dat["data"], convparams, convobs)
-        return A0, dat
-    catch e
-        save && error_log(savedir, unid)
-        showerror(stdout, e, catch_backtrace())                
-        println()
-        save && open(string(savedir, unid, "/", errorfile), "w+") do io
-            showerror(io, e, catch_backtrace())
-        end
-    finally
-        output = length(filter(x-> x!=errorfile && x!="info.txt", readdir(string(savedir, unid)))) > 0
-        telapsed = canonicalize(Dates.CompoundPeriod(now() - tstart))
-        save && close_log(savedir, unid, output, telapsed)
-    end
-    return A0, dat
+    run_all(dt, tmax, A, H;
+            method=method,
+            obs=obs,
+            convobs=convobs,
+            convparams=convparams,
+            kwargs...)
+#     tstart = now()
+#     A0, dat = try
+#         A0, dat = launch_workers(machine) do pid
+#             print("loading MPSDynamics............")
+#             @everywhere pid eval(using MPSDynamics)
+#             println("done")
+#             A0, dat = fetch(@spawnat only(pid) run_all(dt, tmax, A, H;
+#                                                        method=method,
+#                                                        obs=obs,
+#                                                        convobs=convobs,
+#                                                        convparams=convparams,
+#                                                        kwargs...))
+#             return A0, dat
+#         end
+#         save && save_data(savedir, unid, convcheck, dat["data"], convcheck ? dat["convdata"] : nothing, paramdict)
+#         plot && save_plot(savedir, convcheck, unid, dat["data"]["times"], convcheck ? dat["convdata"] : dat["data"], convparams, convobs)
+#         return A0, dat
+#     catch e
+#         save && error_log(savedir, unid)
+#         showerror(stdout, e, catch_backtrace())                
+#         println()
+#         save && open(string(savedir, unid, "/", errorfile), "w+") do io
+#             showerror(io, e, catch_backtrace())
+#         end
+#     finally
+#         output = length(filter(x-> x!=errorfile && x!="info.txt", readdir(string(savedir, unid)))) > 0
+#         telapsed = canonicalize(Dates.CompoundPeriod(now() - tstart))
+#         save && close_log(savedir, unid, output, telapsed)
+#     end
+#     return A0, dat
 end
 
 export sz, sx, sy, numb, crea, anih, unitcol, unitrow, unitmat

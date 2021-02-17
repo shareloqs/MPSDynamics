@@ -32,9 +32,9 @@ function run_2TDVP(dt, tmax, A, H, truncerr, truncdim; obs=[], savebonddims=fals
         exp = measure(A0, obs; t=times[tstep])
         for (i, ob) in enumerate(obs)
             data[ob.name] = cat(data[ob.name], exp[i], dims=ndims(exp[i])+1)
-            if savebonddims
-                data["bonddims"] = cat(data["bonddims"], [bonds...], dims=2)
-            end
+        end
+        if savebonddims
+            data["bonddims"] = cat(data["bonddims"], [bonds...], dims=2)
         end
     end
     timed && push!(data, "deltat"=>ttdvp)
