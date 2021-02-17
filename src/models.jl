@@ -133,7 +133,7 @@ function hbathchain(N::Int, d::Int, chainparams, longrangecc...; tree=false, rev
         M[:, 1, :, :] = dn(e[1]*n, b, bd, u)
         numlong > 0 && error("haven't yet coded case of long range couplings with non-hermitian coupling")
         push!(H, M)
-    end    
+    end
     for i=2:N-1
         M=zeros(D, D, d, d)
         M[D, :, :, :] = up(e[i]*n, t[i]*b, t[i]*bd, fill(zero(u), numlong)..., u)
