@@ -1,4 +1,4 @@
-function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=true, timed=false, savebonddims=false, Dplusmax=nothing, Dlim=100, kwargs...)
+function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=false, timed=false, savebonddims=false, Dplusmax=nothing, Dlim=100, kwargs...)
     A0=deepcopy(A)
     data = Dict{String,Any}()
 
@@ -22,7 +22,7 @@ function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=true, time
     Afull=nothing
     for tstep=1:numsteps
         maxbond = max(bonds...)
-        @printf("%i/%i, t = %.3f, Dmax = %i ", tstep, numsteps, times[tstep], maxbond)
+        @printf("%i/%i, t = %.3f, Dmax = %i \n", tstep, numsteps, times[tstep], maxbond)
         A0, Afull, F, info = tdvp1sweep_dynamic!(dt, A0, H, Afull, F;
                                                  obs=obs,
                                                  prec=prec,

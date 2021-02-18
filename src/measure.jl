@@ -68,7 +68,7 @@ reach(A, ob::CdagCup) = max(ob.sites...)
 reach(A, ob::CdagCdn) = max(ob.sites...)
 reach(A, ob::Observable) = 1
 
-function measure(A::Vector, M::Vector)
+function measurempo(A::Vector, M::Vector)
     N = length(M)
     N == length(A) || throw(ArgumentError("MPO has $N site while MPS has $(length(A)) sites"))
     F = fill!(similar(M[1], (1,1,1)), 1)
@@ -77,7 +77,7 @@ function measure(A::Vector, M::Vector)
     end
     real(only(F))
 end
-function measure(A::Vector, M::Vector, sites::Tuple{Int, Int})
+function measurempo(A::Vector, M::Vector, sites::Tuple{Int, Int})
     N = sites[2] - sites[1] + 1
     F = fill!(similar(M[1], (1,1,1)), 1)
     for k=1:sites[1]-1
@@ -100,6 +100,8 @@ measure observable `O` on mps state `A`
 """
 measure(A, O::OneSiteObservable; acs=nothing, ρ=nothing, kwargs...) = measure(A, O, acs, ρ)
 measure(A, O::OneSiteObservable, ::Nothing, ::Nothing) = measure1siteoperator(A, O.op, O.sites)
+#ignore ρ if acs is supplied:
+measure(A, O::OneSiteObservable, acs::Vector, ρ::Vector) = measure(A, O, acs, nothing)
 function measure(A, O::OneSiteObservable, acs::Vector, ::Nothing)
     T = O.hermitian ? Float64 : ComplexF64
     if typeof(O.sites) <: Int
