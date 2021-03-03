@@ -181,6 +181,30 @@ function methylbluempo(e1, e2, δ, N1, N2, N3, d1, d2, d3, cparS1, cparS2, cparS
     return H
 end
 
+function methylbluempo2(e1, e2, δ, N1, N2, N3, d1, d2, d3, cparS1, ccS2, cparS2, ccS1, cparS1S2)
+    u = unitmat(3)
+
+    c1 = only(cparS1[3])
+    c2 = only(cparS2[3])
+    c3 = only(cparS1S2[3])
+
+    s2 = unitcol(1, 3)
+    s1 = unitcol(2, 3)
+       
+    #Hs = e1*s1*s1' + e2*s2*s2' + δ*(s1*s2' + s2*s1')
+    Hs = (e2-e1)*s2*s2' + δ*(s1*s2' + s2*s1') # e^(-is1*s1't)He^(is1*s1't)
+    M = zeros(1,4,4,3,3,3)
+    M[1,:,1,1,:,:] = up(Hs, c1*s1*s1', s2*s2', u)
+    M[1,1,:,1,:,:] = up(Hs, c2*s2*s2', s1*s1', u)
+    M[1,1,1,:,:,:] = up(Hs, c3*(s1*s2'+s2*s1'), u)
+
+    H = TreeNetwork(Any[M])
+    addtree!(H, 1, hbathchain(N1, d1, cparS1, ccS2; coupletox=true, tree=true))
+    addtree!(H, 1, hbathchain(N2, d2, cparS2, ccS1; coupletox=true, tree=true))
+    addtree!(H, 1, hbathchain(N3, d3, cparS1S2; coupletox=true, tree=true))
+    return H
+end
+
 function methylbluempo_correlated(e1, e2, δ, N1, N2, d1, d2, cparS1, ccS2, cparS1S2)
     u = unitmat(3)
     s2 = unitcol(1, 3)
