@@ -13,7 +13,7 @@ The methods currently implemented are
 
 * 1-site TDVP on tree and chain MPS [2]
 * 2-site TDVP on chain MPS [2]
-* a variant of 1-site of 1-site TDVP with dynamic bond-dimensions on chain MPS [3]
+* a variant of 1-site TDVP with dynamic bond-dimensions on chain MPS [3]
 
 The elementary tensor operations are implemented using the package [TensorOperations.jl](https://github.com/Jutho/TensorOperations.jl)
 
@@ -21,18 +21,19 @@ The elementary tensor operations are implemented using the package [TensorOperat
 
 The package may be installed by typing the following into a Julia REPL
 
-```
+```julia
 ] add https://github.com/angusdunnett/MPSDynamics.git
 ```
 
 # Usage
 
+The basic usage is as follows. First include the package.
 
-
-```
+```julia
 using MPSDynamics
-
 ```
+
+To set up a simulation we require MPS representing our initial wavefunction ``|\psi(0)\langle``
 
 # Publications
 
@@ -49,3 +50,7 @@ using MPSDynamics
 
 * Real-time benchmark dynamics of the Ohmic Spin-Boson Model computed with Time-Dependent Variational Matrix Product States. (TDVMPS) coupling strength and temperature parameter space.
      * [10.5281/zenodo.4352728](https://doi.org/10.5281/zenodo.4352728)
+
+# References
+
+* 
