@@ -4,7 +4,7 @@ Tensor network simulations for finite temperature, open quantum system dynamics.
 
 This package is intended to provide an easy to use interface for performing tensor network simulations on Matrix Product
 States (MPS). MPSDynamics.jl is a versatile package which supports both chain and (loop-free) tree MPS, as well as
-providing a choice of several time evolution algorithms. The interface also provides strong support for the measurement
+providing a choice of several time evolution algorithms. The package also provides strong support for the measurement
 of observables, as well as the storing and logging of data, which makes it a useful tool for the study of many-body
 physics. The package was originally developped with the aim of studying open system dynamics at finite temperature using
 the T-TEDOPA mapping [1], however the methods implemented can equally be applied to other areas of physics.
@@ -15,7 +15,7 @@ The methods currently implemented are
 * 2-site TDVP on chain MPS [2]
 * a variant of 1-site TDVP with dynamic bond-dimensions on chain MPS [3]
 
-The elementary tensor operations are implemented using the package [TensorOperations.jl](https://github.com/Jutho/TensorOperations.jl)
+The elementary tensor operations are implemented in all cases using the [TensorOperations.jl](https://github.com/Jutho/TensorOperations.jl) package.
 
 # Installation
 
@@ -27,13 +27,17 @@ The package may be installed by typing the following into a Julia REPL
 
 # Usage
 
-The basic usage is as follows. First include the package.
+The basic usage is as follows. First, include the package.
 
 ```julia
 using MPSDynamics
 ```
 
-To set up a simulation we require an MPS representing our initial wavefunction |\psi(0)\langle
+To set up a simulation we require an MPS representing our initial wave-function and a Matrix Product Operator (MPO) representing our Hamiltonian.
+
+MPSDynamics.jl contains various functions for generating MPSs and MPOs used for simulating certain models, but no attempt is made to be comprehensive. For generic MPO constuction, one can use the [ITensors.jl](https://github.com/ITensor/ITensors.jl) package and convert the resulting object into a form compatible with MPSDynamics.jl using the function MPOtoVector.
+
+
 
 # Publications
 
