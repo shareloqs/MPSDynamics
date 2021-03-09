@@ -33,7 +33,7 @@ The basic usage is as follows. First include the package.
 using MPSDynamics
 ```
 
-To set up a simulation we require MPS representing our initial wavefunction ``|\psi(0)\langle``
+To set up a simulation we require an MPS representing our initial wavefunction |\psi(0)\langle
 
 # Publications
 
