@@ -37,7 +37,7 @@ To set up a simulation we require an MPS representing our initial wave-function 
 
 MPSDynamics.jl contains various functions for generating MPSs and MPOs used for simulating certain models, but no attempt is made to be comprehensive. For generic MPO constuction, one can use the [ITensors.jl](https://github.com/ITensor/ITensors.jl) package and convert the resulting object into a form compatible with MPSDynamics.jl using the function MPOtoVector.
 
-In this example 
+In this example we will consider the spin-boson model.
 
 
 
@@ -59,8 +59,8 @@ In this example
 
 # References
 
-* [1] [D. Tamascelli, A. Smirne, J. Lim, S. F. Huegla, and M. B. Plenio, Physical Review Letters 123, 090402 (2019) arXiv: 1811.12418](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.123.090402)
+* [[1]](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.123.090402) D. Tamascelli, A. Smirne, J. Lim, S. F. Huegla, and M. B. Plenio, Physical Review Letters 123, 090402 (2019) arXiv: 1811.12418
 
-* [2] [J. Haegeman, C. Lubich, I. Oseledets, B. Vandereycken, and F. Verstraete, Physical Review B 94, 165116 (2016), arXiv: 1408.5056](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.94.165116)
+* [[2]](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.94.165116) [J. Haegeman, C. Lubich, I. Oseledets, B. Vandereycken, and F. Verstraete, Physical Review B 94, 165116 (2016), arXiv: 1408.5056]
 
-* [3] [A. J. Dunnett, and A. W. Chin, arXiv : 2007.13528](https://arxiv.org/abs/2007.13528)
+* [[3]](https://arxiv.org/abs/2007.13528) [A. J. Dunnett, and A. W. Chin, arXiv : 2007.13528]
