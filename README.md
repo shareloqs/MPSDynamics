@@ -63,4 +63,4 @@ In this example
 
 * [2] [J. Haegeman, C. Lubich, I. Oseledets, B. Vandereycken, and F. Verstraete, Physical Review B 94, 165116 (2016), arXiv: 1408.5056](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.94.165116)
 
-* [3] [https://arxiv.org/abs/2007.13528](https://arxiv.org/abs/2007.13528)
+* [3] [A. J. Dunnett, and A. W. Chin, arXiv : 2007.13528](https://arxiv.org/abs/2007.13528)
