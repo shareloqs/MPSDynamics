@@ -6,7 +6,7 @@ This package is intended to provide an easy to use interface for performing tens
 States (MPS). MPSDynamics.jl is a versatile package which supports both chain and (loop-free) tree MPS, as well as
 providing a choice of several time evolution algorithms. The package also provides strong support for the measurement
 of observables, as well as the storing and logging of data, which makes it a useful tool for the study of many-body
-physics. The package was originally developped with the aim of studying open system dynamics at finite temperature using
+physics. The package was originally developed with the aim of studying open system dynamics at finite temperature using
 the T-TEDOPA mapping [1], however the methods implemented can equally be applied to other areas of physics.
 
 The methods currently implemented are
@@ -35,7 +35,7 @@ using MPSDynamics
 
 To set up a simulation we require an MPS representing our initial wave-function and a Matrix Product Operator (MPO) representing our Hamiltonian.
 
-MPSDynamics.jl contains various functions for generating MPSs and MPOs used for simulating certain models, but no attempt is made to be comprehensive. For generic MPO constuction, one can use the [ITensors.jl](https://github.com/ITensor/ITensors.jl) package and convert the resulting object into a form compatible with MPSDynamics.jl using the function `MPOtoVector`.
+MPSDynamics.jl contains various functions for generating MPSs and MPOs used for simulating certain models, but no attempt is made to be comprehensive. For generic MPO construction, one can use the [ITensors.jl](https://github.com/ITensor/ITensors.jl) package and convert the resulting object into a form compatible with MPSDynamics.jl using the function `MPOtoVector`.
 
 In this example we will consider the spin-boson model. First we define parameters and generate the MPO.
 
@@ -100,7 +100,7 @@ A, dat = runsim(dt, T, A, H;
                 );
 ```
 
-This will propagate the MPS upto time `T` in time steps of `dt`. The simulation will be performed using 1-site TDVP with
+This will propagate the MPS up to time `T` in time steps of `dt`. The simulation will be performed using 1-site TDVP with
 bond-dimensions of 2, 4 and 6 in order to check for convergence. The observables supplied to `convobs` will be measured
 at every time step for every bond-dimension, while the observables supplied to `obs` will only be measured for the last
 (most accurate) convergence parameter supplied to `convparams`.
@@ -111,11 +111,11 @@ directory is ~/MPSDynamics, which will be created if it doesn't exist (if using 
 
 The data is stored in the JLD format which is based on HDF5. Loading the data in julia using the
 [JLD](https://github.com/JuliaIO/JLD.jl) package will recover the full type information of the Julia variables that were
-stored. At the same time the HDF5 format is natively support across many platforms and languages. For example, to load
+stored. At the same time the HDF5 format is natively supported across many platforms and languages. For example, to load
 the spin-z data in Mathematica one could do
 
 ```mathematica
-Import["~/MPSDyanmics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
+Import["~/MPSDynamics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
 ```
 
 
@@ -130,7 +130,7 @@ Import["~/MPSDyanmics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
 
 # Data Repositories
 
-* Exact Spin-Boson-Model Tunnelling Dynamics with Time Dependent Variation Matrix Product States (TDVMPS). Barrier height and temperature parameter space.
+* Exact Spin-Boson-Model Tunneling Dynamics with Time Dependent Variation Matrix Product States (TDVMPS). Barrier height and temperature parameter space.
      * [10.5281/zenodo.4432014](https://doi.org/10.5281/zenodo.4432014)
 
 * Real-time benchmark dynamics of the Ohmic Spin-Boson Model computed with Time-Dependent Variational Matrix Product States. (TDVMPS) coupling strength and temperature parameter space.
