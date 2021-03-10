@@ -289,10 +289,14 @@ end
 
 Generate MPO for a spin-1/2 coupled to a chain of harmonic oscillators defined by the Hamiltonian
 
-``H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0σ_x(a_k^\\dagger+a_k) + \sum_i=0^N-1 t_i (a_i+1^\\dagger a_i +h.c.) + \\sum_i=1^N-1 ϵ_ia_i^\\dagger a_i,
+``H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0σ_x(a_k^\\dagger+a_k) + \sum_i=0^N-1 t_i (a_i+1^\\dagger a_i +h.c.) + \\sum_i=1^N-1 ϵ_ia_i^\\dagger a_i``,
 
-which is unitarily equivalent to the spin-boson Hamiltonian defined by
-The chain parameters 
+This Hamiltonain is unitarily equivalent to the spin-boson Hamiltonian defined 
+
+``H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{J(ω)}(a_ω^\\dagger+a_ω) + \\int_0^∞ωa_ω^\\daggera_ω``
+
+The chain parameters, supplied by `chainparams=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`, can be choosen for any arbitrary spectral density ``J(ω)`` at any temperature.
+
 """
 function spinbosonmpo(ω0, Δ, d, N, chainparams; rwa=false, tree=false)
     u = unitmat(2)
