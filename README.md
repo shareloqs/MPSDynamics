@@ -68,9 +68,9 @@ We may then wish to construct some observables to measure along the trajectory. 
 ob1 = OneSiteObservable("sz", sz, 1)
 ```
 
-creates an object which represents the measurement of the expectation of `sz` on the first site of the chain,
-i.e. on the spin. The string passed to the first argument is just a label that will be used to retrieve the measurement data
-after the run.
+creates an object which represents the measurement of the expectation <img
+src="https://render.githubusercontent.com/render/math?math=\sigma_x"> on the first site of the chain, i.e. on the spin. The
+string passed to the first argument is just a label that will be used to retrieve the measurement data after the run.
 
 We may also wish to measure the bath observables.
 
