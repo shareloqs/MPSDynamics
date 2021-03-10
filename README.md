@@ -40,13 +40,13 @@ MPSDynamics.jl contains various functions for generating MPSs and MPOs used for 
 In this example we will consider the spin-boson model. First we define parameters and generate the MPO.
 
 ```julia
-d=6
-N=30
+d=6 # Number of Fock states of the chain modes
+N=30 # Length of the chain
 
-α = 0.5
-Δ = 0.0
-ω0 = 0.2
-s = 1
+α = 0.5 # coupling strength
+Δ = 0.0 # tunneling 
+ω0 = 0.2 # TLS gap
+s = 1 # ohmiticity
 cpars = chaincoeffs_ohmic(N, α, s)
 
 H = spinbosonmpo(ω0, Δ, d, N, cpars)
