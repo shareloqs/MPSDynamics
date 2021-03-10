@@ -115,41 +115,42 @@ function hbathchain(N::Int, d::Int, chainparams, longrangecc...; tree=false, rev
 
     numlong = length(longrangecc)
     cc = longrangecc
-    D = 3 + (coupletox ? 1 : 2)*(1+numlong)
+    D1 = 2 + (coupletox ? 1 : 2)*(1+numlong)
+    D2 = coupletox ? D1+1 : D1 
 
     H=Vector{Any}()
 
     if coupletox
-        M=zeros(D-1, D, d, d)
-        M[D-1, :, :, :] = up(e[1]*n, t[1]*b, t[1]*bd, fill(zero(u), numlong)..., u)
+        M=zeros(D1, D2, d, d)
+        M[D1, :, :, :] = up(e[1]*n, t[1]*b, t[1]*bd, fill(zero(u), numlong)..., u)
         M[:, 1, :, :] = dn(e[1]*n, [cc[j][1]*(b+bd) for j=1:numlong]..., b+bd, u)
         for k=1:numlong
             M[k+2,k+3,:,:] = u
         end
         push!(H, M)
     else
-        M=zeros(D, D, d, d)
-        M[D, :, :, :] = up(e[1]*n, t[1]*b, t[1]*bd, u)
+        M=zeros(D1, D2, d, d)
+        M[D1, :, :, :] = up(e[1]*n, t[1]*b, t[1]*bd, u)
         M[:, 1, :, :] = dn(e[1]*n, b, bd, u)
         numlong > 0 && error("haven't yet coded case of long range couplings with non-hermitian coupling")
         push!(H, M)
     end
     for i=2:N-1
-        M=zeros(D, D, d, d)
-        M[D, :, :, :] = up(e[i]*n, t[i]*b, t[i]*bd, fill(zero(u), numlong)..., u)
+        M=zeros(D2, D2, d, d)
+        M[D2, :, :, :] = up(e[i]*n, t[i]*b, t[i]*bd, fill(zero(u), numlong)..., u)
         M[:, 1, :, :] = dn(e[i]*n, [cc[j][i]*(b+bd) for j=1:numlong]..., b, bd, u)
         for k=1:numlong
             M[k+3,k+3,:,:] = u
         end
         push!(H, M)
     end
-    M=zeros(D, d, d)
+    M=zeros(D2, d, d)
     M[:, :, :] = dn(e[N]*n, [cc[j][N]*(b+bd) for j=1:numlong]..., b, bd, u)
     push!(H, M)
     if tree
         return TreeNetwork(H)
     else
-        H[end] = reshape(H[end], D, 1, d, d)
+        H[end] = reshape(H[end], D2, 1, d, d)
         reverse && reversempo!(H)
         return H
     end
@@ -181,11 +182,11 @@ function methylbluempo(e1, e2, δ, N1, N2, N3, d1, d2, d3, cparS1, cparS2, cparS
     return H
 end
 
-function methylbluempo2(e1, e2, δ, N1, N2, N3, d1, d2, d3, cparS1, ccS2, cparS2, ccS1, cparS1S2)
+function methylbluempo2(e1, e2, δ, N1, N2, N3, d1, d2, d3, S1p, S2p, S1q, S2q, cparS1S2)
     u = unitmat(3)
 
-    c1 = only(cparS1[3])
-    c2 = only(cparS2[3])
+    c1 = only(S1p[3])
+    c2 = only(S1q[3])
     c3 = only(cparS1S2[3])
 
     s2 = unitcol(1, 3)
@@ -195,12 +196,12 @@ function methylbluempo2(e1, e2, δ, N1, N2, N3, d1, d2, d3, cparS1, ccS2, cparS2
     Hs = (e2-e1)*s2*s2' + δ*(s1*s2' + s2*s1') # e^(-is1*s1't)He^(is1*s1't)
     M = zeros(1,4,4,3,3,3)
     M[1,:,1,1,:,:] = up(Hs, c1*s1*s1', s2*s2', u)
-    M[1,1,:,1,:,:] = up(Hs, c2*s2*s2', s1*s1', u)
+    M[1,1,:,1,:,:] = up(Hs, c2*s1*s1', s2*s2', u)
     M[1,1,1,:,:,:] = up(Hs, c3*(s1*s2'+s2*s1'), u)
 
     H = TreeNetwork(Any[M])
-    addtree!(H, 1, hbathchain(N1, d1, cparS1, ccS2; coupletox=true, tree=true))
-    addtree!(H, 1, hbathchain(N2, d2, cparS2, ccS1; coupletox=true, tree=true))
+    addtree!(H, 1, hbathchain(N1, d1, S1p, S2p; coupletox=true, tree=true))
+    addtree!(H, 1, hbathchain(N2, d2, S1q, S2q; coupletox=true, tree=true))
     addtree!(H, 1, hbathchain(N3, d3, cparS1S2; coupletox=true, tree=true))
     return H
 end
@@ -283,6 +284,16 @@ function methylblue_S1_mpo(e1, N, d, chainparams; tree=false)
     end
 end
 
+"""
+    spinbosonmpo(ω0, Δ, d, N, chainparams; rwa=false, tree=false)
+
+Generate MPO for a spin-1/2 coupled to a chain of harmonic oscillators defined by the Hamiltonian
+
+``H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0σ_x(a_k^\\dagger+a_k) + \sum_i=0^N-1 t_i (a_i+1^\\dagger a_i +h.c.) + \\sum_i=1^N-1 ϵ_ia_i^\\dagger a_i,
+
+which is unitarily equivalent to the spin-boson Hamiltonian defined by
+The chain parameters 
+"""
 function spinbosonmpo(ω0, Δ, d, N, chainparams; rwa=false, tree=false)
     u = unitmat(2)
     
@@ -304,7 +315,7 @@ function spinbosonmpo(ω0, Δ, d, N, chainparams; rwa=false, tree=false)
     end
 end
 
-function twobathspinmpo(ω0, Δ, Nl, Nr, dl, dr, chainparamsl=[fill(1.0,N),fill(1.0,N-1), 1.0], chainparamsr=chainparamsl; rwar=false, rwal=false, tree=false)
+function twobathspinmpo(ω0, Δ, Nl, Nr, dl, dr, chainparamsl=[fill(1.0,N),fill(1.0,N-1), 1.0], chainparamsr=chainparamsl; tree=false)
     u = unitmat(2)
 
     cl = only(chainparamsl[3])
@@ -312,14 +323,13 @@ function twobathspinmpo(ω0, Δ, Nl, Nr, dl, dr, chainparamsl=[fill(1.0,N),fill(
 
     Hs = (ω0/2)*sz + Δ*sx
 
-    Al = rwal ? cl*sm : cl*sx
-    Ar = rwar ? cr*sm : cr*sx
+    M=zeros(3,3,2,2)
+    M[1,:,:,:] = up(Hs, cr*sx, u)
+    M[:,1,:,:] = up(Hs, cl*sx, u)
 
-    M=zeros(4,4,2,2)
-    M[1,:,:,:] = up(Hs, Ar, Matrix(Ar'), u)
-    M[:,1,:,:] = up(Hs, Al, Matrix(Al'), u)
-
-    return Any[hbathchain(Nl, dl, chainparamsl; reverse=true)..., M, hbathchain(Nr, dr, chainparamsr)...]
+    chain1 = hbathchain(Nl, dl, chainparamsl; coupletox=true, reverse=true)
+    chain2 = hbathchain(Nr, dr, chainparamsr; coupletox=true)
+    return Any[chain1..., M, chain2...]
 end
 
 """
