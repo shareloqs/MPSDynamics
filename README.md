@@ -35,7 +35,7 @@ using MPSDynamics
 
 To set up a simulation we require an MPS representing our initial wave-function and a Matrix Product Operator (MPO) representing our Hamiltonian.
 
-MPSDynamics.jl contains various functions for generating MPSs and MPOs used for simulating certain models, but no attempt is made to be comprehensive. For generic MPO constuction, one can use the [ITensors.jl](https://github.com/ITensor/ITensors.jl) package and convert the resulting object into a form compatible with MPSDynamics.jl using the function MPOtoVector.
+MPSDynamics.jl contains various functions for generating MPSs and MPOs used for simulating certain models, but no attempt is made to be comprehensive. For generic MPO constuction, one can use the [ITensors.jl](https://github.com/ITensor/ITensors.jl) package and convert the resulting object into a form compatible with MPSDynamics.jl using the function `MPOtoVector`.
 
 In this example we will consider the spin-boson model. First we define parameters and generate the MPO.
 
@@ -59,7 +59,7 @@ Then we create the MPS.
 A = productstatemps(physdims(H));
 ```
 
-This will generate a product state MPS with local Hilbert space dimensions corressponding to the MPO, representing the
+This will generate a product state MPS with local Hilbert space dimensions corresponding to the MPO `H`, representing the
 spin in the up state and the bath in the vacuum state.
 
 We may then wish to construct some observables to measure along the trajectory. For example
@@ -68,7 +68,7 @@ We may then wish to construct some observables to measure along the trajectory. 
 ob1 = OneSiteObservable("sz", sz, 1)
 ```
 
-creates an object which represents the measurement of the expectation of ``\sigma_x`` on the first site of the chain,
+creates an object which represents the measurement of the expectation of `sz` on the first site of the chain,
 i.e. on the spin. The string passed to the first argument is just a label that will be used to retrieve the measurement data
 after the run.
 
@@ -101,12 +101,22 @@ A, dat = runsim(dt, T, A, H;
 ```
 
 This will propagate the MPS upto time `T` in time steps of `dt`. The simulation will be performed using 1-site TDVP with
-bond-dimensions of 2, 4 and 6 in order to check for convergence. The observables supplied to `convobs` will be measure
+bond-dimensions of 2, 4 and 6 in order to check for convergence. The observables supplied to `convobs` will be measured
 at every time step for every bond-dimension, while the observables supplied to `obs` will only be measured for the last
 (most accurate) convergence parameter supplied to `convparams`.
 
+The final MPS is returned to `A` and the measurement data is returned to `dat`. If the option `save=true` is used the
+data will also be saved to a file. The save directory may be specified using the option `savedir`, by default the save
+directory is ~/MPSDynamics, which will be created if it doesn't exist (if using Windows the slashes will need to be reversed).
 
+The data is stored in the JLD format which is based on HDF5. Loading the data in julia using the
+[JLD](https://github.com/JuliaIO/JLD.jl) package will recover the full type information of the Julia variables that were
+stored. At the same time the HDF5 format is natively support across many platforms and languages. For example, to load
+the spin-z data in Mathematica one could do
 
+```mathematica
+Import["~/MPSDyanmics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
+```
 
 
 

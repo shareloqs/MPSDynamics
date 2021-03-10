@@ -290,12 +290,12 @@ end
 Generate MPO for a spin-1/2 coupled to a chain of harmonic oscillators, defined by the Hamiltonian
 
 ``
-H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0σ_x(b_k^\\dagger+b_k) + \\sum_{i=0}^{N-1} t_i (b_i+1^\\dagger b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_ib_i^\\dagger b_i
+H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0σ_x(b_k^\\dagger+b_k) + \\sum_{i=0}^{N-1} t_i (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_ib_i^\\dagger b_i
 ``.
 
 The spin is on site 1 of the MPS and the bath modes are to the right.
 
-This Hamiltonain is unitarily equivalent to the spin-boson Hamiltonian defined by
+This Hamiltonain is unitarily equivalent (before the truncation to `N` sites) to the spin-boson Hamiltonian defined by
 
 ``
 H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\int_0^∞ωb_ω^\\dagger b_ω
@@ -359,7 +359,7 @@ The coefficients parameterise the chain Hamiltonian
 H = H_S + c_0 A_S⊗B_0+\\sum_{i=0}^{N-1}t_i (b_{i+1}^\\dagger + b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_ib_i^\\dagger b_i
 ``
 
-which is unitarily equivalent to
+which is unitarily equivalent (before the truncation to `N` sites) to
 
 ``
 H = H_S + A_S⊗\\int_0^∞dω\\sqrt{\\frac{J(ω)}{π}}B_ω + \\int_0^∞dωωb_ω^\\dagger b_ω 
