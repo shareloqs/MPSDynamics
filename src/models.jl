@@ -287,15 +287,17 @@ end
 """
     spinbosonmpo(ω0, Δ, d, N, chainparams; rwa=false, tree=false)
 
-Generate MPO for a spin-1/2 coupled to a chain of harmonic oscillators defined by the Hamiltonian
+Generate MPO for a spin-1/2 coupled to a chain of harmonic oscillators, defined by the Hamiltonian
 
-``H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0σ_x(a_k^\\dagger+a_k) + \sum_i=0^N-1 t_i (a_i+1^\\dagger a_i +h.c.) + \\sum_i=1^N-1 ϵ_ia_i^\\dagger a_i``,
+``H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0σ_x(b_k^\\dagger+b_k) + \\sum_{i=0}^{N-1} t_i (b_i+1^\\dagger b_i +h.c.) + \\sum_i=1^N-1 ϵ_ib_i^\\dagger b_i``.
 
-This Hamiltonain is unitarily equivalent to the spin-boson Hamiltonian defined 
+This Hamiltonain is unitarily equivalent to the spin-boson Hamiltonian defined by
 
-``H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{J(ω)}(a_ω^\\dagger+a_ω) + \\int_0^∞ωa_ω^\\daggera_ω``
+``H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\int_0^∞ωb_ω^\\dagger b_ω``.
 
-The chain parameters, supplied by `chainparams=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`, can be choosen for any arbitrary spectral density ``J(ω)`` at any temperature.
+The chain parameters, supplied by `chainparams=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature.
+
+The rotating wave approximation can be made by setting `rwa=true`.
 
 """
 function spinbosonmpo(ω0, Δ, d, N, chainparams; rwa=false, tree=false)
@@ -339,7 +341,7 @@ end
 """
     chaincoeffs_ohmic(nummodes, α, s, beta="inf"; wc=1, soft=false)
 
-Generate chain coefficients for an Harmonic bath coupled to a spin-1/2 with spectral density given by: 
+Generate chain coefficients for an Harmonic bath at zero temperature with a power law spectral density given by: 
 
 soft cutoff: ``J(ω) = 2παω_c (\\frac{ω}{ω_c})^s \\exp(-ω/ω_c)`` \n
 hard cutoff: ``J(ω) = 2παω_c (\\frac{ω}{ω_c})^s θ(ω-ω_c)``

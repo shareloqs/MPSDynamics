@@ -107,7 +107,7 @@ export sz, sx, sy, numb, crea, anih, unitcol, unitrow, unitmat, spinSX, spinSY, 
 
 export chaincoeffs_ohmic, spinbosonmpo, methylbluempo, methylbluempo_correlated, methylbluempo_correlated_nocoupling, methylbluempo_nocoupling, ibmmpo, methylblue_S1_mpo, methylbluempo2, twobathspinmpo
 
-export productstatemps, physdims, randmps, bonddims
+export productstatemps, physdims, randmps, bonddims, elementmps
 
 export measure, measurempo, OneSiteObservable, TwoSiteObservable, FockError, errorbar
 
