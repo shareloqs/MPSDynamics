@@ -37,7 +37,7 @@ To set up a simulation we require an MPS representing our initial wave-function 
 
 MPSDynamics.jl contains various functions for generating MPSs and MPOs used for simulating certain models, but no attempt is made to be comprehensive. For generic MPO constuction, one can use the [ITensors.jl](https://github.com/ITensor/ITensors.jl) package and convert the resulting object into a form compatible with MPSDynamics.jl using the function MPOtoVector.
 
-In this example we will consider the spin-boson model. First we 
+In this example we will consider the spin-boson model. First we define parameters and generate the MPO.
 
 ```julia
 d=6
@@ -52,6 +52,15 @@ cpars = chaincoeffs_ohmic(N, α, s)
 H = spinbosonmpo(ω0, Δ, d, N, cpars)
 
 ```
+
+Then we create the MPS.
+
+```julia
+A = productstatemps(physdims(H));
+```
+
+This will generate a product state MPS with the spin in the up state and the bath in the vacuum state.
+
 
 
 

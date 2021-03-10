@@ -290,7 +290,7 @@ end
 Generate MPO for a spin-1/2 coupled to a chain of harmonic oscillators, defined by the Hamiltonian
 
 ``
-H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0σ_x(b_k^\\dagger+b_k) + \\sum_{i=0}^{N-1} t_i (b_i+1^\\dagger b_i +h.c.) + \\sum_i=1^N-1 ϵ_ib_i^\\dagger b_i
+H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0σ_x(b_k^\\dagger+b_k) + \\sum_{i=0}^{N-1} t_i (b_i+1^\\dagger b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_ib_i^\\dagger b_i
 ``.
 
 This Hamiltonain is unitarily equivalent to the spin-boson Hamiltonian defined by
@@ -299,7 +299,7 @@ This Hamiltonain is unitarily equivalent to the spin-boson Hamiltonian defined b
 H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\int_0^∞ωb_ω^\\dagger b_ω
 ``.
 
-The chain parameters, supplied by `chainparams=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature.
+The chain parameters, supplied by `chainparams`=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0], can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature.
 
 The rotating wave approximation can be made by setting `rwa=true`.
 
@@ -343,9 +343,10 @@ function twobathspinmpo(ω0, Δ, Nl, Nr, dl, dr, chainparamsl=[fill(1.0,N),fill(
 end
 
 """
-    chaincoeffs_ohmic(N, α, s,; ωc=1, soft=false) = [[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]
+    chaincoeffs_ohmic(N, α, s,; ωc=1, soft=false)
 
-Generate chain coefficients for an Harmonic bath at zero temperature with a power law spectral density given by: 
+Generate chain coefficients ``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`` for an Harmonic bath at zero temperature with a power
+law spectral density given by:
 
 soft cutoff: ``J(ω) = 2παω_c (\\frac{ω}{ω_c})^s \\exp(-ω/ω_c)`` \n
 hard cutoff: ``J(ω) = 2παω_c (\\frac{ω}{ω_c})^s θ(ω-ω_c)``
@@ -353,7 +354,7 @@ hard cutoff: ``J(ω) = 2παω_c (\\frac{ω}{ω_c})^s θ(ω-ω_c)``
 The coefficients parameterise the chain Hamiltonian
 
 ``
-H = H_S + c_0 A_S⊗(b_0^\\dagger+b_0)+\\sum_{i=0}^{N-1}t_i (b_i+1^\\dagger b_i +h.c.) + \\sum_i=1^N-1 ϵ_ib_i^\\dagger b_i
+H = H_S + c_0 A_S⊗B_0+\\sum_{i=0}^{N-1}t_i (b_{i+1}^\\dagger + b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_ib_i^\\dagger b_i
 ``
 
 which is unitarily equivalent to
