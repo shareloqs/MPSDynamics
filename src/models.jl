@@ -289,11 +289,15 @@ end
 
 Generate MPO for a spin-1/2 coupled to a chain of harmonic oscillators, defined by the Hamiltonian
 
-``H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0σ_x(b_k^\\dagger+b_k) + \\sum_{i=0}^{N-1} t_i (b_i+1^\\dagger b_i +h.c.) + \\sum_i=1^N-1 ϵ_ib_i^\\dagger b_i``.
+``
+H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0σ_x(b_k^\\dagger+b_k) + \\sum_{i=0}^{N-1} t_i (b_i+1^\\dagger b_i +h.c.) + \\sum_i=1^N-1 ϵ_ib_i^\\dagger b_i
+``.
 
 This Hamiltonain is unitarily equivalent to the spin-boson Hamiltonian defined by
 
-``H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\int_0^∞ωb_ω^\\dagger b_ω``.
+``
+H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\int_0^∞ωb_ω^\\dagger b_ω
+``.
 
 The chain parameters, supplied by `chainparams=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature.
 
@@ -339,20 +343,25 @@ function twobathspinmpo(ω0, Δ, Nl, Nr, dl, dr, chainparamsl=[fill(1.0,N),fill(
 end
 
 """
-    chaincoeffs_ohmic(nummodes, α, s, beta="inf"; wc=1, soft=false)
+    chaincoeffs_ohmic(N, α, s,; ωc=1, soft=false) = [[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]
 
 Generate chain coefficients for an Harmonic bath at zero temperature with a power law spectral density given by: 
 
 soft cutoff: ``J(ω) = 2παω_c (\\frac{ω}{ω_c})^s \\exp(-ω/ω_c)`` \n
 hard cutoff: ``J(ω) = 2παω_c (\\frac{ω}{ω_c})^s θ(ω-ω_c)``
 
-The Hamiltonian is given by:
+The coefficients parameterise the chain Hamiltonian
 
-``H = \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\sum_kg_k(b_k^\\dagger+b_k) + \\sum_kω_kb_k^\\dagger b_k``
+``
+H = H_S + c_0 A_S⊗(b_0^\\dagger+b_0)+\\sum_{i=0}^{N-1}t_i (b_i+1^\\dagger b_i +h.c.) + \\sum_i=1^N-1 ϵ_ib_i^\\dagger b_i
+``
 
-And the spectral density is defined by:
+which is unitarily equivalent to
 
-``J(ω) ≡ π\\sum_k|g_k|^2δ(ω-ω_k)``
+``
+H = H_S + A_S⊗\\int_0^∞dω\\sqrt{\\frac{J(ω)}{π}}B_ω + \\int_0^∞dωωb_ω^\\dagger b_ω 
+``
+
 """
 function chaincoeffs_ohmic(nummodes, α, s; ωc=1, soft=false)
     if soft
