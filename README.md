@@ -59,7 +59,53 @@ Then we create the MPS.
 A = productstatemps(physdims(H));
 ```
 
-This will generate a product state MPS with the spin in the up state and the bath in the vacuum state.
+This will generate a product state MPS with local Hilbert space dimensions corressponding to the MPO, representing the
+spin in the up state and the bath in the vacuum state.
+
+We may then wish to construct some observables to measure along the trajectory. For example
+
+```julia
+ob1 = OneSiteObservable("sz", sz, 1)
+```
+
+creates an object which represents the measurement of the expectation of ``\sigma_x`` on the first site of the chain,
+i.e. on the spin. The string passed to the first argument is just a label that will be used to retrieve the measurement data
+after the run.
+
+We may also wish to measure the bath observables.
+
+```julia
+ob2 = OneSiteObservable("chain mode occupation", numb(d), (2,N+1))
+```
+
+This will measure the number operator (truncated to d Fock states) on all chain modes, i.e. on sites 2 to
+N+1 inclusive.
+
+Finally we launch the simulation with the function `runsim`.
+
+```julia
+dt = 0.2
+T = 60.0
+
+A, dat = runsim(dt, T, A, H;
+                name = "ohmic spin boson model",
+                method = :TDVP1,
+                obs = [ob2],
+                convobs = [ob1],
+                params = @LogParams(N, d, α, Δ, ω0, s),
+                convparams = [2,4,8],
+                verbose = false,
+                save = true,
+                plot = true,
+                );
+```
+
+This will propagate the MPS upto time `T` in time steps of `dt`. The simulation will be performed using 1-site TDVP with
+bond-dimensions of 2, 4 and 6 in order to check for convergence. The observables supplied to `convobs` will be measure
+at every time step for every bond-dimension, while the observables supplied to `obs` will only be measured for the last
+(most accurate) convergence parameter supplied to `convparams`.
+
+
 
 
 

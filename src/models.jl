@@ -293,6 +293,8 @@ Generate MPO for a spin-1/2 coupled to a chain of harmonic oscillators, defined 
 H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0σ_x(b_k^\\dagger+b_k) + \\sum_{i=0}^{N-1} t_i (b_i+1^\\dagger b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_ib_i^\\dagger b_i
 ``.
 
+The spin is on site 1 of the MPS and the bath modes are to the right.
+
 This Hamiltonain is unitarily equivalent to the spin-boson Hamiltonian defined by
 
 ``
@@ -343,7 +345,7 @@ function twobathspinmpo(ω0, Δ, Nl, Nr, dl, dr, chainparamsl=[fill(1.0,N),fill(
 end
 
 """
-    chaincoeffs_ohmic(N, α, s,; ωc=1, soft=false)
+    chaincoeffs_ohmic(N, α, s; ωc=1, soft=false)
 
 Generate chain coefficients ``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`` for an Harmonic bath at zero temperature with a power
 law spectral density given by:
