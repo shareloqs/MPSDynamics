@@ -301,7 +301,7 @@ This Hamiltonain is unitarily equivalent (before the truncation to `N` sites) to
 H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\int_0^∞ωb_ω^\\dagger b_ω
 ``.
 
-The chain parameters, supplied by `chainparams`=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0], can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature.
+The chain parameters, supplied by `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature.
 
 The rotating wave approximation can be made by setting `rwa=true`.
 
