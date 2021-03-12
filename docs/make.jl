@@ -7,7 +7,6 @@ makedocs(
     clean   = true,
     doctest = true,
     modules = [MPSDynamics],
-    repo   = "angusdunnett/MPSDynamics.git",
     highlightsig = true,
     sitename = "MPSDynamics.jl",
     authors = "Angus Dunnett",
