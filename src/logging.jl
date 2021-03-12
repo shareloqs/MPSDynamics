@@ -114,6 +114,10 @@ function save_plot(savedir, convcheck, unid, times, convdatadict, convparams, co
 end
 
 macro LogParams(vars...)
-    [[string(var),esc(var)] for var in vars]
+    global names = string.(vars)
+    quote
+        len = length($(esc(vars)))
+        vals = [$(esc.(vars)...)]
+        [[names[i],vals[i]] for i=1:len]
+    end
 end
-

@@ -40,13 +40,13 @@ MPSDynamics.jl contains various functions for generating MPSs and MPOs used for 
 In this example we will consider the spin-boson model. First we define parameters and generate the MPO.
 
 ```julia
-d=6 # Number of Fock states of the chain modes
-N=30 # Length of the chain
+d=6 # number of Fock states of the chain modes
+N=30 # length of the chain
 
 α = 0.5 # coupling strength
 Δ = 0.0 # tunneling 
 ω0 = 0.2 # TLS gap
-s = 1 # ohmiticity
+s = 1 # ohmicity
 cpars = chaincoeffs_ohmic(N, α, s)
 
 H = spinbosonmpo(ω0, Δ, d, N, cpars)
@@ -102,7 +102,7 @@ A, dat = runsim(dt, T, A, H;
 ```
 
 This will propagate the MPS up to time `T` in time steps of `dt`. The simulation will be performed using 1-site TDVP with
-bond-dimensions of 2, 4 and 6 in order to check for convergence. The observables supplied to `convobs` will be measured
+bond-dimensions of 2, 4 and 8 in order to check for convergence. The observables supplied to `convobs` will be measured
 at every time step for every bond-dimension, while the observables supplied to `obs` will only be measured for the last
 (most accurate) convergence parameter supplied to `convparams`.
 
