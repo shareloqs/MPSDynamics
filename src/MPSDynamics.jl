@@ -1,6 +1,6 @@
 module MPSDynamics
 
-using JLD, HDF5, Random, Dates, Plots, Printf, Distributed, LinearAlgebra, DelimitedFiles, KrylovKit, TensorOperations, GraphRecipes, SpecialFunctions
+using JLD, HDF5, Random, Dates, Plots, Printf, Distributed, LinearAlgebra, DelimitedFiles, KrylovKit, TensorOperations, GraphRecipes, SpecialFunctions, ITensors
 
 include("fundamentals.jl")
 include("reshape.jl")
@@ -107,7 +107,7 @@ export sz, sx, sy, numb, crea, anih, unitcol, unitrow, unitmat, spinSX, spinSY, 
 
 export chaincoeffs_ohmic, spinbosonmpo, methylbluempo, methylbluempo_correlated, methylbluempo_correlated_nocoupling, methylbluempo_nocoupling, ibmmpo, methylblue_S1_mpo, methylbluempo2, twobathspinmpo
 
-export productstatemps, physdims, randmps, bonddims
+export productstatemps, physdims, randmps, bonddims, elementmps
 
 export measure, measurempo, OneSiteObservable, TwoSiteObservable, FockError, errorbar
 
@@ -122,6 +122,8 @@ export randtree
 export readchaincoeffs, h5read, load
 
 export println, print, show
+
+export @LogParams
 
 end
 

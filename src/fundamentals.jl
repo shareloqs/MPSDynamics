@@ -369,5 +369,18 @@ function writeprintln(f::Vector{T}, str...) where T <: IO
     write.(f, string(str...,"\n"))
 end
 
+"""
+    MPOtoVector(mpo::MPO)
 
+Convert an ITensors chain MPO into a form compatible with MPSDynamics
 
+"""
+function MPOtoVector(mpo::MPO)
+    N = length(mpo)
+    H = [Array(mpo[i],mpo[i].inds...) for i=1:N]
+    dims=size(H[1])
+    H[1] = reshape(H[1], 1, dims...)
+    dims=size(H[N])
+    H[N] = reshape(H[N], dims[1], 1, dims[2], dims[3])
+    return H
+end

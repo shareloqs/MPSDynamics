@@ -112,3 +112,12 @@ function save_plot(savedir, convcheck, unid, times, convdatadict, convparams, co
         savefig(plt, string(savedir,unid,"/","convplot_",ob.name,"_",unid,".pdf"));
     end
 end
+
+macro LogParams(vars...)
+    global names = string.(vars)
+    quote
+        len = length($(esc(vars)))
+        vals = [$(esc.(vars)...)]
+        [[names[i],vals[i]] for i=1:len]
+    end
+end

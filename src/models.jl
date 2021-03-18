@@ -182,11 +182,11 @@ function methylbluempo(e1, e2, δ, N1, N2, N3, d1, d2, d3, cparS1, cparS2, cparS
     return H
 end
 
-function methylbluempo2(e1, e2, δ, N1, N2, N3, d1, d2, d3, S1p, S2p, S1q, S2q, cparS1S2)
+function methylbluempo2(e1, e2, δ, N1, N2, N3, d1, d2, d3, S1a1, S2a1, S1a2, S2a2, cparS1S2)
     u = unitmat(3)
 
-    c1 = only(S1p[3])
-    c2 = only(S1q[3])
+    c1 = only(S1a1[3])
+    c2 = only(S2a2[3])
     c3 = only(cparS1S2[3])
 
     s2 = unitcol(1, 3)
@@ -196,12 +196,12 @@ function methylbluempo2(e1, e2, δ, N1, N2, N3, d1, d2, d3, S1p, S2p, S1q, S2q, 
     Hs = (e2-e1)*s2*s2' + δ*(s1*s2' + s2*s1') # e^(-is1*s1't)He^(is1*s1't)
     M = zeros(1,4,4,3,3,3)
     M[1,:,1,1,:,:] = up(Hs, c1*s1*s1', s2*s2', u)
-    M[1,1,:,1,:,:] = up(Hs, c2*s1*s1', s2*s2', u)
+    M[1,1,:,1,:,:] = up(Hs, c2*s2*s2', s1*s1', u)
     M[1,1,1,:,:,:] = up(Hs, c3*(s1*s2'+s2*s1'), u)
 
     H = TreeNetwork(Any[M])
-    addtree!(H, 1, hbathchain(N1, d1, S1p, S2p; coupletox=true, tree=true))
-    addtree!(H, 1, hbathchain(N2, d2, S1q, S2q; coupletox=true, tree=true))
+    addtree!(H, 1, hbathchain(N1, d1, S1a1, S2a1; coupletox=true, tree=true))
+    addtree!(H, 1, hbathchain(N2, d2, S2a2, S1a2; coupletox=true, tree=true))
     addtree!(H, 1, hbathchain(N3, d3, cparS1S2; coupletox=true, tree=true))
     return H
 end
@@ -284,6 +284,28 @@ function methylblue_S1_mpo(e1, N, d, chainparams; tree=false)
     end
 end
 
+"""
+    spinbosonmpo(ω0, Δ, d, N, chainparams; rwa=false, tree=false)
+
+Generate MPO for a spin-1/2 coupled to a chain of harmonic oscillators, defined by the Hamiltonian
+
+``
+H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0σ_x(b_k^\\dagger+b_k) + \\sum_{i=0}^{N-1} t_i (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_ib_i^\\dagger b_i
+``.
+
+The spin is on site 1 of the MPS and the bath modes are to the right.
+
+This Hamiltonain is unitarily equivalent (before the truncation to `N` sites) to the spin-boson Hamiltonian defined by
+
+``
+H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\int_0^∞ωb_ω^\\dagger b_ω
+``.
+
+The chain parameters, supplied by `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature.
+
+The rotating wave approximation can be made by setting `rwa=true`.
+
+"""
 function spinbosonmpo(ω0, Δ, d, N, chainparams; rwa=false, tree=false)
     u = unitmat(2)
     
@@ -323,20 +345,26 @@ function twobathspinmpo(ω0, Δ, Nl, Nr, dl, dr, chainparamsl=[fill(1.0,N),fill(
 end
 
 """
-    chaincoeffs_ohmic(nummodes, α, s, beta="inf"; wc=1, soft=false)
+    chaincoeffs_ohmic(N, α, s; ωc=1, soft=false)
 
-Generate chain coefficients for an Harmonic bath coupled to a spin-1/2 with spectral density given by: 
+Generate chain coefficients ``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`` for an Harmonic bath at zero temperature with a power
+law spectral density given by:
 
 soft cutoff: ``J(ω) = 2παω_c (\\frac{ω}{ω_c})^s \\exp(-ω/ω_c)`` \n
 hard cutoff: ``J(ω) = 2παω_c (\\frac{ω}{ω_c})^s θ(ω-ω_c)``
 
-The Hamiltonian is given by:
+The coefficients parameterise the chain Hamiltonian
 
-``H = \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\sum_kg_k(b_k^\\dagger+b_k) + \\sum_kω_kb_k^\\dagger b_k``
+``
+H = H_S + c_0 A_S⊗B_0+\\sum_{i=0}^{N-1}t_i (b_{i+1}^\\dagger + b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_ib_i^\\dagger b_i
+``
 
-And the spectral density is defined by:
+which is unitarily equivalent (before the truncation to `N` sites) to
 
-``J(ω) ≡ π\\sum_k|g_k|^2δ(ω-ω_k)``
+``
+H = H_S + A_S⊗\\int_0^∞dω\\sqrt{\\frac{J(ω)}{π}}B_ω + \\int_0^∞dωωb_ω^\\dagger b_ω 
+``
+
 """
 function chaincoeffs_ohmic(nummodes, α, s; ωc=1, soft=false)
     if soft
