@@ -8,6 +8,7 @@ include("tensorOps.jl")
 include("measure.jl")
 include("observables.jl")
 include("logiter.jl")
+include("flattendict.jl")
 include("machines.jl")
 include("treeBasics.jl")
 include("treeIterators.jl")
@@ -32,7 +33,7 @@ function runsim(dt, tmax, A, H;
                 obs=[],
                 convobs=[],
                 convparams=error("Must specify convergence parameters"),
-                save=true,
+                save=false,
                 plot=save,
                 savedir=string(homedir(),"/MPSDynamics/"),
                 unid=randstring(5),
@@ -47,10 +48,10 @@ function runsim(dt, tmax, A, H;
         numconv = length(convparams)
     else
         convcheck = false
-        convparams = only(convparams)
+        convparams = typeof(convparams) <: Vector ? only(convparams) : convparams
     end
 
-    if save || saveplot
+    if save || plot
         if savedir[end] != '/'
             savedir = string(savedir,"/")
         end
@@ -72,40 +73,49 @@ function runsim(dt, tmax, A, H;
 
     tstart = now()
     A0, dat = try
-        A0, dat = launch_workers(machine) do pid
+        out = launch_workers(machine) do pid
             print("loading MPSDynamics............")
             @everywhere pid eval(using MPSDynamics)
             println("done")
-            A0, dat = fetch(@spawnat only(pid) run_all(dt, tmax, A, H;
+            out = fetch(@spawnat only(pid) run_all(dt, tmax, A, H;
                                                        method=method,
                                                        obs=obs,
                                                        convobs=convobs,
                                                        convparams=convparams,
                                                        kwargs...))
+            return out
+        end
+        if typeof(out) <: Distributed.RemoteException
+            throw(out)
+        else
+            A0, dat = out
+            save && save_data(savedir, unid, convcheck, dat["data"], convcheck ? dat["convdata"] : nothing, paramdict)
+            plot && save_plot(savedir, convcheck, unid, dat["data"]["times"], convcheck ? dat["convdata"] : dat["data"], convparams, convobs)
+            dat = flatten(dat)
             return A0, dat
         end
-        save && save_data(savedir, unid, convcheck, dat["data"], convcheck ? dat["convdata"] : nothing, paramdict)
-        plot && save_plot(savedir, convcheck, unid, dat["data"]["times"], convcheck ? dat["convdata"] : dat["data"], convparams, convobs)
-        return A0, dat
     catch e
-        # this part isn't working very well
         save && error_log(savedir, unid)
         showerror(stdout, e, catch_backtrace())                
         println()
         save && open(string(savedir, unid, "/", errorfile), "w+") do io
             showerror(io, e, catch_backtrace())
         end
+        return (nothing, nothing)
     finally
-        output = length(filter(x-> x!=errorfile && x!="info.txt", readdir(string(savedir, unid)))) > 0
         telapsed = canonicalize(Dates.CompoundPeriod(now() - tstart))
-        save && close_log(savedir, unid, output, telapsed)
+        if save
+            output = length(filter(x-> x!=errorfile && x!="info.txt", readdir(string(savedir, unid)))) > 0
+            close_log(savedir, unid, output, telapsed)
+        end
+        println("total run time : $telapsed")
     end
     return A0, dat
 end
 
 export sz, sx, sy, numb, crea, anih, unitcol, unitrow, unitmat, spinSX, spinSY, spinSZ, SZ, SX, SY
 
-export chaincoeffs_ohmic, spinbosonmpo, methylbluempo, methylbluempo_correlated, methylbluempo_correlated_nocoupling, methylbluempo_nocoupling, ibmmpo, methylblue_S1_mpo, methylbluempo2, twobathspinmpo
+export chaincoeffs_ohmic, spinbosonmpo, methylbluempo, methylbluempo_correlated, methylbluempo_correlated_nocoupling, methylbluempo_nocoupling, ibmmpo, methylblue_S1_mpo, methylbluempo2, twobathspinmpo, xyzmpo
 
 export productstatemps, physdims, randmps, bonddims, elementmps
 
@@ -124,6 +134,8 @@ export readchaincoeffs, h5read, load
 export println, print, show
 
 export @LogParams
+
+export MPOtoVector, MPStoVector
 
 end
 

@@ -8,7 +8,9 @@ function run_2TDVP(dt, tmax, A, H, truncerr, truncdim; obs=[], savebonddims=fals
     @printf("truncerr : %.3e, truncdim : %i \n", truncerr, truncdim)
 
     exp = measure(A0, obs; t=times[1])
-    push!(data, [obs[i].name => reshape(exp[i], size(exp[i])..., 1) for i=1:length(obs)]...)
+    for i=1:length(obs)
+        push!(data, obs[i].name => reshape(exp[i], size(exp[i])..., 1))
+    end
 
     bonds = bonddims(A0)
     savebonddims && push!(data, "bonddims" => reshape([bonds...], length(bonds), 1))

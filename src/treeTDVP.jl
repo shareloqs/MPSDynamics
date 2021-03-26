@@ -531,8 +531,8 @@ function productstatemps(tree_::Tree, physdims::Dims, Dmax::Int=1; state=:Vacuum
     setheadnode!(tree, leafnodes[2])
     bonddims2 = calcbonddims(tree, physdims, Dmax)
     bonddims = min.(bonddims1, bonddims2)
-    setheadnode!(tree, hn)
-
+    tree = deepcopy(tree_)
+    
     if state==:Vacuum
         statelist = [unitcol(1, physdims[i]) for i in 1:N]
     elseif state==:FullOccupy
@@ -563,15 +563,15 @@ productstatemps(tree::Tree, physdims::Int, Dmax::Int; state=:Vacuum) =
     productstatemps(tree, ntuple(i -> physdims, length(tree)), Dmax; state=state)
 
 function mpsembed!(A::TreeNetwork, Dmax::Int)
+    tree = deepcopy(A.tree)
     pdims = physdims(A)
-    hn = findheadnode(A)
-    leafnodes = leaves(A)
-    setheadnode!(A.tree, leafnodes[1])
-    bonddims1 = calcbonddims(A.tree, pdims, Dmax)
-    setheadnode!(A.tree, leafnodes[2])
-    bonddims2 = calcbonddims(A.tree, pdims, Dmax)
+    hn = findheadnode(tree)
+    leafnodes = leaves(tree)
+    setheadnode!(tree, leafnodes[1])
+    bonddims1 = calcbonddims(tree, pdims, Dmax)
+    setheadnode!(tree, leafnodes[2])
+    bonddims2 = calcbonddims(tree, pdims, Dmax)
     bonddims = min.(bonddims1, bonddims2)
-    setheadnode!(A.tree, hn)
 
     for (id, nd) in enumerate(A.tree.nodes)
         parent = nd.parent

@@ -355,7 +355,12 @@ truncF2(F, D) = F[:,:,1:D]
 
 function evolveAC2(dt::Float64, A1, A2, M1, M2, FL, FR, energy=false; kwargs...)
     @tensor AA[a,sa,b,sb] := A1[a,c,sa] * A2[c,b,sb]
-    AAnew, info = exponentiate(x->applyH2(x, M1, M2, FL, FR), -im*dt, AA; ishermitian = true)
+
+    tol = get(kwargs, :tol, 1e-12)
+    krylovdim = get(kwargs, :krylovdim, 30)
+    maxiter = get(kwargs, :maxiter, 100)
+
+    AAnew, info = exponentiate(x->applyH2(x, M1, M2, FL, FR), -im*dt, AA; ishermitian = true, tol=tol, krylovdim=krylovdim, maxiter=maxiter)
 
     if energy
         E = real(dot(AAnew, applyH2(AAnew, M1, M2, FL, FR)))
@@ -371,7 +376,11 @@ function evolveAC(dt::Float64, AC, M, FL, FR, energy=false; kwargs...)
     AC = setrightbond(AC, Drnew)
     AC = setleftbond(AC, Dlnew)
 
-    AC, info = exponentiate(x->applyH1(x, M, FL, FR), -im*dt, AC; ishermitian = true)
+    tol = get(kwargs, :tol, 1e-12)
+    krylovdim = get(kwargs, :krylovdim, 30)
+    maxiter = get(kwargs, :maxiter, 100)
+
+    AC, info = exponentiate(x->applyH1(x, M, FL, FR), -im*dt, AC; ishermitian = true, tol=tol, krylovdim=krylovdim, maxiter=maxiter)
 
     if energy
         E = real(dot(AC, applyH1(AC, M, FL, FR)))
@@ -381,8 +390,11 @@ function evolveAC(dt::Float64, AC, M, FL, FR, energy=false; kwargs...)
 end
 
 function evolveC(dt::Float64, C, FL, FR, energy=false; kwargs...)
+    tol = get(kwargs, :tol, 1e-12)
+    krylovdim = get(kwargs, :krylovdim, 30)
+    maxiter = get(kwargs, :maxiter, 100)
         
-    C, info = exponentiate(x->applyH0(x, FL, FR), im*dt, C; ishermitian = true)
+    C, info = exponentiate(x->applyH0(x, FL, FR), im*dt, C; ishermitian = true, tol=tol, krylovdim=krylovdim, maxiter=maxiter)
 
     if energy
         E = real(dot(C, applyH0(C, FL, FR)))

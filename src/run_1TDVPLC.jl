@@ -8,7 +8,9 @@ function run_1TDVP_LC(dt, tmax, A, H, Dmax; obs=[], timed=false, lightconerad=2,
     @printf("Dmax : %i \n", Dmax)
 
     exp = measure(A0, obs; t=times[1])
-    push!(data, [obs[i].name => reshape(exp[i], size(exp[i])..., 1) for i=1:length(obs)]...)
+    for i=1:length(obs)
+        push!(data, obs[i].name => reshape(exp[i], size(exp[i])..., 1))
+    end
 
     timed && (ttdvp = Vector{Float64}(undef, numsteps))
 

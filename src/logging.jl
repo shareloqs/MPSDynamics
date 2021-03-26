@@ -63,7 +63,7 @@ function close_log(savedir, unid, output, telapsed)
         else
             writeprintln(f, "\t no output files produced")
         end
-        writeprintln(f, "\t total run time : $telapsed")
+        write(f, "\t total run time : $telapsed\n")
         writeprintln(f)
     end
 end
