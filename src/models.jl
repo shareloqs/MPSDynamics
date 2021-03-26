@@ -188,7 +188,6 @@ function methylbluempo2(e1, e2, δ, N1, N2, N3, d1, d2, d3, S1a1, S2a1, S1a2, S2
 
     c1 = only(S1a1[3])
     c2 = only(S2a2[3])
-    
     c3 = only(cparS1S2[3])
 
     s2 = unitcol(1, 3)
