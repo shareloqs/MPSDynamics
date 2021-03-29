@@ -170,15 +170,16 @@ function methylbluempo(e1, e2, δ, N1, N2, N3, d1, d2, d3, cparS1, cparS2, cparS
     #Hs = e1*s1*s1' + e2*s2*s2' + δ*(s1*s2' + s2*s1')
     Hs = (e2-e1)*s2*s2' + δ*(s1*s2' + s2*s1') # e^(-is1*s1't)He^(is1*s1't)
 
-    M=zeros(1,4,4,4,3,3)
-    M[1, :, 1, 1, :, :] = up(Hs, c1*s1*s1', c1*s1*s1', u)
-    M[1, 1, :, 1, :, :] = up(Hs, c2*s2*s2', c2*s2*s2', u)
-    M[1, 1, 1, :, :, :] = up(Hs, c3*(s1*s2'+s2*s1'), c3*(s1*s2'+s2*s1'), u)
+    M=zeros(1,3,3,3,3,3)
+    M[1, :, 1, 1, :, :] = up(Hs, c1*s1*s1', u)
+    M[1, 1, :, 1, :, :] = up(Hs, c2*s2*s2', u)
+    M[1, 1, 1, :, :, :] = up(Hs, c3*(s1*s2'+s2*s1'), u)
 
     H = TreeNetwork(Any[M])
-    addtree!(H, 1, hbathchain(N1, d1, cparS1, tree=true))
-    addtree!(H, 1, hbathchain(N2, d2, cparS2, tree=true))
-    addtree!(H, 1, hbathchain(N3, d3, cparS1S2, tree=true))
+    addtree!(H, 1, hbathchain(N1, d1, cparS1, tree=true, coupletox=true))
+    addtree!(H, 1, hbathchain(N2, d2, cparS2, tree=true, coupletox=true))
+    addtree!(H, 1, hbathchain(N3, d3, cparS1S2, tree=true, coupletox=true))
+
     return H
 end
 
@@ -191,7 +192,7 @@ function methylbluempo2(e1, e2, δ, N1, N2, N3, d1, d2, d3, S1a1, S2a1, S1a2, S2
 
     s2 = unitcol(1, 3)
     s1 = unitcol(2, 3)
-       
+
     #Hs = e1*s1*s1' + e2*s2*s2' + δ*(s1*s2' + s2*s1')
     Hs = (e2-e1)*s2*s2' + δ*(s1*s2' + s2*s1') # e^(-is1*s1't)He^(is1*s1't)
     M = zeros(1,4,4,3,3,3)
@@ -313,16 +314,21 @@ function spinbosonmpo(ω0, Δ, d, N, chainparams; rwa=false, tree=false)
 
     Hs = (ω0/2)*sz + Δ*sx
 
-    M=zeros(1,4,2,2)
-    M[1, :, :, :] = up(Hs, rwa ? c0*sm : c0*sx, rwa ? c0*sp : c0*sx, u)
+    if rwa
+        M=zeros(1,4,2,2)
+        M[1, :, :, :] = up(Hs, c0*sm, c0*sp, u)
+    else
+        M=zeros(1,3,2,2)
+        M[1, :, :, :] = up(Hs, c0*sx, u)
+    end
 
     if tree
-        chain = hbathchain(N, d, chainparams; tree=true)
+        chain = hbathchain(N, d, chainparams; tree=true, coupletox=!rwa)
         H = TreeNetwork(Vector{AbstractArray}([M]))
         addtree!(H, 1, chain)
         return H
     else
-        chain = hbathchain(N, d, chainparams; tree=false)
+        chain = hbathchain(N, d, chainparams; tree=false, coupletox=!rwa)
         return Any[M, chain...]
     end
 end

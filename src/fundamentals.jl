@@ -377,10 +377,27 @@ Convert an ITensors chain MPO into a form compatible with MPSDynamics
 """
 function MPOtoVector(mpo::MPO)
     N = length(mpo)
-    H = [Array(mpo[i],mpo[i].inds...) for i=1:N]
+    H = [Array(mpo[i], mpo[i].inds...) for i=1:N]
     dims=size(H[1])
     H[1] = reshape(H[1], 1, dims...)
     dims=size(H[N])
     H[N] = reshape(H[N], dims[1], 1, dims[2], dims[3])
     return H
 end
+
+# Doesn't really work because indices change order in ITensors
+function MPStoVector(mps::MPS)
+    N = length(mps)
+    A = [Array(mps[i], mps[i].inds...) for i=1:N]
+    dims = size(A[1])
+    A[1] = reshape(A[1], 1, dims...)
+    A[1] = permutedims(A[1], [1,3,2])
+    for i=2:N-1
+        A[i] = permutedims(A[i], [3,1,2])
+    end
+    dims = size(A[N])
+    A[N] = reshape(A[N], dims..., 1)
+    A[N] = permutedims(A[N], [1,3,2])
+    return A
+end
+    

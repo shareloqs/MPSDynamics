@@ -11,6 +11,7 @@ function open_log(dt, tmax, convparams, method, machine, savedir, unid, name, pa
     named = typeof(name) <: String
     open(string(savedir,"$unid/","info.txt"), "w") do f0
         open(logname, append=true) do f
+            writeprintln(f)
             writeprintln(f, "[$(now())] => RUN <$unid> START")
             named && writeprintln([f,f0], "\t name : $name")
             writeprintln([f,f0], "\t machine : $(machine.name)")
@@ -63,7 +64,7 @@ function close_log(savedir, unid, output, telapsed)
         else
             writeprintln(f, "\t no output files produced")
         end
-        writeprintln(f, "\t total run time : $telapsed")
+        write(f, "\t total run time : $telapsed\n")
         writeprintln(f)
     end
 end

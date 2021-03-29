@@ -8,7 +8,9 @@ function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=false, tim
     @printf("prec : %.3e \n", prec)
 
     exp = measure(A0, obs; t=times[1])
-    push!(data, [obs[i].name => reshape(exp[i], size(exp[i])..., 1) for i=1:length(obs)]...)
+    for i=1:length(obs)
+        push!(data, obs[i].name => reshape(exp[i], size(exp[i])..., 1))
+    end
 
     bonds = bonddims(A0)
     savebonddims && push!(data, "bonddims" => reshape([bonds...], length(bonds), 1))
