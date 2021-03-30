@@ -247,7 +247,7 @@ function methylbluempo_nocoupling(e1, e2, N1, N2, d1, d2, cparS1, cparS2)
     u = unitmat(3)
     s2 = unitcol(1, 3)
     s1 = unitcol(2, 3)
-
+    
     c1 = only(cparS1[3])
     c2 = only(cparS2[3])
 
