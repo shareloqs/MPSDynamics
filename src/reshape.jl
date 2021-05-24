@@ -3,3 +3,8 @@ function Base.reshape(x::Number, dims...)
     return fill(x, dims...)
 end
 
+function slice(A::AbstractArray, id::Int)
+    s=size(A,id)
+    d=ndims(A)
+    [A[fill(:,id-1)...,i,fill(:,d-id)...] for i=1:s]
+end

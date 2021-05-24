@@ -167,10 +167,10 @@ function updateleftenv(A::Array{T1,4}, M::Array{T2,5}, dir::Int, F0, F1) where {
     dir==2 && (Aperm = [1,2,3,4]; Mperm = [1,2,3,4,5])
     At = permutedims(A, Aperm)
     Mt = permutedims(M, Mperm)
-    @tensoropt !(b,b0,b1) F[a,b,c] := F0[a0,b0,c0]*F1[a1,b1,c1]*conj(At[a0,a1,a,s'])*Mt[b0,b1,b,s',s]*At[c0,c1,c,s]
+    @tensoropt F[a,b,c] := F0[a0,b0,c0]*F1[a1,b1,c1]*conj(At[a0,a1,a,s'])*Mt[b0,b1,b,s',s]*At[c0,c1,c,s]
 end
 function updaterightenv(A::Array{T1,4}, M::Array{T2,5}, F1, F2) where {T1,T2}
-    @tensoropt !(b,b1,b2) F[a,b,c] := F1[a1,b1,c1]*F2[a2,b2,c2]*conj(A[a,a1,a2,s'])*M[b,b1,b2,s',s]*A[c,c1,c2,s]
+    @tensoropt F[a,b,c] := F1[a1,b1,c1]*F2[a2,b2,c2]*conj(A[a,a1,a2,s'])*M[b,b1,b2,s',s]*A[c,c1,c2,s]
 end
 function updateleftenv(A::Array{T1,5}, M::Array{T2,6}, dir::Int, F0, F1, F2) where {T1,T2} # dir in {1,2,3}
     dir==1 && (Aperm = [1,3,4,2,5]; Mperm = [1,3,4,2,5,6])
@@ -178,10 +178,10 @@ function updateleftenv(A::Array{T1,5}, M::Array{T2,6}, dir::Int, F0, F1, F2) whe
     dir==3 && (Aperm = [1,2,3,4,5]; Mperm = [1,2,3,4,5,6])
     At = permutedims(A, Aperm)
     Mt = permutedims(M, Mperm)
-    @tensoropt !(b,b0,b1,b2) F[a,b,c] := F0[a0,b0,c0]*F1[a1,b1,c1]*F2[a2,b2,c2]*conj(At[a0,a1,a2,a,s'])*Mt[b0,b1,b2,b,s',s]*At[c0,c1,c2,c,s]
+    @tensoropt F[a,b,c] := F0[a0,b0,c0]*F1[a1,b1,c1]*F2[a2,b2,c2]*conj(At[a0,a1,a2,a,s'])*Mt[b0,b1,b2,b,s',s]*At[c0,c1,c2,c,s]
 end
 function updaterightenv(A::Array{T1,5}, M::Array{T2,6}, F1, F2, F3) where {T1,T2}
-    @tensoropt !(b,b1,b2,b3) F[a,b,c] := F1[a1,b1,c1]*F2[a2,b2,c2]*F3[a3,b3,c3]*conj(A[a,a1,a2,a3,s'])*M[b,b1,b2,b3,s',s]*A[c,c1,c2,c3,s]
+    @tensoropt F[a,b,c] := F1[a1,b1,c1]*F2[a2,b2,c2]*F3[a3,b3,c3]*conj(A[a,a1,a2,a3,s'])*M[b,b1,b2,b3,s',s]*A[c,c1,c2,c3,s]
 end
 
 #dir gives the open index, where dir=1 is the parent
@@ -243,23 +243,24 @@ function updateenv4(A, M, F1, F2, F3)
     @tensor F[a,b,c] := F1[a1,b1,c1]*F2[a2,b2,c2]*F3[a3,b3,c3]*conj(A[a1,a2,a3,a,s'])*M[b1,b2,b3,b,s',s]*A[c1,c2,c3,c,s]
 end
 
-function applyH2(AA, H1, H2, F1, F2)
-    @tensoropt !(b1,b,b2) HAA[a1,s1,a2,s2] := F1[a1,b1,c1]*AA[c1,s1',c2,s2']*H1[b1,b,s1,s1']*H2[b,b2,s2,s2']*F2[a2,b2,c2]
+@tensoropt function applyH2(AA, H1, H2, F1, F2)
+    HAA[a1,s1,a2,s2] := F1[a1,b1,c1]*AA[c1,s1',c2,s2']*H1[b1,b,s1,s1']*H2[b,b2,s2,s2']*F2[a2,b2,c2]
+#    @tensoropt HAA[a1,s1,a2,s2] := F1[a1,b1,c1]*AA[c1,s1',c2,s2']*H1[b1,b,s1,s1']*H2[b,b2,s2,s2']*F2[a2,b2,c2]
 end
-function applyH1(AC, M, F)
-    @tensoropt !(b) HAC[a,s'] := F[a,b,c]*AC[c,s]*M[b,s',s]
+@tensoropt function applyH1(AC, M, F)
+    HAC[a,s'] := F[a,b,c]*AC[c,s]*M[b,s',s]
 end
-function applyH1(AC, M, F0, F1)
-    @tensoropt !(b0,b1) HAC[a0,a1,s'] := F0[a0,b0,c0]*F1[a1,b1,c1]*AC[c0,c1,s]*M[b0,b1,s',s]
+@tensoropt function applyH1(AC, M, F0, F1)
+    HAC[a0,a1,s'] := F0[a0,b0,c0]*F1[a1,b1,c1]*AC[c0,c1,s]*M[b0,b1,s',s]
 end
-function applyH1(AC, M, F0, F1, F2)
-    @tensoropt !(b0,b1,b2) HAC[a0,a1,a2,s'] := F0[a0,b0,c0]*F1[a1,b1,c1]*F2[a2,b2,c2]*AC[c0,c1,c2,s]*M[b0,b1,b2,s',s]
+@tensoropt function applyH1(AC, M, F0, F1, F2)
+    HAC[a0,a1,a2,s'] := F0[a0,b0,c0]*F1[a1,b1,c1]*F2[a2,b2,c2]*AC[c0,c1,c2,s]*M[b0,b1,b2,s',s]
 end
-function applyH1(AC, M, F0, F1, F2, F3)
-    @tensoropt !(b0,b1,b2,b3) HAC[a0,a1,a2,a3,s'] := F0[a0,b0,c0]*F1[a1,b1,c1]*F2[a2,b2,c2]*F3[a3,b3,c3]*AC[c0,c1,c2,c3,s]*M[b0,b1,b2,b3,s',s]
+@tensoropt function applyH1(AC, M, F0, F1, F2, F3)
+    HAC[a0,a1,a2,a3,s'] := F0[a0,b0,c0]*F1[a1,b1,c1]*F2[a2,b2,c2]*F3[a3,b3,c3]*AC[c0,c1,c2,c3,s]*M[b0,b1,b2,b3,s',s]
 end
-function applyH0(C, F0, F1)
-    @tensor HC[α,β] := F0[α,a,α']*C[α',β']*F1[β,a,β']
+@tensor function applyH0(C, F0, F1)
+    HC[α,β] := F0[α,a,α']*C[α',β']*F1[β,a,β']
 end
 
 #sets the right/left bond dimension of A, ie will truncate if Dnew is smaller than the current bond dimension and zero pad if it's larger
