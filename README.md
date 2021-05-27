@@ -43,7 +43,7 @@ In this example we will consider the spin-boson model. First we define parameter
 d=6 # number of Fock states of the chain modes
 N=30 # length of the chain
 
-α = 0.5 # coupling strength
+α = 0.1 # coupling strength
 Δ = 0.0 # tunneling 
 ω0 = 0.2 # TLS gap
 s = 1 # ohmicity
@@ -91,7 +91,7 @@ ob3 = TwoSiteObservable("SXdisp", sx, disp(d), [1], collect(2:N+1))
 ```
 
 will measure <img src="https://render.githubusercontent.com/render/math?math=\langle\sigma_x\hat{q}_i\rangle"> where
-<img src="https://render.githubusercontent.com/render/math?math=hat{q}_i"> is the displacement operator of the chain site and the index i runs over
+<img src="https://render.githubusercontent.com/render/math?math=\hat{q}_i"> is the displacement operator of the chain site and the index *i* runs over
 all chain sites.
 
 Finally we launch the simulation with the function `runsim`.
@@ -123,6 +123,8 @@ data will also be saved to a file. The save directory may be specified using the
 directory is ~/MPSDynamics, which will be created if it doesn't exist (if using Windows the slashes will need to be reversed).
 
 If the option `plot=true` is used, plots for 1D observables will be automatically generated and saved along with the data.
+
+![convplot](/home/angus/MPSDynamics/qJAWB/convplot_sz_qJAWB.pdf)
 
 The data is stored in the JLD format which is based on HDF5. Loading the data in julia using the
 [JLD](https://github.com/JuliaIO/JLD.jl) package will recover the full type information of the Julia variables that were
