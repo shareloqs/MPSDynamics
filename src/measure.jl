@@ -263,9 +263,9 @@ function measure2siteoperator(A::Vector, M1, M2, j1::Int64, j2::Int64, ρ::Vecto
     m2 = j1<j2 ? M2 : M1
 
     if j1==j2
+        herm_cis = ishermitian(M1*M2)
         v = rhoAOAstar(ρ[j1], A[j1], M1*M2, nothing)
-        T<:Real && (v=real(v))
-        return v
+        return herm_cis ? real(v) : v
     else
         ρ1 = rhoAOAstar(ρ[i1], A[i1], m1)
         for k=i1+1:i2-1
@@ -405,28 +405,30 @@ function measure2siteoperator_pair(A::Vector, M1, ρ::Vector; conjugate=false)
 end
 
 function measure2siteoperator(A::Vector, M1, M2, sites1::Vector{Int}, sites2::Vector{Int})
-    herm_cis = ishermitian(M1*M2)
+    if size(M1) == size(M2)
+        herm_cis = ishermitian(M1*M2)
+    else
+        herm_cis = false
+    end
     herm_trans = ishermitian(M1) && ishermitian(M2)
 
     N = length(A)
     ρ = ones(ComplexF64, 1, 1)
 
-    T = (herm_cis && herm_trans) ? Float64 : ComplexF64
+    T = herm_trans ? Float64 : ComplexF64
 
     expval = zeros(T, N, N)
     for i in 1:N
         if in(i, sites1)
             if in(i, sites2)
                 v = rhoAOAstar(ρ, A[i], M1*M2, nothing)
-                herm_cis && (v=real(v))
-                expval[i,i] = v
+                expval[i,i] = herm_cis ? real(v) : v
             end
             ρ12 = rhoAOAstar(ρ, A[i], M1)
             for j in i+1:N
                 if in(j, sites2)
                     v = rhoAOAstar(ρ12, A[j], M2, nothing)
-                    herm_trans && (v=real(v))
-                    expval[i,j] = v
+                    expval[i,j] = herm_trans ? real(v) : v
                 end
                 ρ12 = rhoAAstar(ρ12, A[j])
             end
@@ -437,8 +439,7 @@ function measure2siteoperator(A::Vector, M1, M2, sites1::Vector{Int}, sites2::Ve
             for j in i+1:N
                 if in(j, sites1)
                     v = rhoAOAstar(ρ21, A[j], M1, nothing)
-                    herm_trans && (v=real(v))
-                    expval[j,i] = v
+                    expval[j,i] = herm_trans ? real(v) : v
                 end
                 ρ21 = rhoAAstar(ρ21, A[j])
             end
@@ -448,7 +449,11 @@ function measure2siteoperator(A::Vector, M1, M2, sites1::Vector{Int}, sites2::Ve
     return expval[sites1,sites2]
 end
 function measure2siteoperator(A::Vector, M1, M2, sites1::Vector{Int}, sites2::Vector{Int}, ρ::Vector)
-    herm_cis = ishermitian(M1*M2)
+    if size(M1) == size(M2)
+        herm_cis = ishermitian(M1*M2)
+    else
+        herm_cis = false
+    end
     herm_trans = ishermitian(M1) && ishermitian(M2)
 
     N = length(A)
@@ -460,15 +465,13 @@ function measure2siteoperator(A::Vector, M1, M2, sites1::Vector{Int}, sites2::Ve
         if in(i, sites1)
             if in(i, sites2)
                 v = rhoAOAstar(ρ[i], A[i], M1*M2, nothing)
-                herm_cis && (v=real(v))
-                expval[i,i] = v
+                expval[i,i] = herm_cis ? real(v) : v
             end
             ρ12 = rhoAOAstar(ρ[i], A[i], M1)
             for j in i+1:N
                 if in(j, sites2)
                     v = rhoAOAstar(ρ12, A[j], M2, nothing)
-                    herm_trans && (v=real(v))
-                    expval[i,j] = v
+                    expval[i,j] = herm_trans ? real(v) : v
                 end
                 ρ12 = rhoAAstar(ρ12, A[j])
             end
@@ -479,8 +482,7 @@ function measure2siteoperator(A::Vector, M1, M2, sites1::Vector{Int}, sites2::Ve
             for j in i+1:N
                 if in(j, sites1)
                     v = rhoAOAstar(ρ21, A[j], M1, nothing)
-                    herm_trans && (v=real(v))
-                    expval[j,i] = v
+                    expval[j,i] = herm_trans ? real(v) : v
                 end
                 ρ21 = rhoAAstar(ρ21, A[j])
             end

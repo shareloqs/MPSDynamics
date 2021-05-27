@@ -56,7 +56,8 @@ H = spinbosonmpo(ω0, Δ, d, N, cpars)
 Then we create the MPS.
 
 ```julia
-A = productstatemps(physdims(H));
+ψ = unitcol(1,2)
+A = productstatemps(physdims(H), state=[ψ, fill(unitcol(1,d), N)...]) # MPS
 ```
 
 This will generate a product state MPS with local Hilbert space dimensions corresponding to the MPO `H`, representing the
