@@ -70,9 +70,9 @@ ob1 = OneSiteObservable("sz", sz, 1)
 ```
 
 creates an object which represents the measurement of the expectation of <img
-src="https://render.githubusercontent.com/render/math?math=\sigma_x"> on the first site of the chain, i.e. on the spin.
+src="https://render.githubusercontent.com/render/math?math=\sigma_z"> on the first site of the chain, i.e. on the spin.
 The string passed to the first argument is just a label that will be used to retrieve the measurement data after the
-run.
+run. Any type `Type` can be used as an observable by defining a function `measure(A, ob::Type)`, where `A` is an MPS.
 
 We may also wish to measure the bath observables.
 
@@ -83,6 +83,17 @@ ob2 = OneSiteObservable("chain mode occupation", numb(d), (2,N+1))
 This will measure the number operator (truncated to d Fock states) on all chain modes, i.e. on sites 2 to
 N+1 inclusive.
 
+It is also possible to measure two-site observables, for example
+
+```julia
+import MPSDynamics: disp
+ob3 = TwoSiteObservable("SXdisp", sx, disp(d), [1], collect(2:N+1))
+```
+
+will measure <img src="https://render.githubusercontent.com/render/math?math=\langle\sigma_x\hat{q}_i\rangle"> where
+<img src="https://render.githubusercontent.com/render/math?math=hat{q}_i"> is the displacement operator of the chain site and the index i runs over
+all chain sites.
+
 Finally we launch the simulation with the function `runsim`.
 
 ```julia
@@ -92,10 +103,10 @@ T = 60.0
 A, dat = runsim(dt, T, A, H;
                 name = "ohmic spin boson model",
                 method = :TDVP1,
-                obs = [ob2],
+                obs = [ob2,ob3],
                 convobs = [ob1],
                 params = @LogParams(N, d, α, Δ, ω0, s),
-                convparams = [2,4,8],
+                convparams = [2,4,6],
                 verbose = false,
                 save = true,
                 plot = true,
@@ -103,13 +114,15 @@ A, dat = runsim(dt, T, A, H;
 ```
 
 This will propagate the MPS up to time `T` in time steps of `dt`. The simulation will be performed using 1-site TDVP with
-bond-dimensions of 2, 4 and 8 in order to check for convergence. The observables supplied to `convobs` will be measured
+bond-dimensions of 2, 4 and 6 in order to check for convergence. The observables supplied to `convobs` will be measured
 at every time step for every bond-dimension, while the observables supplied to `obs` will only be measured for the last
 (most accurate) convergence parameter supplied to `convparams`.
 
 The final MPS is returned to `A` and the measurement data is returned to `dat`. If the option `save=true` is used the
 data will also be saved to a file. The save directory may be specified using the option `savedir`, by default the save
 directory is ~/MPSDynamics, which will be created if it doesn't exist (if using Windows the slashes will need to be reversed).
+
+If the option `plot=true` is used, plots for 1D observables will be automatically generated and saved along with the data.
 
 The data is stored in the JLD format which is based on HDF5. Loading the data in julia using the
 [JLD](https://github.com/JuliaIO/JLD.jl) package will recover the full type information of the Julia variables that were
