@@ -97,8 +97,8 @@ all chain sites.
 Finally we launch the simulation with the function `runsim`.
 
 ```julia
-dt = 0.2
-T = 60.0
+dt = 0.5
+T = 30.0
 
 A, dat = runsim(dt, T, A, H;
                 name = "ohmic spin boson model",
@@ -123,8 +123,6 @@ data will also be saved to a file. The save directory may be specified using the
 directory is ~/MPSDynamics, which will be created if it doesn't exist (if using Windows the slashes will need to be reversed).
 
 If the option `plot=true` is used, plots for 1D observables will be automatically generated and saved along with the data.
-
-![convplot](/home/angus/MPSDynamics/qJAWB/convplot_sz_qJAWB.pdf)
 
 The data is stored in the JLD format which is based on HDF5. Loading the data in julia using the
 [JLD](https://github.com/JuliaIO/JLD.jl) package will recover the full type information of the Julia variables that were
