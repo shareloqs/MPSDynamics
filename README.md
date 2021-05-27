@@ -130,6 +130,8 @@ using Plots
 plot(dat["data/times"], dat["convdata/sz"],label=["Dmax=2" "Dmax=4" "Dmax=6"], xlabel="t",ylabel="sz")
 heatmap(dat["data/times"], collect(1:N), abs.(dat["data/SXdisp"][1,:,:]), xlabel="t",ylabel="i")
 ```
+![](https://github.com/angusdunnett/MPSDynamics/blob/master/images/plot.pdf)
+![](https://github.com/angusdunnett/MPSDynamics/blob/master/images/heatmap.pdf)
 
 The data is stored in the JLD format which is based on HDF5. Loading the data in julia using the
 [JLD](https://github.com/JuliaIO/JLD.jl) package will recover the full type information of the Julia variables that were
