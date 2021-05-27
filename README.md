@@ -124,6 +124,13 @@ directory is ~/MPSDynamics, which will be created if it doesn't exist (if using 
 
 If the option `plot=true` is used, plots for 1D observables will be automatically generated and saved along with the data.
 
+Otherwise plots can be produced from `dat`, e.g.
+```Julia
+using Plots
+plot(dat["data/times"], dat["convdata/sz"],label=["Dmax=2" "Dmax=4" "Dmax=6"], xlabel="t",ylabel="sz")
+heatmap(dat["data/times"], collect(1:N), abs.(dat["data/SXdisp"][1,:,:]), xlabel="t",ylabel="i")
+```
+
 The data is stored in the JLD format which is based on HDF5. Loading the data in julia using the
 [JLD](https://github.com/JuliaIO/JLD.jl) package will recover the full type information of the Julia variables that were
 stored. At the same time the HDF5 format is natively supported across many platforms and languages. For example, to load
