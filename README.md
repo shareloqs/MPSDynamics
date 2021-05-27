@@ -120,7 +120,8 @@ the spin-z data in Mathematica one could do
 Import["~/MPSDynamics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
 ```
 
-
+# Documentation
+  [https://angusdunnett.github.io/MPSDynamics/](https://angusdunnett.github.io/MPSDynamics/)
 
 # Publications
 
