@@ -119,8 +119,9 @@ at every time step for every bond-dimension, while the observables supplied to `
 (most accurate) convergence parameter supplied to `convparams`.
 
 The final MPS is returned to `A` and the measurement data is returned to `dat`. If the option `save=true` is used the
-data will also be saved to a file. The save directory may be specified using the option `savedir`, by default the save
-directory is ~/MPSDynamics, which will be created if it doesn't exist (if using Windows the slashes will need to be reversed).
+data will also be saved to a file. The directory in which data should be saved may be passed to the keyword argument
+`savedir`; by default the save directory is ~/MPSDynamics, which will be created if it doesn't exist (if using Windows
+the slashes will need to be reversed).
 
 If the option `plot=true` is used, plots for 1D observables will be automatically generated and saved along with the data.
 
@@ -133,7 +134,7 @@ heatmap(dat["data/times"], collect(1:N), abs.(dat["data/SXdisp"][1,:,:]), xlabel
 <img src="https://github.com/angusdunnett/MPSDynamics/blob/master/images/plot.pdf">
 <img src="https://github.com/angusdunnett/MPSDynamics/blob/master/images/heatmap.pdf">
 
-The data is stored in the JLD format which is based on HDF5. Loading the data in julia using the
+The data is stored in the JLD format which is based on HDF5. Loading the data in Julia using the
 [JLD](https://github.com/JuliaIO/JLD.jl) package will recover the full type information of the Julia variables that were
 stored. At the same time the HDF5 format is natively supported across many platforms and languages. For example, to load
 the spin-z data in Mathematica one could do

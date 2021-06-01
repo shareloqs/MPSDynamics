@@ -42,14 +42,20 @@ function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=false, tim
         timed && (ttdvp[tstep] = info["t2"] + info["t3"])
         timed && (tproj[tstep] = info["t1"])
 
-        for (i, ob) in enumerate(obs)
-            data[ob.name] = cat(data[ob.name], exp[i]; dims=ndims(exp[i])+1)
+        if tstep != 1
+            for (i, ob) in enumerate(obs)
+                data[ob.name] = cat(data[ob.name], exp[i]; dims=ndims(exp[i])+1)
+            end
         end
         if savebonddims
             data["bonddims"] = cat(data["bonddims"], bonds, dims=2)
         end
     end
-
+    exp = measure(A0, obs; t=times[end])
+    for (i, ob) in enumerate(obs)
+        data[ob.name] = cat(data[ob.name], exp[i]; dims=ndims(exp[i])+1)
+    end
+    
     effects && push!(data, "effects" => efft)
     timed && push!(data, "projtime" => tproj)
     timed && push!(data, "tdvptime" => ttdvp)
