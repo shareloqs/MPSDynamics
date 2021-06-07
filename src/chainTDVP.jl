@@ -73,6 +73,7 @@ function tdvp1sweep_dynamic!(dt2, A::Vector, M::Vector, Afull=nothing, FRs=nothi
     end
     push!(info, ("obs", measure(A, obs; acs=ACs)))
     push!(info, ("dims",[newdims...]))
+    rpad!.(effect, -1.0, Dlim)
     push!(info, ("effect", effect))
     if error
         h2 = measurempo(A, M2)
@@ -246,7 +247,7 @@ function updatedims(A::Vector, PAs::Vector, PCs::Vector, th, Dlim)
     for k=1:N-1
         Dmax = min(size(PAs[k])[3], size(PAs[k+1])[1], newdims[k]*size(PAs[k])[2])
 
-        effect[k] = [norm(PAs[k][:,:,1:i])^2 - norm(PCs[k][1:i,1:i])^2 + norm(PAs[k+1][1:i,:,:])^2 for i=1:Dmax]
+        effect[k] = Float64[norm(PAs[k][:,:,1:i])^2 - norm(PCs[k][1:i,1:i])^2 + norm(PAs[k+1][1:i,:,:])^2 for i=1:Dmax]
         
         Dnew=1
         while Dnew < Dmax && Dnew < Dlim

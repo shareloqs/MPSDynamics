@@ -18,7 +18,7 @@ function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=false, tim
     error && (errs = Vector{Float64}(undef, numsteps))
     timed && (ttdvp = Vector{Float64}(undef, numsteps))
     timed && (tproj = Vector{Float64}(undef, numsteps))
-    effects && (efft = Vector{Float64}(undef, numsteps))
+    effects && (efft = Vector{Any}(undef, numsteps))
 
     F=nothing
     Afull=nothing
@@ -37,7 +37,7 @@ function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=false, tim
         
         exp = info["obs"]
         bonds = info["dims"]
-        effects && (efft[tstep] = info["effect"])
+        effects && (efft[tstep] = reduce(hcat, info["effect"]))
         error && (errs[tstep] = info["err"])
         timed && (ttdvp[tstep] = info["t2"] + info["t3"])
         timed && (tproj[tstep] = info["t1"])
@@ -56,7 +56,13 @@ function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=false, tim
         data[ob.name] = cat(data[ob.name], exp[i]; dims=ndims(exp[i])+1)
     end
     
-    effects && push!(data, "effects" => efft)
+    if effects
+        efftarray = efft[1]
+        for tstep=2:numsteps
+            efftarray = cat(efftarray, efft[tstep], dims=3)
+        end
+        push!(data, "effects" => efftarray)
+    end
     timed && push!(data, "projtime" => tproj)
     timed && push!(data, "tdvptime" => ttdvp)
     error && push!(data, "projerr" => errs)

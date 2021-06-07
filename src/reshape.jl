@@ -8,3 +8,8 @@ function slice(A::AbstractArray, id::Int)
     d=ndims(A)
     [A[fill(:,id-1)...,i,fill(:,d-id)...] for i=1:s]
 end
+
+function rpad!(A::AbstractArray, val, len::Int)
+    l1 = length(A)
+    push!(A, fill(val, len-l1)...)
+end
