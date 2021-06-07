@@ -15,10 +15,10 @@ function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=false, tim
     bonds = bonddims(A0)
     savebonddims && push!(data, "bonddims" => reshape([bonds...], length(bonds), 1))
 
-    error && (errs = Vector{Any}(undef, numsteps))
-    timed && (ttdvp = Vector{Any}(undef, numsteps))
-    timed && (tproj = Vector{Any}(undef, numsteps))
-    effects && (efft = Vector{Any}(undef, numsteps))
+    error && (errs = Vector{Float64}(undef, numsteps))
+    timed && (ttdvp = Vector{Float64}(undef, numsteps))
+    timed && (tproj = Vector{Float64}(undef, numsteps))
+    effects && (efft = Vector{Float64}(undef, numsteps))
 
     F=nothing
     Afull=nothing

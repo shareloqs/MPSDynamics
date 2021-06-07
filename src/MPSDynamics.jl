@@ -125,8 +125,6 @@ export runsim, run_all
 
 export Machine, RemoteMachine, LocalMachine, init_machines, update_machines, launch_workers, rmworkers
 
-export plot, scatter
-
 export randtree
 
 export readchaincoeffs, h5read, load
