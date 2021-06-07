@@ -11,5 +11,8 @@ end
 
 function rpad!(A::AbstractArray, val, len::Int)
     l1 = length(A)
+    if len<=l1
+        return A
+    end
     push!(A, fill(val, len-l1)...)
 end
