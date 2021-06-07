@@ -73,7 +73,7 @@ function tdvp1sweep_dynamic!(dt2, A::Vector, M::Vector, Afull=nothing, FRs=nothi
     end
     push!(info, ("obs", measure(A, obs; acs=ACs)))
     push!(info, ("dims",[newdims...]))
-    rpad!.(effect, -1.0, Dlim)
+    rpad!.(effect, Dlim)
     push!(info, ("effect", effect))
     if error
         h2 = measurempo(A, M2)
