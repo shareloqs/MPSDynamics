@@ -113,7 +113,7 @@ Create an MPO representing a tight-binding chain of `N` oscillators with `d` Foc
 # Arguments
 
 * `reverse`: If `reverse`=`true` create a chain were the last (i.e. Nth) site is the site which couples to the system
-* `coupletox`: Used to choose the form of the system coupling. `coupletox`=`true` gives a non-number conserving coupling of the form ``A_{\text{S}}(b_{0}^\\dagger + b_0)`` where ``A_{\text{S}}`` is a system operator, while `coupletox`=`false` gives the number-converving coupling ``(A_{\text{S}} b_{0}^\\dagger + A_{\text{S}}^\\dagger b_0)``
+* `coupletox`: Used to choose the form of the system coupling. `coupletox`=`true` gives a non-number conserving coupling of the form ``A_{\\text{S}}(b_{0}^\\dagger + b_0)`` where ``A_{\\text{S}}`` is a system operator, while `coupletox`=`false` gives the number-converving coupling ``(A_{\\text{S}} b_{0}^\\dagger + A_{\\text{S}}^\\dagger b_0)``
 * `tree`: If `true` the resulting chain will be of type `TreeNetwork`; useful for construcing tree-MPOs 
 
 # Example
