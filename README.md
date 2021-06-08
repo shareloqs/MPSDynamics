@@ -147,7 +147,7 @@ Import["~/MPSDynamics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
   [https://angusdunnett.github.io/MPSDynamics/](https://angusdunnett.github.io/MPSDynamics/)
 
 # Publications
-Publication which make use of MPSDynamics:
+Publications which make use of MPSDynamics:
 
 * Simulating quantum vibronic dynamics at finite temperatures with many body wave functions at 0K
      * [https://doi.org/10.3389/fchem.2020.600731](https://doi.org/10.3389/fchem.2020.600731)
