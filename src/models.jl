@@ -112,8 +112,8 @@ Create an MPO representing a tight-binding chain of `N` oscillators with `d` Foc
 
 # Arguments
 
-* `reverse`: If `reverse`=`true` create a chain were the last (i.e. Nth) site is the site which couples to the system
-* `coupletox`: Used to choose the form of the system coupling. `coupletox`=`true` gives a non-number conserving coupling of the form ``A_{\\text{S}}(b_{0}^\\dagger + b_0)`` where ``A_{\\text{S}}`` is a system operator, while `coupletox`=`false` gives the number-converving coupling ``(A_{\\text{S}} b_{0}^\\dagger + A_{\\text{S}}^\\dagger b_0)``
+* `reverse`: If `reverse=true` create a chain were the last (i.e. Nth) site is the site which couples to the system
+* `coupletox`: Used to choose the form of the system coupling. `coupletox=true` gives a non-number conserving coupling of the form ``H_{\\text{I}}=A_{\\text{S}}(b_{0}^\\dagger + b_0)`` where ``A_{\\text{S}}`` is a system operator, while `coupletox=false` gives the number-converving coupling ``H_{\\text{I}}=(A_{\\text{S}} b_{0}^\\dagger + A_{\\text{S}}^\\dagger b_0)``
 * `tree`: If `true` the resulting chain will be of type `TreeNetwork`; useful for construcing tree-MPOs 
 
 # Example
@@ -130,7 +130,7 @@ The full MPO can then be constructed with:
 Hmpo = [M, hbathchain(N, d, chainparams, coupletox=true)...]
 ```
 
-Similarly for a number conserving iteration the site tensor would look like:
+Similarly for a number conserving interaction the site tensor would look like:
 ```julia
 u = one(Hs) # system identity
 M = zeros(1,4,2,2)
