@@ -105,6 +105,43 @@ function tightbindingmpo(N::Int, d::Int; J=1.0, e=1.0)
     return Any[M[1:1,:,:,:], fill(M, N-2)..., M[:,4:4,:,:]]
 end
 
+"""
+    hbathchain(N::Int, d::Int, chainparams, longrangecc...; tree=false, reverse=false, coupletox=false)
+
+Create an MPO representing a tight-binding chain of `N` oscillators with `d` Fock states each. Chain parameters are supplied in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``. The output does not itself represent a complete MPO but will possess an end which is `open' and should be attached to another tensor site, usually representing the `system'.
+
+# Arguments
+
+    * `reverse`: If `reverse`=`true` create a chain were the last (i.e. Nth) site is the site which couples to the system
+    * `coupletox`: Used to choose the form of the system coupling. `coupletox`=`true` gives a non-number conserving coupling of the form ``A_{\text{S}}(b_{0}^\\dagger + b_0)`` where ``A_{\text{S}}`` is a system operator, while `coupletox`=`false` gives the number-converving coupling ``(A_{\text{S}} b_{0}^\\dagger + A_{\text{S}}^\\dagger b_0)``
+    * `tree`: If `true` the resulting chain will be of type `TreeNetwork`; useful for construcing tree-MPOs 
+
+# Example
+
+One can constuct a system site tensor to couple to a chain by using the function `up` to populate the tensor. For example, to construct a system site with Hamiltonian `Hs` and coupling operator `As`, the system tensor `M` is constructed as follows for a non-number conserving interaction:
+```julia
+    u = one(Hs) # system identity
+    M = zeros(1,3,2,2)
+    M[1, :, :, :] = up(Hs, As, u)
+```
+
+The full MPO can then be constructed with:
+```julia
+    [M, hbathchain(N, d, chainparams, coupletox=true)...]
+```
+
+Similarly for a number conserving iteration the site tensor would look like:
+```julia
+    u = one(Hs) # system identity
+    M = zeros(1,4,2,2)
+    M[1, :, :, :] = up(Hs, As, As', u)
+```
+And the full MPO would be
+```julia
+    [M, hbathchain(N, d, chainparams; coupletox=false)...]
+```
+    
+"""
 function hbathchain(N::Int, d::Int, chainparams, longrangecc...; tree=false, reverse=false, coupletox=false)
     b = anih(d)
     bd = crea(d)
@@ -215,9 +252,10 @@ function methylbluempo_correlated(e1, e2, δ, N1, N2, d1, d2, cparS1, ccS2, cpar
     c1 = only(cparS1[3])
     c3 = only(cparS1S2[3])
 
+    # Hs = system Hamiltonian 
     Hs = (e2-e1)*s2*s2' + δ*(s1*s2' + s2*s1') # e^(-is1*s1't)He^(is1*s1't)
 
-    M=zeros(3,4,3,3)
+    M = zeros(3,4,3,3)
     M[:, 1, :, :] = up(Hs, c3*(s1*s2'+s2*s1'), u)
     M[1, :, :, :] = up(Hs, c1*(s1*s1'), s2*s2', u)
 
