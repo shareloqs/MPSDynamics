@@ -471,11 +471,11 @@ function ibmmpo(ω0, d, N, chainparams; tree=false)
     Hs = (ω0/2)*sz
 #    Hs = (ω0/2)*(sz+u)
 
-    M=zeros(1,4,2,2)
-    M[1, :, :, :] = up(Hs, c0*sz, c0*sz, u)
+    M=zeros(1,3,2,2)
+    M[1, :, :, :] = up(Hs, c0*sz, u)
 #    M[1, :, :, :] = up(Hs, c0*(sz+u), c0*(sz+u), u)
 
-    chain = hbathchain(N, d, chainparams; tree=tree)
+    chain = hbathchain(N, d, chainparams; tree=tree, coupletox=true)
     if tree
         H = TreeNetwork(Vector{AbstractArray}([M]))
         addtree!(H, 1, chain)

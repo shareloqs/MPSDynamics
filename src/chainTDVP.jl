@@ -20,14 +20,31 @@ end
 initenvs(A::Vector, M::Vector) = initenvs(A, M, nothing)
 initenvs(A::Vector, M::Vector, F::Vector) = F
 
-function initrightenvs_full(A::Vector, M::Vector, Dplusmax=nothing)
+initrightenvs(A, M, F) = initenvs(A, M, F)
+initrightenvs(A, M) = initenvs(A, M)
+
+function initleftenvs(A::Vector, M::Vector, F::Nothing)
+    N = length(A)
+    F = Vector{Any}(undef, N+2)
+    F[1] = fill!(similar(M[1], (1,1,1)), 1)
+    F[N+2] = fill!(similar(M[1], (1,1,1)), 1)
+    for k=1:N
+        F[k+1] = updateleftenv(A[k], M[k], F[k])
+    end
+    return F
+end
+initleftenvs(A::Vector, M::Vector) = initleftenvs(A, M, nothing)
+initleftenvs(A::Vector, M::Vector, F::Vector) = F
+
+
+function initrightenvs_full(A::Vector, M::Vector; Dplusmax=nothing, SVD=false)
     N = length(A)
     F = Vector{Any}(undef, N-1)
     Afull = Vector{Any}(undef, N-1)
     FR = fill!(similar(M[1], (1,1,1)), 1)
     for k = N:-1:2
         aleft, aright, d = size(A[k])
-        AR, C = QR_full(A[k], 1)
+        C, AR = LQ_full(A[k]; SVD=SVD)
         Dmax = (Dplusmax != nothing ? min(aright*d, aleft+Dplusmax) : aright*d)
         AR = AR[1:Dmax,:,:]
         Afull[k-1] = AR
@@ -43,7 +60,7 @@ function initleftenvs_full(A::Vector, M::Vector)
     FL = fill!(similar(M[1], (1,1,1)), 1)
     for k = 1:N-1
         aleft, aright, d = size(A[k])
-        AL, C = QR_full(A[k], 2)
+        AL, C = QR_full(A[k])
         Afull[k] = AL
         F[k] = updaterightenv(AL, M[k], FL)
         FL = F[k][1:aright,:,1:aright]
@@ -51,13 +68,13 @@ function initleftenvs_full(A::Vector, M::Vector)
     return F, Afull
 end
 
-function tdvp1sweep_dynamic!(dt2, A::Vector, M::Vector, Afull=nothing, FRs=nothing; obs=Vector{Observable}, prec=10^-3, Dlim=50, verbose=false, error=false, timed=false, Dplusmax=nothing, kwargs...)
+function tdvp1sweep_dynamic!(dt2, A::Vector, M::Vector, Afull=nothing, FRs=nothing; obs=Vector{Observable}, prec=10^-3, Dlim=50, SVD=false, verbose=false, error=false, timed=false, Dplusmax=nothing, kwargs...)
 
     N = length(A)
     dt = dt2/2
 
     if Afull==nothing || FRs==nothing
-        FRs, Afull = initrightenvs_full(A, M)
+        FRs, Afull = initrightenvs_full(A, M, Dplusmax=Dplusmax, SVD=SVD)
     end
 
     error && (M2 = multiply(M,M))
@@ -65,11 +82,11 @@ function tdvp1sweep_dynamic!(dt2, A::Vector, M::Vector, Afull=nothing, FRs=nothi
     info = []
 
     if timed
-        val, t, bytes, gctime, memallocs = @timed updaterightbonds(FRs, A, M, prec, Dlim, Dplusmax)
+        val, t, bytes, gctime, memallocs = @timed updaterightbonds(FRs, A, M, prec, Dlim, Dplusmax, SVD)
         push!(info, ("t1",t))
         FR, ACs, effect, acc, newdims = val
     else
-        FR, ACs, effect, acc, newdims = updaterightbonds(FRs, A, M, prec, Dlim, Dplusmax)
+        FR, ACs, effect, acc, newdims = updaterightbonds(FRs, A, M, prec, Dlim, Dplusmax, SVD)
     end
     push!(info, ("obs", measure(A, obs; acs=ACs)))
     push!(info, ("dims",[newdims...]))
@@ -80,24 +97,24 @@ function tdvp1sweep_dynamic!(dt2, A::Vector, M::Vector, Afull=nothing, FRs=nothi
         push!(info, ("err", h2 - acc))
     end
     if timed
-        val, t, bytes, gctime, memallocs = @timed tdvp1rightsweep!(dt, A, Afull, M, FR; verbose=verbose, kwargs...)
+        val, t, bytes, gctime, memallocs = @timed tdvp1rightsweep!(dt, A, Afull, M, FR; SVD=SVD, verbose=verbose, kwargs...)
         push!(info, ("t2",t))
         A, FLs = val
     else
-        A, FLs = tdvp1rightsweep!(dt, A, Afull, M, FR; verbose=verbose, kwargs...)
+        A, FLs = tdvp1rightsweep!(dt, A, Afull, M, FR; SVD=SVD, verbose=verbose, kwargs...)
     end
 
     if timed
-        val, t, bytes, gctime, memallocs = @timed tdvp1leftsweep!(dt, A, M, FLs; verbose=verbose, Dplusmax=Dplusmax, kwargs...)
+        val, t, bytes, gctime, memallocs = @timed tdvp1leftsweep!(dt, A, M, FLs; SVD=SVD, verbose=verbose, Dplusmax=Dplusmax, kwargs...)
         push!(info, ("t3",t))
         A, Afull, FRs = val
     else
-        A, Afull, FRs = tdvp1leftsweep!(dt, A, M, FLs; verbose=verbose, Dplusmax=Dplusmax, kwargs...)
+        A, Afull, FRs = tdvp1leftsweep!(dt, A, M, FLs; SVD=SVD, verbose=verbose, Dplusmax=Dplusmax, kwargs...)
     end
     return A, Afull, FRs, Dict(info)
 end
 
-function tdvp1rightsweep!(dt, A::Vector, Afull::Vector, M::Vector, FR::Vector; verbose=false, kwargs...)
+function tdvp1rightsweep!(dt, A::Vector, Afull::Vector, M::Vector, FR::Vector; verbose=false, SVD=false, kwargs...)
     N = length(A)
     FLs = Vector{Any}(undef, N-1)
     AC = A[1]
@@ -111,7 +128,7 @@ function tdvp1rightsweep!(dt, A::Vector, Afull::Vector, M::Vector, FR::Vector; v
         verbose && Dnew!=Dold && println("*BondDimension $k-$(k+1) changed from $Dold to $Dnew")
         verbose && Dnew==Dold && println("*BondDimension $k-$(k+1) constant at $Dnew")
 
-        AL, C = QR(AC, 2)
+        AL, C = QR(AC; SVD=SVD)
         A[k] = AL
         FLs[k] = updateleftenv(AL, M[k], FL)
         FL = FLs[k]
@@ -128,7 +145,7 @@ function tdvp1rightsweep!(dt, A::Vector, Afull::Vector, M::Vector, FR::Vector; v
     A[N] = AC
     return A, FLs
 end
-function tdvp1leftsweep!(dt, A::Vector, M::Vector, FL::Vector; verbose=false, Dplusmax=nothing, kwargs...)
+function tdvp1leftsweep!(dt, A::Vector, M::Vector, FL::Vector; SVD=false, verbose=false, Dplusmax=nothing, kwargs...)
     N = length(A)
     FRs = Vector{Any}(undef, N-1)
     Afull = Vector{Any}(undef, N-1)
@@ -142,15 +159,16 @@ function tdvp1leftsweep!(dt, A::Vector, M::Vector, FL::Vector; verbose=false, Dp
         AC, info = evolveAC(dt, AC, M[k], FL[k-1], FR, verbose; kwargs...)
         verbose && println("Sweep R->L: AC site $k, energy $(info[1])")
 
-        AR, C = QR_full(AC, 1)
+        C, AR= LQ_full(AC; SVD=SVD)
         A[k] = AR[1:Dnew,:,:]
-        FRs[k-1] = updaterightenv(AR[1:Dmax,:,:], M[k], FR)
+        
+        FRs[k-1] = updaterightenv(AR[1:Dmax,:,:], M[k], FR) 
         FR = FRs[k-1][1:Dnew,:,1:Dnew]
         
-        C, info = evolveC(dt, C, FR, FL[k-1], verbose; kwargs...)
+        C, info = evolveC(dt, C, FL[k-1], FR, verbose; kwargs...)
         verbose && println("Sweep R->L: C between site $k and $(k-1), energy $(info[1])")
         
-        @tensor AC[:] := C[-2,2] * A[k-1][-1,2,-3]
+        @tensor AC[:] := C[2,-2] * A[k-1][-1,2,-3]
 
         Afull[k-1] = AR
     end
@@ -161,7 +179,7 @@ function tdvp1leftsweep!(dt, A::Vector, M::Vector, FL::Vector; verbose=false, Dp
     return A, Afull, FRs
 end
 
-function updaterightbonds(FRs, A, M, th, Dlim, Dplusmax=nothing)
+function updaterightbonds(FRs, A, M, th, Dlim, Dplusmax=nothing, SVD=false)
     N = length(A)
     olddims = bonddimsmps(A)
     ACs = Vector{Any}(undef, N)
@@ -175,10 +193,10 @@ function updaterightbonds(FRs, A, M, th, Dlim, Dplusmax=nothing)
         Dl = olddims[k]
         Dr = olddims[k+1]
         d = size(A[k])[3]
-        Dmax = (Dplusmax != nothing ? min(Dl*d, Dr+Dplusmax) : Dl*d)
+        Dmax = min((Dplusmax != nothing ? min(Dl*d, Dr+Dplusmax) : Dl*d), Dlim)
         @tensor L[a,s,b,c] := LA[a,b',c'] * M[k][b',b,s,s'] * A[k][c',c,s']
         @tensor PAs[k][a,s,a'] := L[a,s,b',c'] * FRs[k][:,:,1:Dr][a',b',c']
-        AL, C = QR_full(AC, 2)
+        AL, C = QR_full(AC; SVD=SVD)
         @tensor AC[a,b,s] := C[a,a'] * A[k+1][1:Dr,:,:][a',b,s]
         ACs[k+1] = AC
         @tensor LA[a,b,c] := L[1:Dl,:,:,:][a',s,b,c] * AL[:,1:Dmax,:][a',a,s]
@@ -216,8 +234,8 @@ function updateleftbonds(FLs, A, M, th, Dlim)
         Dr == size(A[k])[2] || throw(ErrorException("Dr mismatch"))
         @tensor R[a,s,b,c] := RA[a,b',c'] * M[k][b,b',s,s'] * A[k][c,c',s']
         @tensor PAs[k][a',s,a] := R[a,s,b',c'] * FLs[k-1][:,:,1:Dl][a',b',c']
-        AR, C = QR_full(AC, 1)
-        @tensor AC[a,b,s] := C[b,b'] * A[k-1][:,1:Dl,:][a,b',s]
+        C, AR = LQ_full(AC)
+        @tensor AC[a,b,s] := C[b',b] * A[k-1][:,1:Dl,:][a,b',s]
         ACs[k-1] = AC
         @tensor RA[a,b,c] := R[1:Dr,:,:,:][a',s,b,c] * AR[a,a',s]
         @tensor PCs[k-1][a,a'] := RA[a,b',c'] * FLs[k-1][:,:,1:Dl][a',b',c']
@@ -252,6 +270,7 @@ function updatedims(A::Vector, PAs::Vector, PCs::Vector, th, Dlim)
         Dnew=1
         while Dnew < Dmax && Dnew < Dlim
             x = (effect[k][Dnew+1]/effect[k][Dnew]) - 1
+#            x = effect[k][Dnew+1]-effect[k][Dnew]
             if x > th
                 Dnew+=1
             else
@@ -288,7 +307,7 @@ function tdvp1sweep!(dt2, A::Vector, M::Vector, F=nothing; verbose=false, kwargs
         @tensor AC[:] := C[-1,1] * A[k+1][1,-2,-3]
     end
     k = N
-    AC, info = evolveAC(2*dt, AC, M[k], F[k], F[k+2], verbose; kwargs...)
+    AC, info = evolveAC(dt2, AC, M[k], F[k], F[k+2], verbose; kwargs...)
     verbose && println("Sweep L->R: AC site $k, energy $(info[1])")
     for k = N-1:-1:1
         AR, C = QR(AC, 1)

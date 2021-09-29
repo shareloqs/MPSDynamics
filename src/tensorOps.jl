@@ -370,7 +370,7 @@ function evolveAC2(dt::Float64, A1, A2, M1, M2, FL, FR, energy=false; kwargs...)
     return AAnew, info
 end
 
-function evolveAC(dt::Float64, AC, M, FL, FR, energy=false; kwargs...)
+function evolveAC(dt::Float64, AC, M, FL, FR, energy=false; projerr = false, kwargs...)
     Dlnew, w, Dl = size(FL)
     Drnew, w, Dr = size(FR)
 
@@ -381,27 +381,43 @@ function evolveAC(dt::Float64, AC, M, FL, FR, energy=false; kwargs...)
     krylovdim = get(kwargs, :krylovdim, 30)
     maxiter = get(kwargs, :maxiter, 100)
 
-    AC, info = exponentiate(x->applyH1(x, M, FL, FR), -im*dt, AC; ishermitian = true, tol=tol, krylovdim=krylovdim, maxiter=maxiter)
+    if projerr
+        pe = norm(applyH1(AC, M, FL, FR))
+    else
+        pe = nothing
+    end
+    
+    AC, expinfo = exponentiate(x->applyH1(x, M, FL, FR), -im*dt, AC; ishermitian = true, tol=tol, krylovdim=krylovdim, maxiter=maxiter)
 
     if energy
         E = real(dot(AC, applyH1(AC, M, FL, FR)))
-        return AC, (E, info)
+    else
+        E = nothing
     end
-    return AC, info
+    
+    return AC, (E, pe, expinfo)
 end
 
-function evolveC(dt::Float64, C, FL, FR, energy=false; kwargs...)
+function evolveC(dt::Float64, C, FL, FR, energy=false; projerr = false, kwargs...)
     tol = get(kwargs, :tol, 1e-12)
     krylovdim = get(kwargs, :krylovdim, 30)
     maxiter = get(kwargs, :maxiter, 100)
+
+    if projerr
+        pe = norm(applyH0(C, FL, FR))
+    else
+        pe = nothing
+    end
         
-    C, info = exponentiate(x->applyH0(x, FL, FR), im*dt, C; ishermitian = true, tol=tol, krylovdim=krylovdim, maxiter=maxiter)
+    C, expinfo = exponentiate(x->applyH0(x, FL, FR), im*dt, C; ishermitian = true, tol=tol, krylovdim=krylovdim, maxiter=maxiter)
 
     if energy
         E = real(dot(C, applyH0(C, FL, FR)))
-        return C, (E, info)
+    else
+        E = nothing
     end
-    return C, info
+    
+    return C, (E, pe, expinfo)
 end
 
 # @optimalcontractiontree (a0=>x,a1=>x,c0=>x,c1=>x,s=>x,s'=>x,b0=>x,b1=>x) HAC[a0,a1,s'] := F0[a0,b0,c0]*F1[a1,b1,c1]*AC[c0,c1,s]*M[b0,b1,s',s]
@@ -488,6 +504,91 @@ function QR_full(A::AbstractArray, i::Int)
     AL, C = qr(reshape(permutedims(A, circshift(ds, -i)), :, dims[i]))
     AL = permutedims(reshape(AL*Matrix(I,size(AL)...), circshift(dims, -i)[1:end-1]..., :), circshift(ds, i))
     return AL, C
+end
+
+
+function QR(A::AbstractArray; SVD=false)
+    Dl, Dr, d = size(A)
+    if !SVD
+        Q, R = qr(reshape(permutedims(A, [1,3,2]), Dl*d, Dr))
+        AL = permutedims(reshape(Matrix(Q), Dl, d, Dr), [1,3,2])
+        return AL, R #(R = C)
+    else
+        F = svd(reshape(permutedims(A, [1,3,2]), Dl*d, Dr))
+        AL = permutedims(reshape(F.U, Dl, d, Dr), [1,3,2])
+        R = Diagonal(F.S)*F.Vt
+        return AL, R
+    end    
+end
+function QR_full(A::AbstractArray; SVD=false)
+    Dl, Dr, d = size(A)
+    if !SVD
+        Q, R = qr(reshape(permutedims(A, [1,3,2]), Dl*d, Dr))
+        AL = permutedims(reshape(Q*Matrix(I, size(Q)...), Dl, d, Dl*d), [1,3,2])
+        return AL, R #(R = C)
+    else
+        F = svd(reshape(permutedims(A, [1,3,2]), Dl*d, Dr), full=true)
+        AL = permutedims(reshape(F.U, Dl, d, Dl*d), [1,3,2])
+        R = Diagonal(F.S)*F.Vt
+        return AL, R
+    end    
+end
+
+function LQ(A::AbstractArray; SVD=false)
+    Dl, Dr, d = size(A)
+    if !SVD
+        L, Q = lq(reshape(A, Dl, Dr*d))
+        AR = reshape(Matrix(Q), Dl, Dr, d)
+        return L, AR #(L = c)
+    else
+        F = svd(reshape(A, Dl, Dr*d))
+        AR = reshape(F.Vt, Dl, Dr, d)
+        L = F.U*Diagonal(F.S)
+        return L, AR
+    end
+end        
+function LQ_full(A::AbstractArray; SVD=false)
+    Dl, Dr, d = size(A)
+    if !SVD
+        L, Q = lq(reshape(A, Dl, Dr*d))
+        AR = reshape(Q*Matrix(I, size(Q)...), Dr*d, Dr, d)
+        return L, AR #(L = c)
+    else
+        F = svd(reshape(A, Dl, Dr*d), full=true)
+        AR = reshape(F.Vt, Dr*d, Dr, d)
+        L = F.U*Diagonal(F.S)
+        return L, AR
+    end
+end        
+
+function tensor_qr(A)
+    Dl, Dr, d = size(A)
+    Q, R = qr(reshape(permutedims(A, [1,3,2]), Dl*d, Dr))
+    AL = permutedims(reshape(Matrix(Q), Dl, d, Dr), [1,3,2])
+    return AL, R #(R = C)
+end
+
+function tensor_lq(A)
+    Dl, Dr, d = size(A)
+    L, Q = lq(reshape(A, Dl, Dr*d))
+    AR = reshape(Matrix(Q), Dl, Dr, d)
+    return AR, L #(L = c)
+end
+
+function tensor_qr_full(A)
+    Dl, Dr, d = size(A)
+    Q, R = qr(reshape(permutedims(A, [1,3,2]), Dl*d, Dr))
+    AL = permutedims(reshape(Matrix(Q), Dl, d, Dr), [1,3,2])
+    ALcomp = permutedims(reshape(Q*Matrix(I, size(Q)...), Dl, d, Dl*d)[:,:,Dr+1:Dl*d], [1,3,2])
+    return AL, ALcomp, R
+end
+
+function tensor_lq_full(A)
+    Dl, Dr, d = size(A)
+    L, Q = lq(reshape(A, Dl, Dr*d))
+    AR = reshape(Matrix(Q), Dl, Dr, d)
+    ARcomp = reshape(Q*Matrix(I, size(Q)...), Dr*d, Dr, d)[Dl+1:Dr*d,:,:]
+    return AR, ARcomp, L
 end
 
 """
