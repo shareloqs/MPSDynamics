@@ -105,7 +105,7 @@ function tdvp1sweep_dynamic!(dt2, A::Vector, M::Vector, Afull=nothing, FRs=nothi
     end
 
     if timed
-        val, t, bytes, gctime, memallocs = @timed tdvp1leftsweep!(dt, A, M, FLs; SVD=SVD, verbose=verbose, Dplusmax=Dplusmax, kwargs...)
+        val, t, bytes, gctime, memallocs = @timed tdvp1leftsweep!(dt, A, M, FLs, Dlim; SVD=SVD, verbose=verbose, Dplusmax=Dplusmax, kwargs...)
         push!(info, ("t3",t))
         A, Afull, FRs = val
     else
@@ -145,7 +145,7 @@ function tdvp1rightsweep!(dt, A::Vector, Afull::Vector, M::Vector, FR::Vector; v
     A[N] = AC
     return A, FLs
 end
-function tdvp1leftsweep!(dt, A::Vector, M::Vector, FL::Vector; SVD=false, verbose=false, Dplusmax=nothing, kwargs...)
+function tdvp1leftsweep!(dt, A::Vector, M::Vector, FL::Vector, Dlim::Int; SVD=false, verbose=false, Dplusmax=nothing, kwargs...)
     N = length(A)
     FRs = Vector{Any}(undef, N-1)
     Afull = Vector{Any}(undef, N-1)
@@ -154,7 +154,7 @@ function tdvp1leftsweep!(dt, A::Vector, M::Vector, FL::Vector; SVD=false, verbos
     for k=N:-1:2
         Dnew = size(FL[k-1])[1]
         Dold, Dr, d = size(AC)
-        Dmax = (Dplusmax != nothing ? min(Dr*d, Dold+Dplusmax) : Dr*d)
+        Dmax = min(Dlim, (Dplusmax != nothing ? min(Dr*d, Dold+Dplusmax) : Dr*d))
 
         AC, info = evolveAC(dt, AC, M[k], FL[k-1], FR, verbose; kwargs...)
         verbose && println("Sweep R->L: AC site $k, energy $(info[1])")

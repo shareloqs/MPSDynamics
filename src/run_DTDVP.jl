@@ -1,4 +1,4 @@
-function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=false, timed=false, savebonddims=false, Dplusmax=nothing, Dlim=100, kwargs...)
+function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=false, timed=false, savebonddims=false, Dplusmax=nothing, Dlim=50, kwargs...)
     A0=deepcopy(A)
     data = Dict{String,Any}()
 
