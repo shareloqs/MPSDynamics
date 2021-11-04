@@ -149,6 +149,9 @@ Import["~/MPSDynamics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
 # Publications
 Publications which make use of MPSDynamics:
 
+* Influence of non-adiabatic effects on linear absorption spectra in the condensed phase: Methylene blue
+     * [http://aip.scitation.org/doi/10.1063/5.0062950](http://aip.scitation.org/doi/10.1063/5.0062950)
+
 * Simulating quantum vibronic dynamics at finite temperatures with many body wave functions at 0K
      * [https://doi.org/10.3389/fchem.2020.600731](https://doi.org/10.3389/fchem.2020.600731)
 
