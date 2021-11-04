@@ -412,36 +412,44 @@ function measure2siteoperator(A::Vector, M1, M2, sites1::Vector{Int}, sites2::Ve
     end
     herm_trans = ishermitian(M1) && ishermitian(M2)
 
+    maxsites1 = max(sites1...)
+    maxsites2 = max(sites2...)
+    maxsites = max(maxsites1, maxsites2)
+    
     N = length(A)
     ρ = ones(ComplexF64, 1, 1)
 
     T = herm_trans ? Float64 : ComplexF64
 
     expval = zeros(T, N, N)
-    for i in 1:N
+    for i in 1:maxsites
         if in(i, sites1)
             if in(i, sites2)
                 v = rhoAOAstar(ρ, A[i], M1*M2, nothing)
                 expval[i,i] = herm_cis ? real(v) : v
             end
-            ρ12 = rhoAOAstar(ρ, A[i], M1)
-            for j in i+1:N
-                if in(j, sites2)
-                    v = rhoAOAstar(ρ12, A[j], M2, nothing)
-                    expval[i,j] = herm_trans ? real(v) : v
+            if any(x->x>i, sites2)
+                ρ12 = rhoAOAstar(ρ, A[i], M1)
+                for j in i+1:maxsites2
+                    if in(j, sites2)
+                        v = rhoAOAstar(ρ12, A[j], M2, nothing)
+                        expval[i,j] = herm_trans ? real(v) : v
+                    end
+                    ρ12 = rhoAAstar(ρ12, A[j])
                 end
-                ρ12 = rhoAAstar(ρ12, A[j])
             end
         end
         
         if in(i, sites2)
-            ρ21 = rhoAOAstar(ρ, A[i], M2)
-            for j in i+1:N
-                if in(j, sites1)
-                    v = rhoAOAstar(ρ21, A[j], M1, nothing)
-                    expval[j,i] = herm_trans ? real(v) : v
+            if any(x->x>i,sites1)
+                ρ21 = rhoAOAstar(ρ, A[i], M2)
+                for j in i+1:maxsites1
+                    if in(j, sites1)
+                        v = rhoAOAstar(ρ21, A[j], M1, nothing)
+                        expval[j,i] = herm_trans ? real(v) : v
+                    end
+                    ρ21 = rhoAAstar(ρ21, A[j])
                 end
-                ρ21 = rhoAAstar(ρ21, A[j])
             end
         end
         ρ = rhoAAstar(ρ, A[i])
@@ -456,35 +464,43 @@ function measure2siteoperator(A::Vector, M1, M2, sites1::Vector{Int}, sites2::Ve
     end
     herm_trans = ishermitian(M1) && ishermitian(M2)
 
+    maxsites1 = max(sites1...)
+    maxsites2 = max(sites2...)
+    maxsites = max(maxsites1, maxsites2)
+
     N = length(A)
 
     T = (herm_cis && herm_trans) ? Float64 : ComplexF64
 
     expval = zeros(T, N, N)
-    for i in 1:N
+    for i in 1:maxsites
         if in(i, sites1)
             if in(i, sites2)
                 v = rhoAOAstar(ρ[i], A[i], M1*M2, nothing)
                 expval[i,i] = herm_cis ? real(v) : v
             end
-            ρ12 = rhoAOAstar(ρ[i], A[i], M1)
-            for j in i+1:N
-                if in(j, sites2)
-                    v = rhoAOAstar(ρ12, A[j], M2, nothing)
-                    expval[i,j] = herm_trans ? real(v) : v
+            if any(x->x>i, sites2)
+                ρ12 = rhoAOAstar(ρ[i], A[i], M1)
+                for j in i+1:maxsites2
+                    if in(j, sites2)
+                        v = rhoAOAstar(ρ12, A[j], M2, nothing)
+                        expval[i,j] = herm_trans ? real(v) : v
+                    end
+                    ρ12 = rhoAAstar(ρ12, A[j])
                 end
-                ρ12 = rhoAAstar(ρ12, A[j])
             end
         end
         
         if in(i, sites2)
-            ρ21 = rhoAOAstar(ρ[i], A[i], M2)
-            for j in i+1:N
-                if in(j, sites1)
-                    v = rhoAOAstar(ρ21, A[j], M1, nothing)
-                    expval[j,i] = herm_trans ? real(v) : v
+            if any(x->x>i,sites1)
+                ρ21 = rhoAOAstar(ρ[i], A[i], M2)
+                for j in i+1:maxsites1
+                    if in(j, sites1)
+                        v = rhoAOAstar(ρ21, A[j], M1, nothing)
+                        expval[j,i] = herm_trans ? real(v) : v
+                    end
+                    ρ21 = rhoAAstar(ρ21, A[j])
                 end
-                ρ21 = rhoAAstar(ρ21, A[j])
             end
         end
     end

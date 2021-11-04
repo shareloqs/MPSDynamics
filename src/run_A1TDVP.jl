@@ -1,4 +1,4 @@
-function run_A1TDVP(dt, tmax, A, H, prec=10^-4; obs=[], timed = false, savebonddims = true, kwargs...)
+function run_A1TDVP(dt, tmax, A, H, prec=10^-4; obs=[], Dlim = 5, timed = false, savebonddims = true, kwargs...)
     A0=deepcopy(A)
     data = Dict{String,Any}()
 
@@ -25,12 +25,12 @@ function run_A1TDVP(dt, tmax, A, H, prec=10^-4; obs=[], timed = false, savebondd
         maxbond = max(bonds...)
         @printf("%i/%i, t = %.3f, Dmax = %i \n", tstep, numsteps, times[tstep], maxbond)
         if timed
-            val, t, bytes, gctime, memallocs = @timed tdvpa1sweep!(dt, A0, H, Acomp, F; prec=prec, kwargs...)
+            val, t, bytes, gctime, memallocs = @timed tdvpa1sweep!(dt, A0, H, Acomp, F; Dlim=Dlim, prec=prec, kwargs...)
             println("\t","ΔT = ", t)
             A0, Acomp, F, info = val
             ttdvp[tstep] = t
         else
-            A0, Acomp, F, info = tdvpa1sweep!(dt, A0, H, Acomp, F; prec=prec, kwargs...)
+            A0, Acomp, F, info = tdvpa1sweep!(dt, A0, H, Acomp, F; Dlim=Dlim, prec=prec, kwargs...)
         end
         exp = measure(A0, obs; t=times[tstep])
         for (i, ob) in enumerate(obs)
