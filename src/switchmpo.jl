@@ -168,8 +168,8 @@ function switchmpo(N::Int, Nm::Int, dhilbert::Int; E=[], J=0.2, chainparams, s=1
             M[1,1,:,:] = M[D-2,D,:,:] = u
 
             i = 2 # index counter
-            M[1,i,:,:] = x==1 ? 0 : J*c # The first site (the switch) is NOT coupled to the other sites
-            M[1,i+1,:,:] = x==1 ? 0 : J*cd
+            M[1,i,:,:] = x==1 ? zeros(ComplexF64, size(c)...) : J*c # The first site (the switch) is NOT coupled to the other sites
+            M[1,i+1,:,:] = x==1 ? zeros(ComplexF64, size(c)...) : J*cd
             M[1,i+2*x,:,:] = M[1,i+1+2*x,:,:] = signature[x]*P # system operator coupled to the environment 
             M[1,D,:,:] = E[x]*P # onsite energy
 
@@ -427,7 +427,7 @@ function displacedchainmps(A::Vector{Any}, N::Int, Nm::Int; γ=nothing, chainpar
 For a displacement gamma of the bath modes, compute the corresponding displaced operator on the 2*Nm-long chain and apply it to a given mps A.
 """
     coupling_stored = zeros(ComplexF64,N,Nm) # just need NxNm because the two chains have the same coupling coeff up to complex conjugation
-    fnamecc = "chaincouplings_ohmic_Ra$(Ra)_R$(R)_a$(α)_wc$(ωc)_xc$(ωc/c)_beta$(beta).csv"
+    fnamecc = "chaincouplings_ohmic_N$(N)_Ra$(Ra)_R$(R)_a$(α)_wc$(ωc)_xc$(ωc/c_phonon)_beta$(beta).csv"
     lcouplings = Nm # number of stored coeff.
     chaincouplings = readdlm(fnamecc,',',ComplexF64,'\n')
 
@@ -439,12 +439,10 @@ For a displacement gamma of the bath modes, compute the corresponding displaced 
     ι = vcat(-1*conj(ι), -1*ι)
 
     B = Any[] # displaced chain MPS
-    displ = Any[] # modulus square of the displacement amplitude
 
     # The system part of the MPS should be unaffected by the displacement operator
     for i=1:N
         push!(B, A[i])
-        push!(displ, 0.0)
     end
 
     # Displacement operator for the chain
