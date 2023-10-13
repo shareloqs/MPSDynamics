@@ -425,7 +425,7 @@ function switchmpo(N::Int, Nm::Int, dhilbert::Int; E=[], J=0.2, chainparams, s=1
 
 end
 
-function displacedchainmps(A::Vector{Any}, N::Int, Nm::Int; γ=nothing, chainparams=[fill(1.0,Nm),fill(1.0,Nm-1), 1.0], s=1, α=0.02, ωc=1, R=1, c_phonon=1, beta ="inf", issoft=false)
+function displacedchainmps(A::Vector{Any}, N::Int, Nm::Int; γ=nothing, chainparams=[fill(1.0,Nm),fill(1.0,Nm-1), 1.0], s=1, α=0.02, ωc=1, R=1, Ra=1, c_phonon=1, beta ="inf", issoft=false)
 """
 For a displacement gamma of the bath modes, compute the corresponding displaced operator on the 2*Nm-long chain and apply it to a given mps A.
 """
