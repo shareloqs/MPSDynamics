@@ -1,3 +1,6 @@
+import QuadGK: quadgk
+import Jacobi: jacobi
+
 function polybeta(t::Float64, n::Int, a::Array, b::Array, temp::Array)
     """
     polybeta recursively constructs the polynomials used to compute the coupling coefficients given the coefficients a and b
