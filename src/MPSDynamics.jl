@@ -26,9 +26,9 @@ include("run_1TDVP.jl")
 include("run_2TDVP.jl")
 include("run_DTDVP.jl")
 include("run_A1TDVP.jl")
-
 include("chainA1TDVP.jl")
- 
+include("switchmpo.jl")
+
 function runsim(dt, tmax, A, H;
                 method=:TDVP1,
                 machine=LocalMachine(),
