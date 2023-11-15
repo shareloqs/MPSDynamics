@@ -121,12 +121,12 @@ function switchmpo(N::Int, Nm::Int, dhilbert::Int; E=[], J=0.2, chainparams, s=1
                 polynomial0(t) = sf_laguerre_n(n,s,t)*exp(-im*t*(x-1)*R*ωc/c_phonon)*t^s*exp(-s)
                 return sqrt(2*α*gamma(n+s + 1)/gamma(n+1))*ωc*quadgk(polynomial0, 0, 1)[1]
             else
-                polynomial(t) = x==1 ? jacobi(2*t-1,n-1, 0, s)*t^s : jacobi(2*t-1,n-1, 0, s)*exp(-im*t*(Ra + (x-1)*R)*ωc/c_phonon)*t^s
+                polynomial(t) = x==1 ? jacobi(2*t-1,n-1, 0, s)*t^s : jacobi(2*t-1,n-1, 0, s)*exp(-im*t*(Ra + (x-2)*R)*ωc/c_phonon)*t^s
 		        return sqrt(2*α*(2*(n-1) + s + 1))*ωc*quadgk(polynomial, 0, 1)[1]
             end
         elseif beta!="inf"
            polynomial1(t) = polybeta(t,n-1,a_chain,b_chain,[t])
-           integrand(t) = x==1 ? polynomial1(t)*SDTOhmic(t) : polynomial1(t)*exp(im*t*(Ra + (x-1)*R)*ωc/c_phonon)*SDTOhmic(t)
+           integrand(t) = x==1 ? polynomial1(t)*SDTOhmic(t) : polynomial1(t)*exp(im*t*(Ra + (x-2)*R)*ωc/c_phonon)*SDTOhmic(t)
            N2(t) = polynomial1(t)^2*SDTOhmic(t)
            if Norm[n]==0
                Norm[n] = sqrt(quadgk(N2,-1,1)[1])
