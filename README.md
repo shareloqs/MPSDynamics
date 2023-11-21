@@ -71,8 +71,7 @@ We may then wish to construct some observables to measure along the trajectory. 
 ob1 = OneSiteObservable("sz", sz, 1)
 ```
 
-creates an object which represents the measurement of the expectation of <img
-src="https://render.githubusercontent.com/render/math?math=\sigma_z"> on the first site of the chain, i.e. on the spin.
+creates an object which represents the measurement of the expectation of $\sigma_z$ on the first site of the chain, i.e. on the spin.
 The string passed to the first argument is just a label that will be used to retrieve the measurement data after the
 run. Any type `Type` can be used as an observable by defining a function `measure(A, ob::Type)`, where `A` is an MPS.
 
@@ -92,8 +91,8 @@ import MPSDynamics: disp
 ob3 = TwoSiteObservable("SXdisp", sx, disp(d), [1], collect(2:N+1))
 ```
 
-will measure <img src="https://render.githubusercontent.com/render/math?math=\langle\sigma_x\hat{q}_i\rangle"> where
-<img src="https://render.githubusercontent.com/render/math?math=\hat{q}_i"> is the displacement operator of the chain site and the index *i* runs over
+will measure $\langle\sigma_x\hat{q}_i\rangle$ where
+$\hat{q}_i$ is the displacement operator of the chain site and the index *i* runs over
 all chain sites.
 
 Finally we launch the simulation with the function `runsim`.
@@ -133,8 +132,13 @@ using Plots
 plot(dat["data/times"], dat["convdata/sz"],label=["Dmax=2" "Dmax=4" "Dmax=6"], xlabel="t",ylabel="sz")
 heatmap(dat["data/times"], collect(1:N), abs.(dat["data/SXdisp"][1,:,:]), xlabel="t",ylabel="i")
 ```
-<img src="https://github.com/angusdunnett/MPSDynamics/blob/master/images/plot.pdf">
-<img src="https://github.com/angusdunnett/MPSDynamics/blob/master/images/heatmap.pdf">
+<picture>
+  <img alt="Convergence plot of <sz> with increasing bond dimension Dmax" src="https://raw.githubusercontent.com/angusdunnett/MPSDynamics/master/images/plot.pdf">
+</picture>
+
+<picture>
+  <img alt="Heatmap of the <sx q_i> correlation as a function of time and chain modes" src="https://raw.githubusercontent.com/angusdunnett/MPSDynamics/master/images/heatmap.pdf">
+</picture>
 
 The data is stored in the JLD format which is based on HDF5. Loading the data in Julia using the
 [JLD](https://github.com/JuliaIO/JLD.jl) package will recover the full type information of the Julia variables that were
