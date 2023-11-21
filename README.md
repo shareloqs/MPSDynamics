@@ -171,6 +171,11 @@ dynamics. *Phys. Rev. A* 104(5):052204, November 2021
 * Real-time benchmark dynamics of the Ohmic Spin-Boson Model computed with Time-Dependent Variational Matrix Product States. (TDVMPS) coupling strength and temperature parameter space.
      * [10.5281/zenodo.4352728](https://doi.org/10.5281/zenodo.4352728)
 
+# Citation
+
+If you use this package in your research, please cite it:
+* A. J. Dunnett and T. Lacroix, MPSDynamics.jl: Tensor network simulations for finite temperature open quantum system dynamics, https://github.com/angusdunnett/MPSDynamics. 
+
 # References
 
 * [[1]](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.123.090402) D. Tamascelli, A. Smirne, J. Lim, S. F. Huegla, and M. B. Plenio, Physical Review Letters 123, 090402 (2019) arXiv: 1811.12418
