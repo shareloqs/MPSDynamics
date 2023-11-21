@@ -1,5 +1,7 @@
 # MPSDynamics.jl
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5106435.svg)](https://doi.org/10.5281/zenodo.5106435)
+
 Tensor network simulations for finite temperature, open quantum system dynamics.
 
 This package is intended to provide an easy to use interface for performing tensor network simulations on Matrix Product
@@ -174,7 +176,7 @@ dynamics. *Phys. Rev. A* 104(5):052204, November 2021
 # Citation
 
 If you use this package in your research, please cite it:
-* A. J. Dunnett and T. Lacroix, MPSDynamics.jl: Tensor network simulations for finite temperature open quantum system dynamics, https://github.com/angusdunnett/MPSDynamics. 
+* Dunnett, A. (2021). angusdunnett/MPSDynamics: (v1.0). Zenodo. https://doi.org/10.5281/zenodo.5106435
 
 # References
 
