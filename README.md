@@ -188,4 +188,5 @@ If you use this package in your research, please cite it:
 
 * [[2]](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.94.165116) J. Haegeman, C. Lubich, I. Oseledets, B. Vandereycken, and F. Verstraete, Physical Review B 94, 165116 (2016), arXiv: 1408.5056
 
-* [[3]](https://arxiv.org/abs/2007.13528) A. J. Dunnett, and A. W. Chin, arXiv : 2007.13528
+* [[3]](https://doi.org/10.1103/PhysRevB.104.214302) A. J. Dunnett & A. W. Chin, Physical Review B, 104(21), 214302 (2021)
+
