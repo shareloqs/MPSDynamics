@@ -133,11 +133,11 @@ plot(dat["data/times"], dat["convdata/sz"],label=["Dmax=2" "Dmax=4" "Dmax=6"], x
 heatmap(dat["data/times"], collect(1:N), abs.(dat["data/SXdisp"][1,:,:]), xlabel="t",ylabel="i")
 ```
 <picture>
-  <img alt="Convergence plot of <sz> with increasing bond dimension Dmax" src="https://raw.githubusercontent.com/angusdunnett/MPSDynamics/master/images/plot.pdf">
+  <img alt="Convergence plot of <sz> with increasing bond dimension Dmax" src="https://raw.githubusercontent.com/angusdunnett/MPSDynamics/master/images/plot.png">
 </picture>
 
 <picture>
-  <img alt="Heatmap of the <sx q_i> correlation as a function of time and chain modes" src="https://raw.githubusercontent.com/angusdunnett/MPSDynamics/master/images/heatmap.pdf">
+  <img alt="Heatmap of the <sx q_i> correlation as a function of time and chain modes" src="https://raw.githubusercontent.com/angusdunnett/MPSDynamics/master/images/heatmap.png">
 </picture>
 
 The data is stored in the JLD format which is based on HDF5. Loading the data in Julia using the
