@@ -155,13 +155,12 @@ Import["~/MPSDynamics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
 # Publications
 Publications which make use of MPSDynamics:
 
-* Dunnett and Chin. Influence of non-adiabatic effects on linear absorption spectra in the condensed phase: Methylene blue. *J. Chem. Phys.* 155(14):144112, October 2021
+* Lacroix et al. Unveiling non-Markovian spacetime signaling in open quantum systems with long-range tensor network dynamics. *Phys. Rev. A* 104(5):052204, November 2021
+     * [https://link.aps.org/doi/10.1103/PhysRevA.104.052204](https://link.aps.org/doi/10.1103/PhysRevA.104.052204)
+
+* Dunnett et al. Influence of non-adiabatic effects on linear absorption spectra in the condensed phase: Methylene blue. *J. Chem. Phys.* 155(14):144112, October 2021
 
      * [http://aip.scitation.org/doi/10.1063/5.0062950](http://aip.scitation.org/doi/10.1063/5.0062950)
-
-* Lacroix et al. Unveiling non-Markovian spacetime signaling in open quantum systems with long-range tensor network
-dynamics. *Phys. Rev. A* 104(5):052204, November 2021
-     * [https://link.aps.org/doi/10.1103/PhysRevA.104.052204](https://link.aps.org/doi/10.1103/PhysRevA.104.052204)
 
 * Dunnett and Chin. Simulating quantum vibronic dynamics at finite temperatures with many body wave functions at 0K. *Front. Chem.* 8, January 2021
      * [https://doi.org/10.3389/fchem.2020.600731](https://doi.org/10.3389/fchem.2020.600731)
