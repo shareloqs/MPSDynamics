@@ -181,6 +181,12 @@ Publications which make use of MPSDynamics:
 If you use this package in your research, please cite it:
 * Dunnett, A. (2021). angusdunnett/MPSDynamics: (v1.0). Zenodo. https://doi.org/10.5281/zenodo.5106435
 
+# How to Contribute
+Contributions are welcome! Don't hesitate to contact us if you
+* found a bug;
+* have a suggestion on how to improve the code and/or documentation;
+* would like to get involved in writing code and/or documentation.
+ 
 # References
 
 * [[1]](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.123.090402) D. Tamascelli, A. Smirne, J. Lim, S. F. Huegla, and M. B. Plenio, Physical Review Letters 123, 090402 (2019) arXiv: 1811.12418
