@@ -7,7 +7,7 @@ dn(ops...) = permutedims(cat(reverse(ops)...; dims=3), [3,1,2])
 Return the MPO representation of the `N`-spin XYZ Hamiltonian with external field ``\\vec{h}=(h_x, 0, h_z)``.
 
 ``
-H = \\sum_{n=1}^{N-1} -J_x\\sigma_x^{n} \\sigma_x^{n+1} - J_y\\sigma_y^{n} \\sigma_y^{n+1} - J_z\\sigma_z^{n} \\sigma_z^{n+1} + \\sum_{n=1}^{N}(- h_x\\sigma_x^{n} - h_z\\sigma_z^{n})  
+H = \\sum_{n=1}^{N-1} -J_x σ_x^{n} σ_x^{n+1} - J_y σ_y^{n} σ_y^{n+1} - J_z σ_z^{n} σ_z^{n+1} + \\sum_{n=1}^{N}(- h_x σ_x^{n} - h_z σ_z^{n})  
 ``.
 
 """
@@ -345,7 +345,7 @@ end
 Generate MPO for a spin-1/2 coupled to a chain of harmonic oscillators, defined by the Hamiltonian
 
 ``
-H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0σ_x(b_k^\\dagger+b_k) + \\sum_{i=0}^{N-1} t_i (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_ib_i^\\dagger b_i
+H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0σ_x(b_0^\\dagger+b_0) + \\sum_{i=0}^{N-1} t_i (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_ib_i^\\dagger b_i
 ``.
 
 The spin is on site 1 of the MPS and the bath modes are to the right.
