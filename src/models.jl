@@ -1,6 +1,16 @@
 up(ops...) = permutedims(cat(ops...; dims=3), [3,1,2])
 dn(ops...) = permutedims(cat(reverse(ops)...; dims=3), [3,1,2])
 
+"""
+    xyzmpo(N::Int; Jx=1.0, Jy=Jx, Jz=Jx, hx=0., hz=0.)
+
+Return the MPO representation of the `N`-spin XYZ Hamiltonian with external field ``\\vec{h}=(h_x, 0, h_z)``.
+
+``
+H = \\sum_{n=1}^{N-1} -J_x\\sigma_x^{n} \\sigma_x^{n+1} - J_y\\sigma_y^{n} \\sigma_y^{n+1} - J_z\\sigma_z^{n} \\sigma_z^{n+1} + \\sum_{n=1}^{N}(- h_x\\sigma_x^{n} - h_z\\sigma_z^{n})  
+``.
+
+"""
 function xyzmpo(N::Int; Jx=1.0, Jy=Jx, Jz=Jx, hx=0., hz=0.)
     u = unitmat(2)
 
@@ -27,7 +37,13 @@ function xyzmpo(N::Int; Jx=1.0, Jy=Jx, Jz=Jx, hx=0., hz=0.)
     return Any[M[1:1,:,:,:], fill(M, N-2)..., M[:,D:D,:,:]]
 end
 
+"""
+    isingmpo(N; J=1.0, h=1.0)
+
+Return the MPO representation of a `N`-spin 1D Ising model with external field ``\\vec{h} = (0,0,h)``.
+"""
 isingmpo(N::Int; J=1.0, h=1.0) = xyzmpo(N; Jx=J, Jy=0., Jz=0., hz=h, hx=0.)
+
 heisenbergmpo(N::Int, J=1.0) = xyzmpo(N; Jx=J)
 xxzmpo(N::Int, Δ = 1.0, J=1.0) = xyzmpo(N; Jx=J, Jy=J, Jz=J*Δ)
 
