@@ -101,6 +101,16 @@ function mpodrivencavity_noTLS(QRparams, d, dchain, Nchain, chainparams; rwa = f
     return Any[MR, chain1...]
 end
 
+"""
+    xyzmpo(N::Int; Jx=1.0, Jy=Jx, Jz=Jx, hx=0., hz=0.)
+
+Return the MPO representation of the `N`-spin XYZ Hamiltonian with external field ``\\vec{h}=(h_x, 0, h_z)``.
+
+``
+H = \\sum_{n=1}^{N-1} -J_x σ_x^{n} σ_x^{n+1} - J_y σ_y^{n} σ_y^{n+1} - J_z σ_z^{n} σ_z^{n+1} + \\sum_{n=1}^{N}(- h_x σ_x^{n} - h_z σ_z^{n})  
+``.
+
+"""
 function xyzmpo(N::Int; Jx=1.0, Jy=Jx, Jz=Jx, hx=0., hz=0.)
     u = unitmat(2)
 
@@ -127,7 +137,13 @@ function xyzmpo(N::Int; Jx=1.0, Jy=Jx, Jz=Jx, hx=0., hz=0.)
     return Any[M[1:1,:,:,:], fill(M, N-2)..., M[:,D:D,:,:]]
 end
 
+"""
+    isingmpo(N; J=1.0, h=1.0)
+
+Return the MPO representation of a `N`-spin 1D Ising model with external field ``\\vec{h} = (0,0,h)``.
+"""
 isingmpo(N::Int; J=1.0, h=1.0) = xyzmpo(N; Jx=J, Jy=0., Jz=0., hz=h, hx=0.)
+
 heisenbergmpo(N::Int, J=1.0) = xyzmpo(N; Jx=J)
 xxzmpo(N::Int, Δ = 1.0, J=1.0) = xyzmpo(N; Jx=J, Jy=J, Jz=J*Δ)
 
@@ -429,7 +445,7 @@ end
 Generate MPO for a spin-1/2 coupled to a chain of harmonic oscillators, defined by the Hamiltonian
 
 ``
-H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0σ_x(b_k^\\dagger+b_k) + \\sum_{i=0}^{N-1} t_i (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_ib_i^\\dagger b_i
+H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0σ_x(b_0^\\dagger+b_0) + \\sum_{i=0}^{N-1} t_i (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_ib_i^\\dagger b_i
 ``.
 
 The spin is on site 1 of the MPS and the bath modes are to the right.

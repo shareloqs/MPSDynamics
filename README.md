@@ -1,5 +1,7 @@
 # MPSDynamics.jl
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5106435.svg)](https://doi.org/10.5281/zenodo.5106435)
+
 Tensor network simulations for finite temperature, open quantum system dynamics.
 
 This package is intended to provide an easy to use interface for performing tensor network simulations on Matrix Product
@@ -69,8 +71,7 @@ We may then wish to construct some observables to measure along the trajectory. 
 ob1 = OneSiteObservable("sz", sz, 1)
 ```
 
-creates an object which represents the measurement of the expectation of <img
-src="https://render.githubusercontent.com/render/math?math=\sigma_z"> on the first site of the chain, i.e. on the spin.
+creates an object which represents the measurement of the expectation of $\sigma_z$ on the first site of the chain, i.e. on the spin.
 The string passed to the first argument is just a label that will be used to retrieve the measurement data after the
 run. Any type `Type` can be used as an observable by defining a function `measure(A, ob::Type)`, where `A` is an MPS.
 
@@ -90,8 +91,8 @@ import MPSDynamics: disp
 ob3 = TwoSiteObservable("SXdisp", sx, disp(d), [1], collect(2:N+1))
 ```
 
-will measure <img src="https://render.githubusercontent.com/render/math?math=\langle\sigma_x\hat{q}_i\rangle"> where
-<img src="https://render.githubusercontent.com/render/math?math=\hat{q}_i"> is the displacement operator of the chain site and the index *i* runs over
+will measure $\langle\sigma_x\hat{q}_i\rangle$ where
+$\hat{q}_i$ is the displacement operator of the chain site and the index *i* runs over
 all chain sites.
 
 Finally we launch the simulation with the function `runsim`.
@@ -131,8 +132,13 @@ using Plots
 plot(dat["data/times"], dat["convdata/sz"],label=["Dmax=2" "Dmax=4" "Dmax=6"], xlabel="t",ylabel="sz")
 heatmap(dat["data/times"], collect(1:N), abs.(dat["data/SXdisp"][1,:,:]), xlabel="t",ylabel="i")
 ```
-<img src="https://github.com/angusdunnett/MPSDynamics/blob/master/images/plot.pdf">
-<img src="https://github.com/angusdunnett/MPSDynamics/blob/master/images/heatmap.pdf">
+<picture>
+  <img alt="Convergence plot of <sz> with increasing bond dimension Dmax" src="https://raw.githubusercontent.com/angusdunnett/MPSDynamics/master/images/plot.png">
+</picture>
+
+<picture>
+  <img alt="Heatmap of the <sx q_i> correlation as a function of time and chain modes" src="https://raw.githubusercontent.com/angusdunnett/MPSDynamics/master/images/heatmap.png">
+</picture>
 
 The data is stored in the JLD format which is based on HDF5. Loading the data in Julia using the
 [JLD](https://github.com/JuliaIO/JLD.jl) package will recover the full type information of the Julia variables that were
@@ -149,13 +155,12 @@ Import["~/MPSDynamics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
 # Publications
 Publications which make use of MPSDynamics:
 
-* Dunnett and Chin. Influence of non-adiabatic effects on linear absorption spectra in the condensed phase: Methylene blue. *J. Chem. Phys.* 155(14):144112, October 2021
+* Lacroix et al. Unveiling non-Markovian spacetime signaling in open quantum systems with long-range tensor network dynamics. *Phys. Rev. A* 104(5):052204, November 2021
+     * [https://link.aps.org/doi/10.1103/PhysRevA.104.052204](https://link.aps.org/doi/10.1103/PhysRevA.104.052204)
+
+* Dunnett et al. Influence of non-adiabatic effects on linear absorption spectra in the condensed phase: Methylene blue. *J. Chem. Phys.* 155(14):144112, October 2021
 
      * [http://aip.scitation.org/doi/10.1063/5.0062950](http://aip.scitation.org/doi/10.1063/5.0062950)
-
-* Lacroix et al. Unveiling non-Markovian spacetime signaling in open quantum systems with long-range tensor network
-dynamics. *Phys. Rev. A* 104(5):052204, November 2021
-     * [https://link.aps.org/doi/10.1103/PhysRevA.104.052204](https://link.aps.org/doi/10.1103/PhysRevA.104.052204)
 
 * Dunnett and Chin. Simulating quantum vibronic dynamics at finite temperatures with many body wave functions at 0K. *Front. Chem.* 8, January 2021
      * [https://doi.org/10.3389/fchem.2020.600731](https://doi.org/10.3389/fchem.2020.600731)
@@ -171,10 +176,22 @@ dynamics. *Phys. Rev. A* 104(5):052204, November 2021
 * Real-time benchmark dynamics of the Ohmic Spin-Boson Model computed with Time-Dependent Variational Matrix Product States. (TDVMPS) coupling strength and temperature parameter space.
      * [10.5281/zenodo.4352728](https://doi.org/10.5281/zenodo.4352728)
 
+# Citation
+
+If you use this package in your research, please cite it:
+* Dunnett, A. (2021). angusdunnett/MPSDynamics: (v1.0). Zenodo. https://doi.org/10.5281/zenodo.5106435
+
+# How to Contribute
+Contributions are welcome! Don't hesitate to contact us if you
+* found a bug;
+* have a suggestion on how to improve the code and/or documentation;
+* would like to get involved in writing code and/or documentation.
+ 
 # References
 
 * [[1]](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.123.090402) D. Tamascelli, A. Smirne, J. Lim, S. F. Huegla, and M. B. Plenio, Physical Review Letters 123, 090402 (2019) arXiv: 1811.12418
 
 * [[2]](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.94.165116) J. Haegeman, C. Lubich, I. Oseledets, B. Vandereycken, and F. Verstraete, Physical Review B 94, 165116 (2016), arXiv: 1408.5056
 
-* [[3]](https://arxiv.org/abs/2007.13528) A. J. Dunnett, and A. W. Chin, arXiv : 2007.13528
+* [[3]](https://doi.org/10.1103/PhysRevB.104.214302) A. J. Dunnett & A. W. Chin, Physical Review B, 104(21), 214302 (2021)
+

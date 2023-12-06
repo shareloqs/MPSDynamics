@@ -30,8 +30,9 @@ include("run_A1TDVP.jl")
 include("run_drive1TDVP_readout.jl")
 include("run_drive1TDVPchain_readout.jl")
 include("chainA1TDVP.jl")
+include("switchmpo.jl")
 include("run_driveDTDVP_readout.jl")
- 
+
 function runsim(dt, tmax, A, H;
                 method=:TDVP1,
                 machine=LocalMachine(),
