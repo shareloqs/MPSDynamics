@@ -23,11 +23,14 @@ include("models.jl")
 include("logging.jl")
 include("run_all.jl")
 include("run_1TDVP.jl")
+include("run_drive1TDVP.jl")
 include("run_2TDVP.jl")
 include("run_DTDVP.jl")
 include("run_A1TDVP.jl")
-
+include("run_drive1TDVP_readout.jl")
+include("run_drive1TDVPchain_readout.jl")
 include("chainA1TDVP.jl")
+include("run_driveDTDVP_readout.jl")
  
 function runsim(dt, tmax, A, H;
                 method=:TDVP1,
@@ -137,6 +140,10 @@ export println, print, show
 export @LogParams
 
 export MPOtoVector, MPStoVector
+
+export mpodrivencavity, HtR, HtQ,  Ht, Htchain
+
+export rhoreduced_proton2chains
 
 end
 

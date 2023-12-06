@@ -1,6 +1,106 @@
 up(ops...) = permutedims(cat(ops...; dims=3), [3,1,2])
 dn(ops...) = permutedims(cat(reverse(ops)...; dims=3), [3,1,2])
 
+#Time dependent function for driveTDVP1
+function Ht(time,F,ω)
+    H = [F*sx*sin(ω*tstep) for tstep in time]
+    return H
+end
+
+
+#Time dependent function for driveTDVP1_readout
+function HtR(time,ϵd,ω,a,ad)
+    H = [ϵd*(a+ad)*sin(ω*tstep) for tstep in time]
+    return H
+end
+
+#Time dependent function for driveTDVP1_readout, drive the TLS
+function HtQ(time,ϵd,ω,sx)
+    H = [ϵd*sx*sin(ω*tstep) for tstep in time]
+    return H
+end
+
+
+
+#Time dependent function to drive the chain in driveTDVP1_readout
+function Htchain(time,ϵd,ω,a,ad,U_chain)
+    H=zeros(length(U_chain),length(time),size(a)[1],size(a)[2])
+    for i=1:size(U_chain)[1]
+        for t=1:length(time)
+           for k=1:size(U_chain)[2]
+                H[i,t,:,:] += ϵd*((ad*conj(U_chain[i,k]))+(a*U_chain[i,k]))*sin(ω*time[t])
+           end
+        end
+    end
+    return H
+end
+
+
+
+function mpodrivencavity(ωeg, QRparams, d, dchain, Nchain, chainparams; rwa=false)
+    u = unitmat(2)
+
+    a = anih(d)
+    ad = crea(d)
+    n = numb(d)
+    ωR = QRparams[1]
+    uR = unitmat(d)
+
+    gchain = only(chainparams[3])
+    g = only(QRparams[2])
+
+    Hs = 0.5 * ωeg * sz
+
+    MQ = zeros(1, 3, 2, 2)
+    MQ[1, :, :, :] = up(Hs, g * sx, u)
+
+    if rwa
+        MR=zeros(3, 4, d, d)
+        MR[:, 1, :, :] = dn(ωR * n, a + ad, uR)
+        MR[3, :, :, :] = up(ωR * n, gchain * a, gchain * ad, uR)
+    else
+        MR=zeros(3, 3, d, d)
+        MR[:, 1, :, :] = dn(ωR * n, a + ad, uR)
+        MR[3, :, :, :] = up(ωR * n, gchain * (a + ad), uR)
+    end
+
+    chain1 = hbathchain(Nchain, dchain, chainparams; coupletox =! rwa)
+
+    return Any[MQ, MR, chain1...]
+end
+
+function mpodrivencavity_noTLS(QRparams, d, dchain, Nchain, chainparams; rwa = false)
+    u = unitmat(2)
+
+    a = anih(d)
+    ad = crea(d)
+    n = numb(d)
+    ωR = QRparams[1]
+    uR = unitmat(d)
+
+    gchain = only(chainparams[3])
+    g = only(QRparams[2])
+
+    MR = zeros(1, 3, d, d)
+    MR[1, :, :, :] = up(ωR * n, a + ad, uR)
+
+    #MR = zeros(3,3,d,d)
+
+    #MR[:, 1, :, :] = dn(ωR*n,(a+ad), uR)
+
+    if rwa
+        MR=zeros(1, 4, d, d)
+        MR[1, :, :, :] = up(ωR * n, gchain * ad, gchain * a, uR)
+    else
+        MR=zeros(1, 3, d, d)
+        MR[1, :, :, :] = up(ωR * n, gchain * (a + ad), uR)
+    end
+
+    chain1 = hbathchain(Nchain, dchain, chainparams; coupletox=!rwa)
+
+    return Any[MR, chain1...]
+end
+
 function xyzmpo(N::Int; Jx=1.0, Jy=Jx, Jz=Jx, hx=0., hz=0.)
     u = unitmat(2)
 
@@ -424,6 +524,13 @@ function chaincoeffs_ohmic(nummodes, α, s; ωc=1, soft=false)
     end
 end
 
+function chaincoeffs_flat(nummodes, α; ωc=1)
+    c0 = sqrt(2α) * ωc
+    e = [ωc / 2 for n in 0:(nummodes - 1)]
+    t = [ωc * (1 + n) * (1 + n) / ((2 + 2n) * (3 + 2n)) * sqrt((3 + 2n)/(1 + 2n)) for n in 0:(nummodes-2)]
+    return [e, t, c0]
+end
+
 #Deprecated#
 function getchaincoeffs(nummodes, α, s, beta, ωc=1)
     matlabdir = ENV["MATDIR"]
@@ -555,3 +662,32 @@ function nearestneighbourmpo(tree_::Tree, h0, A, Ad = A')
     Ms[hn] = Ms[hn][D:D, fill(:,nc+2)...]
     return TreeNetwork(tree, Ms)
 end
+
+function Ht(time,F,ω)
+	H = [F*sx*sin(ω*tstep) for tstep in time]
+	return H
+end
+
+
+
+function rhoreduced_proton2chains(A::Vector, site::Int=4)
+    N = length(A)
+    ρreduced = Vector{Any}(undef, 1)
+    ρreduced2 = zeros(ComplexF64,length(A[2]),length(A[2]))
+    ρR = Vector{Any}(undef, N-site+1)
+    ρL = Vector{Any}(undef, site)
+    ρR[1] = ones(ComplexF64,1,1)
+    ρL[1] = ones(ComplexF64,1,1)
+    for i=N:-1:(site+1) # Build the right block, compressing the chain, from right ot left (indir=2)
+                ρR[N-i+2]= rhoAAstar(ρR[N-i+1], A[i], 2,0)
+    end
+    for i=1:(site-1)
+        ρL[i+1]= rhoAAstar(ρL[i], A[i], 1,0)
+    end
+    # Compress final virtual bondimension 
+    @tensoropt ρreduced[a,b,s,s'] := ρR[N-site+1][a0,b0] * conj(A[site][a,a0,s']) * A[site][b,b0,s]
+    @tensoropt ρreduced2[s,s'] := ρL[site][a0,b0] * ρreduced[a0,b0,s,s']
+    return ρreduced2
+end
+
+

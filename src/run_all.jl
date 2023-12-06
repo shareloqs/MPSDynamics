@@ -26,8 +26,16 @@ function run_all(dt, tmax, A, H;
                 B, dat = run_1TDVP_LC(dt, tmax, A, H, cps...; obs=convobs, kwargs...)
             elseif method==:DTDVP
                 B, dat = run_DTDVP(dt, tmax, A, H, cps...; obs=convobs, kwargs...)
-            elseif method==:A1TDVP
+            elseif method==:driveDTDVP_readout
+                B, dat = run_driveDTDVP_readout(dt, tmax, A, H, cps...; obs=convobs, kwargs...)
+	    elseif method==:A1TDVP
                 B, dat = run_A1TDVP(dt, tmax, A, H, cps...; obs=convobs, kwargs...)
+	    elseif method==:driveTDVP1
+		B, dat = run_drive1TDVP(dt, tmax, A, H, cps...; obs=convobs, kwargs...)
+	    elseif method==:driveTDVP1_readout
+		B, dat = run_drive1TDVP_readout(dt, tmax, A, H, cps...; obs=convobs, kwargs...)
+	    elseif method==:driveTDVP1chain_readout
+		B, dat = run_drive1TDVPchain_readout(dt, tmax, A, H, cps...; obs=convobs, kwargs...)
             elseif method==:hTDVP
                 error("method $method not recognised")
                 #B, dat = run_hTDVP(dt, tmax, A, H, cps...; obs=convobs, kwargs...)
@@ -53,8 +61,17 @@ function run_all(dt, tmax, A, H;
         B, dat = run_1TDVP_LC(dt, tmax, A, H, cps...; obs=obs, kwargs...)
     elseif method==:DTDVP
         B, dat = run_DTDVP(dt, tmax, A, H, cps...; obs=obs, kwargs...)
+    elseif method==:driveDTDVP_readout
+        B, dat = run_driveDTDVP_readout(dt, tmax, A, H, cps...; obs=obs, kwargs...)
     elseif method==:A1TDVP
         B, dat = run_A1TDVP(dt, tmax, A, H, cps...; obs=obs, kwargs...)
+    elseif method==:driveTDVP1
+        B, dat = run_drive1TDVP(dt, tmax, A, H, cps...; obs=convobs, kwargs...)
+    elseif method==:driveTDVP1_readout
+        B, dat = run_drive1TDVP_readout(dt, tmax, A, H, cps...; obs=convobs, kwargs...)
+    elseif method==:driveTDVP1chain_readout
+        B, dat = run_drive1TDVPchain_readout(dt, tmax, A, H, cps...; obs=convobs, kwargs...)
+
     elseif method==:hTDVP
         error("method $method not recognised")
         #B, dat = run_hTDVP(dt, tmax, A, H, cps...; obs=obs, kwargs...)

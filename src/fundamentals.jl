@@ -1,5 +1,7 @@
 default(size = (800,600), reuse = true)
 
+disp(d,ω,m) = (1/(2*sqrt(m*ω/2)))*(crea(d)+anih(d))
+
 crea(d) = diagm(-1 => [sqrt(i) for i=1:d-1])
 anih(d) = Matrix(crea(d)')
 numb(d) = crea(d)*anih(d)
@@ -25,7 +27,7 @@ unitmat(d1, d2) = [i1==i2 ? 1.0 : 0.0 for i1=1:d1, i2=1:d2]
 unitmat(d) = unitmat(d, d)
 
 function unitcol(n, d)
-    z = zeros(d, 1)
+    z = zeros(Complex{Float64}, d, 1)
     z[n] = 1
     return z
 end
