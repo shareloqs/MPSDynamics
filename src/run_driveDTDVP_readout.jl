@@ -1,4 +1,21 @@
-function run_driveDTDVP_readout(dt, tmax, A, H, prec; obs=[], Htime, dR, drivecav=true, effects=false, error=false, timed=false, savebonddims=false, Dplusmax=nothing, Dlim=50, kwargs...)
+
+"Old version of run_drive!"
+# function run_driveDTDVP_readout(dt, tmax, A, H, prec; obs=[], Htime, dR, drivecav=true, effects=false, error=false, timed=false, savebonddims=false, Dplusmax=nothing, Dlim=50, kwargs...)
+
+"New version with option to only compute the reduced density matrix at some timesteps (input param)"
+function run_driveDTDVP_readout(dt, tmax, A, H, prec; 
+                                time_frames_rho,    # to specify the time frames at which to compute the reduce ρ
+                                obs=[], 
+                                Htime, 
+                                dR, 
+                                drivecav=true, 
+                                effects=false, 
+                                error=false, 
+                                timed=false, 
+                                savebonddims=false, 
+                                Dplusmax=nothing, 
+                                Dlim=50, 
+                                kwargs...)
     A0 = deepcopy(A)
     data = Dict{String,Any}()
 
@@ -9,7 +26,7 @@ function run_driveDTDVP_readout(dt, tmax, A, H, prec; obs=[], Htime, dR, driveca
     
     @printf("prec : %.3e \n", prec)
 
-    exp = measure(A0, obs; t=times[1])
+    exp = measure(A0, obs; t = times[1])
     #expChain = measure2siteoperator(A0, measureparamsChain[1], measureparamsChain[2], measureparamsChain[3])
     exprho = rhoreduced_proton2chains(A0, 2) #2 to target R (cavity) site, done for the Wigner function
 
@@ -28,25 +45,25 @@ function run_driveDTDVP_readout(dt, tmax, A, H, prec; obs=[], Htime, dR, driveca
     timed && (tproj = Vector{Float64}(undef, numsteps))
     effects && (efft = Vector{Any}(undef, numsteps))
 
-    F=nothing
-    Afull=nothing
+    F = nothing
+    Afull = nothing
     for tstep=1:numsteps
         maxbond = max(bonds...)
         
-	@printf("%i/%i, t = %.3f, Dmax = %i \n", tstep, numsteps, times[tstep], maxbond)
-    if drivecav==true
-         for i=1:dR
-            for j=1:dR
-                    H0[2][3,1,i,j] =H[2][3,1,i,j]+Htime[tstep][i,j] #Drive the cavity 
-            end
-    end
-    else
-         for i=1:2
-            for j=1:2
-                    H0[1][1,1,i,j] =H[1][1,1,i,j]+Htime[tstep][i,j] #Drive the TLS 
+        @printf("%i/%i, t = %.3f, Dmax = %i \n", tstep, numsteps, times[tstep], maxbond)
+        if drivecav==true
+            for i=1:dR
+                for j=1:dR
+                        H0[2][3,1,i,j] =H[2][3,1,i,j]+Htime[tstep][i,j] #Drive the cavity 
+                end
+        end
+        else
+            for i=1:2
+                for j=1:2
+                        H0[1][1,1,i,j] =H[1][1,1,i,j]+Htime[tstep][i,j] #Drive the TLS 
+                end
             end
         end
-    end
 
 
         A0, Afull, F, info = tdvp1sweep_dynamic!(dt, A0, H0, Afull, F;
@@ -74,9 +91,10 @@ function run_driveDTDVP_readout(dt, tmax, A, H, prec; obs=[], Htime, dR, driveca
         #end
 
         #data["Amplitude Atot"] = cat(data["Amplitude Atot"], expAtot; dims=ndims(expAtot)+1)
-        exprho = rhoreduced_proton2chains(A0, 2)
-        data["ρ_red"] = cat(data["ρ_red"], exprho; dims=ndims(exprho)+1)
-
+        
+        if tstep*dt ∈ time_frames_rho
+            exprho = rhoreduced_proton2chains(A0, 2)
+            data["ρ_red"] = cat(data["ρ_red"], exprho; dims=ndims(exprho)+1)
 
         if tstep != 1
             for (i, ob) in enumerate(obs)
