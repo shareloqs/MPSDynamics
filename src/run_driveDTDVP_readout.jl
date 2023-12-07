@@ -56,7 +56,7 @@ function run_driveDTDVP_readout(dt, tmax, A, H, prec;
                 for j=1:dR
                         H0[2][3,1,i,j] =H[2][3,1,i,j]+Htime[tstep][i,j] #Drive the cavity 
                 end
-        end
+            end
         else
             for i=1:2
                 for j=1:2
@@ -95,7 +95,7 @@ function run_driveDTDVP_readout(dt, tmax, A, H, prec;
         if tstep*dt ∈ time_frames_rho
             exprho = rhoreduced_proton2chains(A0, 2)
             data["ρ_red"] = cat(data["ρ_red"], exprho; dims=ndims(exprho)+1)
-
+        end
         if tstep != 1
             for (i, ob) in enumerate(obs)
                 data[ob.name] = cat(data[ob.name], exp[i]; dims=ndims(exp[i])+1)

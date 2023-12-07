@@ -679,12 +679,10 @@ function nearestneighbourmpo(tree_::Tree, h0, A, Ad = A')
     return TreeNetwork(tree, Ms)
 end
 
-function Ht(time,F,ω)
-	H = [F*sx*sin(ω*tstep) for tstep in time]
-	return H
-end
-
-
+#function Ht(time,F,ω)#
+#	H = [F*sx*sin(ω*tstep) for tstep in time]
+#	return H
+#end
 
 function rhoreduced_proton2chains(A::Vector, site::Int=4)
     N = length(A)
