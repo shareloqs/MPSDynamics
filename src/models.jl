@@ -684,24 +684,3 @@ end
 #	return H
 #end
 
-function rhoreduced_proton2chains(A::Vector, site::Int=4)
-    N = length(A)
-    ρreduced = Vector{Any}(undef, 1)
-    ρreduced2 = zeros(ComplexF64,length(A[2]),length(A[2]))
-    ρR = Vector{Any}(undef, N-site+1)
-    ρL = Vector{Any}(undef, site)
-    ρR[1] = ones(ComplexF64,1,1)
-    ρL[1] = ones(ComplexF64,1,1)
-    for i=N:-1:(site+1) # Build the right block, compressing the chain, from right ot left (indir=2)
-                ρR[N-i+2]= rhoAAstar(ρR[N-i+1], A[i], 2,0)
-    end
-    for i=1:(site-1)
-        ρL[i+1]= rhoAAstar(ρL[i], A[i], 1,0)
-    end
-    # Compress final virtual bondimension 
-    @tensoropt ρreduced[a,b,s,s'] := ρR[N-site+1][a0,b0] * conj(A[site][a,a0,s']) * A[site][b,b0,s]
-    @tensoropt ρreduced2[s,s'] := ρL[site][a0,b0] * ρreduced[a0,b0,s,s']
-    return ρreduced2
-end
-
-
