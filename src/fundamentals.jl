@@ -27,7 +27,8 @@ unitmat(d1, d2) = [i1==i2 ? 1.0 : 0.0 for i1=1:d1, i2=1:d2]
 unitmat(d) = unitmat(d, d)
 
 function unitcol(n, d)
-    z = zeros(Complex{Float64}, d, 1)
+    z = zeros(d, 1)
+    #z = zeros(Complex{Float64}, d, 1)
     z[n] = 1
     return z
 end

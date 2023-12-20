@@ -82,8 +82,12 @@ function runsim(dt, tmax, A, H;
     A0, dat = try
         out = launch_workers(machine) do pid
             print("loading MPSDynamics............")
+            flush(stdout)
+
             @everywhere pid eval(using MPSDynamics)
             println("done")
+            flush(stdout)
+            
             out = fetch(@spawnat only(pid) run_all(dt, tmax, A, H;
                                                        method=method,
                                                        obs=obs,
