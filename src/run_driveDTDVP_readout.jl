@@ -4,7 +4,7 @@
 
 "New version with option to only compute the reduced density matrix at some timesteps (input param)"
 function run_driveDTDVP_readout(dt, tmax, A, H, prec; 
-                                time_frames_rho,    # to specify the time frames at which to compute the reduce ρ
+                                time_frames_rho=[],    # to specify the time frames at which to compute the reduce ρ
                                 obs=[], 
                                 Htime, 
                                 dR, 

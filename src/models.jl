@@ -705,4 +705,3 @@ function rhoreduced_proton2chains(A::Vector, site::Int=4)
     return ρreduced2
 end
 
-

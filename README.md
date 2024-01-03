@@ -155,6 +155,8 @@ Import["~/MPSDynamics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
 
 # Publications
 Publications which make use of MPSDynamics:
+* Riva et al. Thermal cycle and polaron formation in structured bosonic environments. *Phys. Rev. B*  108(19):195138, November 2023
+    * [https://doi.org/10.1103/PhysRevB.108.195138](https://doi.org/10.1103/PhysRevB.108.195138)
 
 * Lacroix et al. Unveiling non-Markovian spacetime signaling in open quantum systems with long-range tensor network dynamics. *Phys. Rev. A* 104(5):052204, November 2021
      * [https://link.aps.org/doi/10.1103/PhysRevA.104.052204](https://link.aps.org/doi/10.1103/PhysRevA.104.052204)

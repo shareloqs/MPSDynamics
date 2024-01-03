@@ -659,3 +659,28 @@ function mpsembed!(A::Vector, Dmax::Int)
     return A
 end
 
+"""
+    rhoreduced_proton2chains(A::Vector, site::Int=4) 
+
+Compute the reduced density matrix of a single site by tracing out the chain.
+
+"""
+
+
+function rhoreduced_proton2chains(A::Vector, site::Int=4)
+    N = length(A)
+
+    # Bring MPS A into mixed canonical form with orthogonality center at site
+    mpsmixednorm!(A, site)
+
+    # Initialize reduced density matrices
+    ρreduced = zeros(ComplexF64, size(A[site], 1), size(A[site], 1), size(A[site], 3), size(A[site], 3))
+    ρreduced2 = zeros(ComplexF64, size(A[site], 3), size(A[site], 3))
+
+    # Compute the reduced density matrix
+    @tensoropt ρreduced[a,b,s,s'] := A[site][a,-1,s'] * conj(A[site][b,-1,s])
+    @tensoropt ρreduced2[s,s'] := ρreduced[1,1,s,s']
+
+    return ρreduced2
+end
+
