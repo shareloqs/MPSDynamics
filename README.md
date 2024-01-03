@@ -23,7 +23,8 @@ The elementary tensor operations are implemented in all cases using the [TensorO
 
 The package may be installed by typing the following into a Julia REPL
 
-```julia
+```
+julia
 ] add https://github.com/angusdunnett/MPSDynamics.git
 ```
 

@@ -35,7 +35,7 @@ function run_driveDTDVP_readout(dt, tmax, A, H, prec;
     end
     #push!(data, "Measure Matrix Chain" => reshape(expChain, size(expChain)..., 1))
     # this is to obtain the reduced density matrix of the cavity
-    push!(data, "ρ_red" => reshape(exprho, size(exprho)..., 1))
+    push!(data, "rho_red" => reshape(exprho, size(exprho)..., 1))
 
     bonds = bonddims(A0)
     savebonddims && push!(data, "bonddims" => reshape([bonds...], length(bonds), 1))
@@ -94,7 +94,7 @@ function run_driveDTDVP_readout(dt, tmax, A, H, prec;
         
         if tstep*dt ∈ time_frames_rho
             exprho = rhoreduced_proton2chains(A0, 2)
-            data["ρ_red"] = cat(data["ρ_red"], exprho; dims=ndims(exprho)+1)
+            data["rho_red"] = cat(data["rho_red"], exprho; dims=ndims(exprho)+1)
         end
         if tstep != 1
             for (i, ob) in enumerate(obs)

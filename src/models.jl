@@ -684,6 +684,7 @@ end
 #	return H
 #end
 
+
 function rhoreduced_proton2chains(A::Vector, site::Int=4)
     N = length(A)
     ρreduced = Vector{Any}(undef, 1)
