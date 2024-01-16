@@ -95,7 +95,7 @@ end
 """
     measure(A, O; kwargs...)
 
-measure observable `O` on mps state `A`
+Measure observable `O` on mps state `A`
 
 """
 measure(A, O::OneSiteObservable; acs=nothing, ρ=nothing, kwargs...) = measure(A, O, acs, ρ)
