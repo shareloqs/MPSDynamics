@@ -63,7 +63,7 @@ A = productstatemps(physdims(H), state=[ψ, fill(unitcol(1,d), N)...]) # MPS
 ```
 
 This will generate a product state MPS with local Hilbert space dimensions corresponding to the MPO `H`, representing the
-spin in the up state and the bath in the vacuum state.
+spin in the up state (`ψ`) and the bath in the vacuum state.
 
 We may then wish to construct some observables to measure along the trajectory. For example
 
@@ -122,15 +122,15 @@ at every time step for every bond-dimension, while the observables supplied to `
 The final MPS is returned to `A` and the measurement data is returned to `dat`. If the option `save=true` is used the
 data will also be saved to a file. The directory in which data should be saved may be passed to the keyword argument
 `savedir`; by default the save directory is ~/MPSDynamics, which will be created if it doesn't exist (if using Windows
-the slashes will need to be reversed).
+the slashes will need to be reversed). The data directory name can be changed with the keyword argument `unid`.
 
 If the option `plot=true` is used, plots for 1D observables will be automatically generated and saved along with the data.
 
 Otherwise plots can be produced from `dat`, e.g.
 ```Julia
 using Plots
-plot(dat["data/times"], dat["convdata/sz"],label=["Dmax=2" "Dmax=4" "Dmax=6"], xlabel="t",ylabel="sz")
-heatmap(dat["data/times"], collect(1:N), abs.(dat["data/SXdisp"][1,:,:]), xlabel="t",ylabel="i")
+plot(dat["data/times"], dat["convdata/sz"],label=["Dmax=2" "Dmax=4" "Dmax=6"], xlabel="t",ylabel="sz", title="")
+heatmap(dat["data/times"], collect(1:N), abs.(dat["data/SXdisp"][1,:,:]), xlabel="t",ylabel="i", title="")
 ```
 ![Convergence plot of <sz> with increasing bond dimension Dmax](https://raw.githubusercontent.com/angusdunnett/MPSDynamics/master/images/plot.png "Convergence plot of <sz> with increasing bond dimension Dmax")
 
