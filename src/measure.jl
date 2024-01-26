@@ -7,7 +7,24 @@ struct OneSiteObservable <: Observable
     hermitian::Bool
     allsites::Bool
 end
+
+"""
+    OneSiteObservable(name,op,sites)
+
+Computes the local expectation value of the one-site operator `op` on the specified sites. Used to define
+one-site observables that are obs and convobs parameters for the `runsim` function.
+
+"""
 OneSiteObservable(name, op, sites) = OneSiteObservable(name, op, sites, ishermitian(op), false)
+
+"""
+    OneSiteObservable(name,op)
+
+Computes the local expectation value of the one-site operator `op` on the every site. Used to define
+one-site observables that are obs and convobs parameters for the `runsim` function.
+
+"""
+
 OneSiteObservable(name, op) = OneSiteObservable(name, op, nothing, ishermitian(op), true)
 
 struct TwoSiteObservable <: Observable
@@ -32,6 +49,14 @@ struct CdagCdn <: Observable
 end
 CdagCdn(sites::Tuple{Int,Int}) = CdagCdn("CdagCup", sites)
 CdagCdn(i1::Int, i2::Int) = CdagCdn("CdagCdn", (i1,i2))
+
+"""
+    TwoSiteObservable(name,op1,op2,sites1=nothing,sites2=nothing)
+
+Computes the local expectation value of operators `op1` and `op2` where `op1` acts on sites1 and `op2` acts on sites2. Used to define
+several-site observables that are obs and convobs parameters for the `runsim` function.
+
+"""
 
 function TwoSiteObservable(name, op1, op2, sites1=nothing, sites2=nothing)
     return TwoSiteObservable(name, op1, op2, sites1, sites2, sites1==nothing && sites2==nothing)
@@ -68,6 +93,14 @@ reach(A, ob::CdagCup) = max(ob.sites...)
 reach(A, ob::CdagCdn) = max(ob.sites...)
 reach(A, ob::Observable) = 1
 
+"""
+    measurempo(A::Vector, M::Vector)
+
+For a list of tensors `A` representing a right orthonormalized MPS, compute the local expectation
+value of the MPO M on every site.
+
+"""
+
 function measurempo(A::Vector, M::Vector)
     N = length(M)
     N == length(A) || throw(ArgumentError("MPO has $N site while MPS has $(length(A)) sites"))
@@ -77,6 +110,14 @@ function measurempo(A::Vector, M::Vector)
     end
     real(only(F))
 end
+"""
+    measurempo(A::Vector, M::Vector, sites::Tuples{Int,Int})
+
+For a list of tensors `A` representing a right orthonormalized MPS, compute the local expectation
+value of the MPO M on specified sites.
+
+"""
+
 function measurempo(A::Vector, M::Vector, sites::Tuple{Int, Int})
     N = sites[2] - sites[1] + 1
     F = fill!(similar(M[1], (1,1,1)), 1)
@@ -148,9 +189,10 @@ measure(A, O::TwoSiteObservable, ρ::Vector) =
     measure2siteoperator(A, O.op1, O.op2, O.sites1, O.sites2, ρ)
 
 """
-    measure1siteoperator(A, O)
+    measure1siteoperator(A::Vector, O, sites::Vector{Int})
+
 For a list of tensors `A` representing a right orthonormalized MPS, compute the local expectation
-value of a one-site operator O for every site or just one if i is specified.
+value of a one-site operator O for every site or just one if it is specified.
 
 For calculating operators on single sites this will be more efficient if the site is on the left of the mps.
 
@@ -170,6 +212,13 @@ function measure1siteoperator(A::Vector, O, sites::Vector{Int})
     end
     return expval[sites]
 end
+
+"""
+    measure1siteoperator(A::Vector, O, chainsection::Tuple{Int64,Int64})
+For a list of tensors `A` representing a right orthonormalized MPS, compute the local expectation
+value of a one-site operator O for a chainsection.
+
+"""
 
 function measure1siteoperator(A::Vector, O, chainsection::Tuple{Int64,Int64})
     ρ = ones(ComplexF64, 1, 1)
@@ -200,6 +249,12 @@ function measure1siteoperator(A::Vector, O, chainsection::Tuple{Int64,Int64})
     return expval
 end
 
+"""
+    measure1siteoperator(A::Vector, O)
+For a list of tensors `A` representing a right orthonormalized MPS, compute the local expectation
+value of a one-site operator O for every site.
+
+"""
 function measure1siteoperator(A::Vector, O)
     N = length(A)
     ρ = ones(ComplexF64, 1, 1)
@@ -214,6 +269,14 @@ function measure1siteoperator(A::Vector, O)
     return expval
 end
 measure1siteoperator(A::Vector, O, ::Nothing) = measure1siteoperator(A, O)
+
+"""
+    measure1siteoperator(A::Vector, O, site::Int)
+For a list of tensors `A` representing a right orthonormalized MPS, compute the local expectation
+value of a one-site operator O for a single site.
+
+"""
+
 function measure1siteoperator(A::Vector, O, site::Int)
     ρ = ones(ComplexF64, 1, 1)
     T = ishermitian(O) ? Float64 : ComplexF64
@@ -403,6 +466,13 @@ function measure2siteoperator_pair(A::Vector, M1, ρ::Vector; conjugate=false)
     dia = diagm(0 => diag(expval))
     return expval + (conjugate ? expval' : transpose(expval)) - dia
 end
+
+"""
+     measure2siteoperator(A::Vector, M1, M2, sites1::Vector{Int}, sites2::Vector{Int})
+
+Caculate expectation of M1*M2 where M1 acts on sites1 and M2 acts on sites2, assumes A is right normalised.
+
+"""
 
 function measure2siteoperator(A::Vector, M1, M2, sites1::Vector{Int}, sites2::Vector{Int})
     if size(M1) == size(M2)

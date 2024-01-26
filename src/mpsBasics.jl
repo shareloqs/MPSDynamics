@@ -518,13 +518,35 @@ function elementmpo(M, el...)
     c[1,1]
 end
 
+"""
+    apply1siteoperator!(A, O, sites::Vector{Int})
+
+Apply an operator O on the MPS A. O is acting on several sites ::Vector{Int}. The resulting MPS A is the MPS modified by the operator O.
+
+"""
+
 function apply1siteoperator!(A, O, sites::Vector{Int})
     for i in sites
         @tensor R[a,b,s] := O[s,s']*A[i][a,b,s']
         A[i] = R
     end
 end
+
+"""
+    apply1siteoperator!(A, O, sites::Int)
+
+Apply an operator O on the MPS A. O is acting on only one site ::Int. The resulting MPS A is the MPS modified by the operator O.
+
+"""
+
 apply1siteoperator!(A, O, site::Int) = apply1siteoperator!(A, O, [site])
+
+"""
+    applympo!(A, H)
+
+Apply an MPO H on the MPS A. H must have the same number of site than A. The resulting MPS A is the MPS modified by the mpo H.
+
+"""
 
 function applympo!(A, H)
     N = length(H)
