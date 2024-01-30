@@ -375,7 +375,8 @@ function tdvp1sweep_lc!(dt2, A::Vector, M::Vector, lc::ChainLightCone, F=nothing
         end
 
         if k == lc.edge-1 && lc.edge != N
-            @tensor v = tensorscalar(conj(AC[a,b,s])*lc.ref[k+1][a,b,s])
+            #@tensor v = tensorscalar(conj(AC[a,b,s])*lc.ref[k+1][a,b,s])
+            @tensor v = (conj(AC[a,b,s])*lc.ref[k+1][a,b,s])[]
             if 1-norm(v) > lc.thresh
                 lc.edge += 1
             end
