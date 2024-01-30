@@ -1,5 +1,5 @@
 function ACOAC(AC::Array{T1, 3}, O::Array{T2, 2}) where {T1,T2}
-    @tensor v = scalar(conj(AC[a,b,s']) * O[s',s] * AC[a,b,s])
+    @tensor v = tensorscalar(conj(AC[a,b,s']) * O[s',s] * AC[a,b,s])
 end
 
 function contractC!(A::Array{T1,2}, C::Array{T2,2}, dir::Int) where {T1,T2}
@@ -33,10 +33,10 @@ function contractC!(A::Array{T1,6}, C::Array{T2,2}, dir::Int) where {T1,T2}
 end
 
 function rhoAAstar(ρ::Array{T1,2}, A::Array{T2,2}, indir::Int) where {T1,T2}
-    @tensoropt ρO = scalar(ρ[a0,b0] * conj(A[a0,s]) * A[b0,s])
+    @tensoropt ρO = tensorscalar(ρ[a0,b0] * conj(A[a0,s]) * A[b0,s])
 end
 function rhoAAstar(ρ::Array{T1,2}, A::Array{T2,2}) where {T1,T2}
-    @tensoropt ρO = scalar(ρ[a0,b0] * conj(A[a0,s]) * A[b0,s])
+    @tensoropt ρO = tensorscalar(ρ[a0,b0] * conj(A[a0,s]) * A[b0,s])
 end
 function rhoAAstar(ρ::Array{T1,2}, A::Array{T2,3}, indir::Int, outdir::Int) where {T1,T2}
     indir==1 && return @tensoropt ρO[a,b] := ρ[a0,b0] * conj(A[a0,a,s]) * A[b0,b,s]
@@ -78,29 +78,29 @@ function rhoAAstar(ρ::Array{T1,2}, A::Array{T2,5}, indir::Int, outdir::Int) whe
 end
 
 function rhoAOAstar(ρ::Array{T1,2}, A::Array{T2,2}, O::Array{T3,2}, indir::Int, ::Nothing) where {T1,T2,T3}
-    @tensoropt ρO = scalar(ρ[a0,b0] * conj(A[a0,s']) * O[s',s] * A[b0,s])
+    @tensoropt ρO = tensorscalar(ρ[a0,b0] * conj(A[a0,s']) * O[s',s] * A[b0,s])
 end
 function rhoAOAstar(ρ::Array{T1,2}, A::Array{T2,2}, O::Array{T3,2}, ::Nothing) where {T1,T2,T3}
-    @tensoropt ρO = scalar(ρ[a0,b0] * conj(A[a0,s']) * O[s',s] * A[b0,s])
+    @tensoropt ρO = tensorscalar(ρ[a0,b0] * conj(A[a0,s']) * O[s',s] * A[b0,s])
 end
 function rhoAOAstar(ρ::Array{T1,2}, A::Array{T2,3}, O::Array{T3,2}, indir::Int, ::Nothing) where {T1,T2,T3}
-    indir==1 && return @tensoropt ρO = scalar(ρ[a0,b0] * conj(A[a0,c0,s']) * O[s',s] * A[b0,c0,s])
-    indir==2 && return @tensoropt ρO = scalar(ρ[a0,b0] * conj(A[c0,a0,s']) * O[s',s] * A[c0,b0,s])
+    indir==1 && return @tensoropt ρO = tensorscalar(ρ[a0,b0] * conj(A[a0,c0,s']) * O[s',s] * A[b0,c0,s])
+    indir==2 && return @tensoropt ρO = tensorscalar(ρ[a0,b0] * conj(A[c0,a0,s']) * O[s',s] * A[c0,b0,s])
 end
 function rhoAOAstar(ρ::Array{T1,2}, A::Array{T2,3}, O::Array{T3,2}, ::Nothing) where {T1,T2,T3}
-    return @tensoropt ρO = scalar(ρ[a0,b0] * conj(A[a0,c0,s']) * O[s',s] * A[b0,c0,s])
+    return @tensoropt ρO = tensorscalar(ρ[a0,b0] * conj(A[a0,c0,s']) * O[s',s] * A[b0,c0,s])
 end
 
 function rhoAOAstar(ρ::Array{T1,2}, A::Array{T2,4}, O::Array{T3,2}, indir::Int, ::Nothing) where {T1,T2,T3}
-    indir==1 && return @tensoropt ρO = scalar(ρ[a0,b0] * conj(A[a0,c0,c1,s']) * O[s',s] * A[b0,c0,c1,s])
-    indir==2 && return @tensoropt ρO = scalar(ρ[a0,b0] * conj(A[c0,a0,c1,s']) * O[s',s] * A[c0,b0,c1,s])
-    indir==3 && return @tensoropt ρO = scalar(ρ[a0,b0] * conj(A[c0,c1,a0,s']) * O[s',s] * A[c0,c1,b0,s])
+    indir==1 && return @tensoropt ρO = tensorscalar(ρ[a0,b0] * conj(A[a0,c0,c1,s']) * O[s',s] * A[b0,c0,c1,s])
+    indir==2 && return @tensoropt ρO = tensorscalar(ρ[a0,b0] * conj(A[c0,a0,c1,s']) * O[s',s] * A[c0,b0,c1,s])
+    indir==3 && return @tensoropt ρO = tensorscalar(ρ[a0,b0] * conj(A[c0,c1,a0,s']) * O[s',s] * A[c0,c1,b0,s])
 end
 function rhoAOAstar(ρ::Array{T1,2}, A::Array{T2,5}, O::Array{T3,2}, indir::Int, ::Nothing) where {T1,T2,T3}
-    indir==1 && return @tensoropt ρO = scalar(ρ[a0,b0] * conj(A[a0,c0,c1,c2,s']) * O[s',s] * A[b0,c0,c1,c2,s])
-    indir==2 && return @tensoropt ρO = scalar(ρ[a0,b0] * conj(A[c0,a0,c1,c2,s']) * O[s',s] * A[c0,b0,c1,c2,s])
-    indir==3 && return @tensoropt ρO = scalar(ρ[a0,b0] * conj(A[c0,c1,a0,c2,s']) * O[s',s] * A[c0,c1,b0,c2,s])
-    indir==4 && return @tensoropt ρO = scalar(ρ[a0,b0] * conj(A[c0,c1,c2,a0,s']) * O[s',s] * A[c0,c1,c2,b0,s])
+    indir==1 && return @tensoropt ρO = tensorscalar(ρ[a0,b0] * conj(A[a0,c0,c1,c2,s']) * O[s',s] * A[b0,c0,c1,c2,s])
+    indir==2 && return @tensoropt ρO = tensorscalar(ρ[a0,b0] * conj(A[c0,a0,c1,c2,s']) * O[s',s] * A[c0,b0,c1,c2,s])
+    indir==3 && return @tensoropt ρO = tensorscalar(ρ[a0,b0] * conj(A[c0,c1,a0,c2,s']) * O[s',s] * A[c0,c1,b0,c2,s])
+    indir==4 && return @tensoropt ρO = tensorscalar(ρ[a0,b0] * conj(A[c0,c1,c2,a0,s']) * O[s',s] * A[c0,c1,c2,b0,s])
 end
 
 function rhoAOAstar(ρ::Array{T1,2}, A::Array{T2,3}, O::Array{T3,2}, indir::Int, outdir::Int) where {T1,T2,T3}
@@ -243,24 +243,24 @@ function updateenv4(A, M, F1, F2, F3)
     @tensor F[a,b,c] := F1[a1,b1,c1]*F2[a2,b2,c2]*F3[a3,b3,c3]*conj(A[a1,a2,a3,a,s'])*M[b1,b2,b3,b,s',s]*A[c1,c2,c3,c,s]
 end
 
-@tensoropt function applyH2(AA, H1, H2, F1, F2)
-    HAA[a1,s1,a2,s2] := F1[a1,b1,c1]*AA[c1,s1',c2,s2']*H1[b1,b,s1,s1']*H2[b,b2,s2,s2']*F2[a2,b2,c2]
+function applyH2(AA, H1, H2, F1, F2)
+    @tensoropt HAA[a1,s1,a2,s2] := F1[a1,b1,c1]*AA[c1,s1',c2,s2']*H1[b1,b,s1,s1']*H2[b,b2,s2,s2']*F2[a2,b2,c2]
 #    @tensoropt HAA[a1,s1,a2,s2] := F1[a1,b1,c1]*AA[c1,s1',c2,s2']*H1[b1,b,s1,s1']*H2[b,b2,s2,s2']*F2[a2,b2,c2]
 end
-@tensoropt function applyH1(AC, M, F)
-    HAC[a,s'] := F[a,b,c]*AC[c,s]*M[b,s',s]
+function applyH1(AC, M, F)
+    @tensoropt HAC[a,s'] := F[a,b,c]*AC[c,s]*M[b,s',s]
 end
-@tensoropt function applyH1(AC, M, F0, F1)
-    HAC[a0,a1,s'] := F0[a0,b0,c0]*F1[a1,b1,c1]*AC[c0,c1,s]*M[b0,b1,s',s]
+function applyH1(AC, M, F0, F1)
+    @tensoropt HAC[a0,a1,s'] := F0[a0,b0,c0]*F1[a1,b1,c1]*AC[c0,c1,s]*M[b0,b1,s',s]
 end
-@tensoropt function applyH1(AC, M, F0, F1, F2)
-    HAC[a0,a1,a2,s'] := F0[a0,b0,c0]*F1[a1,b1,c1]*F2[a2,b2,c2]*AC[c0,c1,c2,s]*M[b0,b1,b2,s',s]
+function applyH1(AC, M, F0, F1, F2)
+    @tensoropt HAC[a0,a1,a2,s'] := F0[a0,b0,c0]*F1[a1,b1,c1]*F2[a2,b2,c2]*AC[c0,c1,c2,s]*M[b0,b1,b2,s',s]
 end
-@tensoropt function applyH1(AC, M, F0, F1, F2, F3)
-    HAC[a0,a1,a2,a3,s'] := F0[a0,b0,c0]*F1[a1,b1,c1]*F2[a2,b2,c2]*F3[a3,b3,c3]*AC[c0,c1,c2,c3,s]*M[b0,b1,b2,b3,s',s]
+function applyH1(AC, M, F0, F1, F2, F3)
+    @tensoropt HAC[a0,a1,a2,a3,s'] := F0[a0,b0,c0]*F1[a1,b1,c1]*F2[a2,b2,c2]*F3[a3,b3,c3]*AC[c0,c1,c2,c3,s]*M[b0,b1,b2,b3,s',s]
 end
-@tensor function applyH0(C, F0, F1)
-    HC[α,β] := F0[α,a,α']*C[α',β']*F1[β,a,β']
+function applyH0(C, F0, F1)
+    @tensor HC[α,β] := F0[α,a,α']*C[α',β']*F1[β,a,β']
 end
 
 #sets the right/left bond dimension of A, ie will truncate if Dnew is smaller than the current bond dimension and zero pad if it's larger
