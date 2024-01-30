@@ -22,6 +22,12 @@ function orthcentersmps(A::TreeNetwork)
     return B
 end
 
+"""
+    physdims(M::TreeNetwork)
+
+Return the physical dimensions of a tree-MPS or tree-MPO `M`.
+"""
+
 function physdims(M::TreeNetwork)
     N = length(M)
     res = Vector{Int}(undef, N)
@@ -262,6 +268,13 @@ end
 
 tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, F=nothing; verbose=false, kwargs...) =
     tdvp1sweep!(dt, A, M, initenvs(A, M, F), findheadnode(A); verbose=verbose, kwargs...)
+
+"""
+    tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, F::Vector, id::Int; verbose=false, kwargs...)
+
+Propagates the tree-MPS A with the tree-MPO M following the 1-site TDVP method. The sweep is done back and forth with a time step dt/2. F represents the merged left and right parts of the site being propagated.  
+"""
+
 function tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, F::Vector, id::Int; verbose=false, kwargs...)
 
     children = A.tree[id].children
@@ -588,6 +601,13 @@ function productstatemps(tree_::Tree, physdims::Dims, Dmax::Int=1; state=:Vacuum
 end
 productstatemps(tree::Tree, physdims::Int, Dmax::Int; state=:Vacuum) =
     productstatemps(tree, ntuple(i -> physdims, length(tree)), Dmax; state=state)
+
+"""
+    mpsembed(A::TreeNetwork, Dmax::Int)
+
+Embed tree-MPS `A` in manifold of max bond-dimension `Dmax`
+
+"""
 
 function mpsembed!(A::TreeNetwork, Dmax::Int)
     tree = deepcopy(A.tree)

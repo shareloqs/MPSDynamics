@@ -287,7 +287,13 @@ function updatedims(A::Vector, PAs::Vector, PCs::Vector, th, Dlim)
     acc += norm(PAs[N][1:newdims[N],:,1:newdims[N+1]])^2
     return Dims(newdims), effect, acc
 end
-        
+
+"""
+    tdvp1sweep!(dt2, A::Vector, M::Vector, F=nothing; verbose=false, kwargs...)
+
+Propagates the MPS A with the MPO M following the 1-site TDVP method. The sweep is done back and forth with a time step dt2/2. F represents the merged left and right parts of the site being propagated.  
+"""
+
 function tdvp1sweep!(dt2, A::Vector, M::Vector, F=nothing; verbose=false, kwargs...)
     N = length(A)
     dt = dt2/2
