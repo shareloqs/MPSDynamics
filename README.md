@@ -1,8 +1,7 @@
 # MPSDynamics.jl
+*Tensor network simulations for finite temperature, open quantum system dynamics.*
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5106435.svg)](https://doi.org/10.5281/zenodo.5106435) [![documentation workflow](https://github.com/angusdunnett/MPSDynamics/actions/workflows/docs.yml/badge.svg)](https://angusdunnett.github.io/MPSDynamics/)
-
-Tensor network simulations for finite temperature, open quantum system dynamics.
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5106435.svg)](https://doi.org/10.5281/zenodo.5106435) [![license](https://img.shields.io/badge/License-GPL_3.0-orange.svg)](https://github.com/angusdunnett/MPSDynamics/blob/master/LICENSE) [![documentation workflow](https://github.com/angusdunnett/MPSDynamics/actions/workflows/docs.yml/badge.svg)](https://angusdunnett.github.io/MPSDynamics/)
 
 This package is intended to provide an easy to use interface for performing tensor network simulations on Matrix Product
 States (MPS). MPSDynamics.jl is a versatile package which supports both chain and (loop-free) tree MPS, as well as
