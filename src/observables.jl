@@ -17,6 +17,13 @@ end
 FockError(sysop, N) = FockError([fill(0.0, N), fill(1.0, N-1), 0.5], sysop, (2, N+1))
 Base.ndims(::FockError) = 0
 
+"""
+    measure(A, obs::FockError; t=0, kwargs...)
+    
+Return the measure of the observable obs on the MPS A. 
+
+"""
+
 function measure(A, obs::FockError; t=0, kwargs...)
     d = physdims(A)[obs.sites[1]:obs.sites[2]][1]
     all(x->x==d, physdims(A)[obs.sites[1]:obs.sites[2]]) || error("MPS has non-uniform local Hilbert space dimensions")

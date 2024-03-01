@@ -1,3 +1,20 @@
+"""
+    Base.reshape(x::Number, dims...)
+
+Reshape any matrix with dimensions "dims"
+
+# Example
+
+```julia-repl
+julia> A = rand(2,3,2)
+
+julia> B = reshape(A,4,3)
+
+julia> size(B) == (4,3) 
+
+```
+"""
+
 function Base.reshape(x::Number, dims...)
     prod(dims) == 1 || throw(DimensionMismatch("new dimensions $(dims) must be consistent with array size 1"))
     return fill(x, dims...)

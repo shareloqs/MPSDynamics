@@ -987,6 +987,14 @@ function measure(A::Vector, O::CdagCdn, ρ::Vector)
     return expval
 end
 
+"""
+     measure(A::Vector, Os::Vector; kwargs...)
+
+Caculate expectation of Os on MPS A.
+
+"""
+
+
 function measure(A::Vector, Os::Vector; kwargs...)
     numobs = length(Os)
     numobs==0 && return Any[]

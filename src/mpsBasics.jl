@@ -559,6 +559,13 @@ function applympo!(A, H)
     end
 end
 
+"""
+    reversemps!(A)
+
+Reverse the left and right dimensions of the MPS A. The resulting MPS A is the reversed MPS.
+
+"""
+
 function reversemps!(A)
     N = length(A)
     reverse!(A)
@@ -566,6 +573,14 @@ function reversemps!(A)
         A[i] = permutedims(A[i], [2,1,3])
     end
 end
+
+"""
+    reversemps(A)
+
+Reverse the left and right bond-dimensions of the MPS A.
+
+"""
+
 function reversemps(A)
     N = length(A)
     Ar = Vector{Any}(undef, N)
@@ -575,6 +590,13 @@ function reversemps(A)
     return Ar
 end
 
+"""
+    reversempo!(M)
+
+Reverse the left and right dimensions of the MPO M. The resulting MPO M is the reversed MPO.
+
+"""
+
 function reversempo!(M)
     N = length(M)
     reverse!(M)
@@ -582,6 +604,14 @@ function reversempo!(M)
         M[i] = permutedims(M[i], [2,1,3,4])
     end
 end
+
+"""
+    reversempo(M)
+    
+Reverse the left and right dimensions of the MPO M.
+
+"""
+
 function reversempo(M)
     N = length(M)
     Mr = Vector{Any}(undef, N)
