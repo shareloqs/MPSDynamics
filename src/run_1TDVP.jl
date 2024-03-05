@@ -1,4 +1,4 @@
-function run_1TDVP(dt, tmax, A, H, Dmax; obs=[], timed=false, kwargs...)
+function run_1TDVP(dt, tmax, A, H, Dmax; obs=[], timed=false, reduceddensity=false, kwargs...)
     A0=deepcopy(A)
     data = Dict{String,Any}()
 
@@ -10,6 +10,10 @@ function run_1TDVP(dt, tmax, A, H, Dmax; obs=[], timed=false, kwargs...)
     exp = measure(A0, obs; t=times[1])
     for i=1:length(obs)
         push!(data, obs[i].name => reshape(exp[i], size(exp[i])..., 1))
+    end
+    if reduceddensity
+        exprho = rhoreduced_1site(A0,1)
+        push!(data, "Reduced ρ" => reshape(exprho, size(exprho)..., 1))
     end
 
     timed && (ttdvp = Vector{Float64}(undef, numsteps))
@@ -30,6 +34,10 @@ function run_1TDVP(dt, tmax, A, H, Dmax; obs=[], timed=false, kwargs...)
         exp = measure(A0, obs; t=times[tstep])
         for (i, ob) in enumerate(obs)
             data[ob.name] = cat(data[ob.name], exp[i]; dims=ndims(exp[i])+1)
+        end
+        if reduceddensity
+            exprho = rhoreduced_1site(A0,1)
+            data["Reduced ρ"] = cat(data["Reduced ρ"], exprho; dims=ndims(exprho)+1)
         end
     end
     timed && push!(data, "deltat"=>ttdvp)

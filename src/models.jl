@@ -571,3 +571,18 @@ function nearestneighbourmpo(tree_::Tree, h0, A, Ad = A')
     Ms[hn] = Ms[hn][D:D, fill(:,nc+2)...]
     return TreeNetwork(tree, Ms)
 end
+
+function puredephasingmpo(ΔE, dchain, Nchain, chainparams; tree=false)
+    u = unitmat(2)
+
+    cparams = only(chainparams[3])
+
+    Hs = (ΔE/2)*sz
+
+    M=zeros(1,3,2,2)
+    M[1, :, :, :] = up(Hs, (cparams/2)*sz, u)
+
+    chain = hbathchain(Nchain, dchain, chainparams; tree=false, reverse=false, coupletox=true)
+    return Any[M, chain...]
+end
+
