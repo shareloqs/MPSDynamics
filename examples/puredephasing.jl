@@ -1,5 +1,5 @@
 #=
-    Example of a Pure Dephasing Model at zero temperature and with an arbitrary temperature.  with an hard cut-off Ohmic spectral density J(ω) = 2αω when ω < ωc and 0 otherwise#
+    Example of a Pure Dephasing Model at zero temperature with an hard cut-off Ohmic spectral density J(ω) = 2αω when ω < ωc and 0 otherwise#
 
     The dynamics is simulated using the T-TEDOPA method that maps the normal modes environment into a non-uniform tight-binding chain.
 
@@ -36,7 +36,7 @@ tfinal = 300.0 # simulation time
 
 method = :TDVP1 # time-evolution method
 
-D = 6 # MPS bond dimension
+D = 2 # MPS bond dimension
 
 #---------------------------
 # MPO and initial state MPS
@@ -84,18 +84,19 @@ A, dat = runsim(dt, tfinal, A, H;
 #----------
 
 Johmic(ω,s) = (2*α*ω^s)/(ωc^(s-1))
-f(ω,t) = (1 - cos(ω*t))/ω^2
+
 time_analytical = LinRange(0.0,tfinal,Int(tfinal))
 
-Γohmic(t) = - quadgk(x -> Johmic(x,s)*f(x,t), 0, ωc)[1]
+Γohmic(t) = - quadgk(x -> Johmic(x,s)*(1 - cos(x*t))/x^2, 0, ωc)[1]
+
 Decoherence_ohmic(t) = 0.5*exp(Γohmic(t))
-ListDecoherence_ohmic = [Decoherence_ohmic(t) for t in time_analytical]
 
 #-------------
 # Plots
 #------------
 
-ρ12 = sqrt.(real(dat["data/Reduced ρ"][1,2,:]).^2 .+ imag(dat["data/Reduced ρ"][1,2,:]).^2 )
+ρ12 = abs.(dat["data/Reduced ρ"][1,2,:])
 
-(plot(time_analytical, ListDecoherence_ohmic1, label="Analytics", title=L"Pure Dephasing, Ohmic $s=%$s \, ,\, T=0K$", linecolor =:black, xlabel="Time (arb. units)",ylabel="Coherence Amplitude", linewidth=4, titlefontsize=16, legend=:best, legendfont=16, xguidefontsize=16, yguidefontsize=16, tickfontsize=10))#,ylims=(0.25,0.5)))#,xticks=(0:2.5:10))))
-display(plot!(dat["data/times"],ρ12,lw=4,ls=:dash,label="Numerics"))
+plot(time_analytical, t->Decoherence_ohmic(t), label="Analytics", title=L"Pure Dephasing, Ohmic $s=%$s$, $T=0~\mathrm{K}$", linecolor=:black, xlabel="Time (arb. units)", ylabel=L"Coherence $|\rho_{12}(t)|$", linewidth=4, titlefontsize=16, legend=:best, legendfontsize=16, xguidefontsize=16, yguidefontsize=16, tickfontsize=10)
+
+plot!(dat["data/times"], ρ12, lw=4, ls=:dash, label="Numerics")
