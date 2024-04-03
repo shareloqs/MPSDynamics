@@ -67,9 +67,22 @@ The orthogonal polynomial-based chain mapping and the subsequent representation 
 Explain that by extending the bath to negative frequencies and having temperature-dependent system environment couplings, it is possible to describe the finite temperature case as an effective zero temperature one.
 Hence, we can keep the pure state description and avoid moving to density matrices at the cost of doubling the size of the environment.
 
-## Computation of the chain coefficient
+## Computation of the chain coefficients
 
-Explain the three-term recurence relation and the relation of the coefficients to the chain on-site and hopping energies.
+A useful property of the orthonormal polynomials is that they obey a recurrence relation
+
+```math
+\begin{align}
+    P_n(\omega) &= (C_{n-1}\omega - A_{n-1})P_{n-1}(\omega) + B_{n-1}P_{n-2}(\omega)\ ,
+\end{align}
+```
+
+where ``A_n`` is related to the first moment of ``P_n``, ``B_n`` and ``C_n`` to the norms of ``P_n`` and ``P_{n-1}``[^appel_mathematics_2007].
+This recurrence relation can be used to construct the polynomials with the conditions that ``P_0(\omega) = ||p_0||^{-1} = \left(\int_{\mathbb{R}^{+}} J(\omega)\mathrm{d}\omega \right)^{-\frac{1}{2}}`` and ``P_{-1}(\omega) = 0``, with ``||\bullet||`` the norm of ``\bullet`` with respect to the measure ``J(\omega)``, and ``P_n(\omega) = p_n(\omega)||p_n||^{-1}`` ; where the polynomials ``\{p_n\}_{n\in\mathbb{N}}`` are the so called _monic polynomials_ where the factor ``a_n`` in front of ``\omega^{n}`` is equal to 1.
+
+The energy of the chain mode ``n`` is given by ``\varepsilon_n = A_n C_n^{-1}`` and ``t_n=C_n^{-1}`` is the coupling between mode ``n`` and ``n+1``[^chin_exact_2010].
+
+The system couples _only_ to the first mode with the coupling strength ``\kappa = ||p_0||``.
 
 Explain that for some weight function/SD they are known analytically and that for others we can use the build-in routines inspired by Gautschi or the PolyChaos.jl package.
 
@@ -117,3 +130,7 @@ Explain quickly why and give references
 
 [^lacroix_unveiling_2021]:
     > Lacroix, T.; Dunnett, A.; Gribben, D.; Lovett, B. W.; Chin, A. Unveiling Non-Markovian Spacetime Signaling in Open Quantum Systems with Long-Range Tensor Network Dynamics. Phys. Rev. A 2021, 104 (5), 052204. https://doi.org/10.1103/PhysRevA.104.052204.
+
+[^appel_mathematics_2007]:
+    > Appel, W. Mathematics for Physics and Physicists; Princeton University Press, 2007.
+
