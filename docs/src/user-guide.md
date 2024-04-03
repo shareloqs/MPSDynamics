@@ -19,9 +19,11 @@ Setting `state=:FullOccupy` will produce an MPS in which each site is fully occu
 The gauge of the MPS can also be set using a keyword argument.
 
 ```julia
-julia> ψ = unitcol(1,2); d = 6; N = 30; α = 0.1; Δ = 0.0; ω0 = 0.2; s = 1
+julia> ψ = unitcol(1,2) # system initial state
 
-julia> cpars = chaincoeffs_ohmic(N, α, s)
+julia> d = 6; N = 30; α = 0.1; Δ = 0.0; ω0 = 0.2; s = 1 
+
+julia> cpars = chaincoeffs_ohmic(N, α, s) # chain coefficient for an Ohmic spectral density
 
 julia> H = spinbosonmpo(ω0, Δ, d, N, cpars)
 
@@ -57,6 +59,34 @@ Explain that a MPO is just a list of tensors with matching bond dimensions.
 
 ## Observables
 
+Explain OneSiteObservable and TwoSiteObservable
+
 ## Time-Evolution
+
+Explain that we do TDVP
+
+### One-site TDVP
+
+Fixed bond dimension, complexity XXX, preserves unitarity.
+
+The convergence parameter is the bond dimension.
+
+Is set in `MPSDynamics.runsim`(@ref) usind the key word argument `method=:TDVP1`
+
+### Two-Site TDVP
+
+Varying bond dimension, complexity higher than 1TDVP, but breaks unitarity because of a SVD.
+
+The convergence parameter is the threshold of the SVD.
+
+Is set in [MPSDynamics.runsim`(@ref) usind the key word argument `method=:TDVP2`
+
+### Adaptive One-Site TDVP
+
+Keeps the good scaling of the 1TDVP, preserves unitarity but is able to increase the bond dimendion.
+
+The convergence parameter is a threshold value for the rate of change of the projection error with respect to the bond dimension.
+
+Is set in `MPSDynamics.runsim`(@ref) usind the key word argument `method=:DTDVP`
 
 ## Data Storage
