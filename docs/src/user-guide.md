@@ -47,7 +47,7 @@ Either way, this can be done by using a [Build-in Hamiltonian](@ref), [Convert a
 
 ### Build-in Hamiltonian
 
-MPSDynamics provides several topical Hamiltonians directly in the form of MPO or Tree Tensor Networks such as the Ising model [`MPSDynamics.isingmpo`](@ref), the XYZ Hamiltonian [`MPSDynamics.xyzmpo`](@ref), the Spin Boson Model [`MPSDynamics.spinbosonmpo`](@ref), (non-)uniform tight-binding chain Hamiltonian [`MPSDynamics.hbathchain`](@ref).
+MPSDynamics provides several topical Hamiltonians directly in the form of MPO or Tree Tensor Networks such as the Ising model [`MPSDynamics.isingmpo`](@ref), the XYZ Hamiltonian [`MPSDynamics.xyzmpo`](@ref), the Spin Boson Model [`MPSDynamics.spinbosonmpo`](@ref), a spin coupled to two bosonic baths `MPSDynamics.twobathspinmpo`, nearest neighbour interactions Hamiltonian `MPSDynamics.nearestneighbourmpo`, the idependent boson model `MPSDynamics.ibmmpo`, (non-)uniform tight-binding chain Hamiltonian [`MPSDynamics.hbathchain`](@ref).
 
 ### Convert a MPO from ITensor
 
@@ -144,7 +144,5 @@ Dict{String, Any} with 6 entries:
   "nchain"   => [0.0 0.23466 … 1.84319 1.76098; 0.0 0.00231507 … 0.83105 0.9033…
   "sy"       => [0.0, -0.0133489, -0.0588887, -0.0858181, -0.0759996, -0.048539…
   "times"    => [0.0, 0.0005, 0.001, 0.0015, 0.002, 0.0025, 0.003, 0.0035, 0.00…
-
-
 
 ```
