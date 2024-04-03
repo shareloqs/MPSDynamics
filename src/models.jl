@@ -353,7 +353,7 @@ The spin is on site 1 of the MPS and the bath modes are to the right.
 This Hamiltonain is unitarily equivalent (before the truncation to `N` sites) to the spin-boson Hamiltonian defined by
 
 ``
-H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{\\frac{J(ω)}{π}}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω ωb_ω^\\dagger b_ω
+H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω ωb_ω^\\dagger b_ω
 ``.
 
 The chain parameters, supplied by `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature.
@@ -387,6 +387,27 @@ function spinbosonmpo(ω0, Δ, d, N, chainparams; rwa=false, tree=false)
     end
 end
 
+"""
+    twobathspinmpo(ω0, Δ, Nl, Nr, dl, dr, chainparamsl=[fill(1.0,N),fill(1.0,N-1), 1.0], chainparamsr=chainparamsl; tree=false)
+
+Generate MPO for a spin-1/2 coupled to a chain of harmonic oscillators on its left and another one on its right, defined by the Hamiltonian
+
+``
+H = \\frac{ω_0}{2}σ_z + Δσ_x + c_Lσ_x(b_0^\\dagger+b_0) + c_Rσ_x(c_0^\\dagger+c_0) + \\sum_{i=0}^{N-1} t^L_i (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N} ϵ^L_i c_i^\\dagger c_i + \\sum_{i=0}^{N-1} t^R_i (c_{i+1}^\\dagger c_i + h.c.) + \\sum_{i=0}^{N} ϵ^R_ic_i^\\dagger c_i
+``.
+
+The spin is on site N+2 of the MPS.
+
+This Hamiltonain is unitarily equivalent (before the truncation to `N` sites) to the two-bath spin-boson Hamiltonian defined by
+
+``
+H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x(\\int_0^∞ dω\\sqrt{J_L(ω)}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω\\sqrt{J_R(ω)}(c_ω^\\dagger+c_ω) ) + \\int_0^∞ dω ωb_ω^\\dagger b_ω  + \\int_0^∞ dω ωc_ω^\\dagger c_ω
+``.
+
+The chain parameters, supplied by `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature.
+
+The MPO can be considered as a Tree Tensor Network by setting `tree=true`.
+"""
 function twobathspinmpo(ω0, Δ, Nl, Nr, dl, dr, chainparamsl=[fill(1.0,N),fill(1.0,N-1), 1.0], chainparamsr=chainparamsl; tree=false)
     u = unitmat(2)
 
@@ -410,8 +431,8 @@ end
 Generate chain coefficients ``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`` for an Harmonic bath at zero temperature with a power
 law spectral density given by:
 
-soft cutoff: ``J(ω) = 2παω_c (\\frac{ω}{ω_c})^s \\exp(-ω/ω_c)`` \n
-hard cutoff: ``J(ω) = 2παω_c (\\frac{ω}{ω_c})^s θ(ω-ω_c)``
+soft cutoff: ``J(ω) = 2αω_c (\\frac{ω}{ω_c})^s \\exp(-ω/ω_c)`` \n
+hard cutoff: ``J(ω) = 2αω_c (\\frac{ω}{ω_c})^s θ(ω-ω_c)``
 
 The coefficients parameterise the chain Hamiltonian
 
@@ -422,8 +443,8 @@ H = H_S + c_0 A_S⊗B_0+\\sum_{i=0}^{N-1}t_i (b_{i+1}^\\dagger b_i +h.c.) + \\su
 which is unitarily equivalent (before the truncation to `N` sites) to
 
 ``
-H = H_S + A_S⊗\\int_0^∞dω\\sqrt{\\frac{J(ω)}{π}}B_ω + \\int_0^∞dωωb_ω^\\dagger b_ω 
-``
+H = H_S + A_S⊗\\int_0^∞dω\\sqrt{J(ω)}B_ω + \\int_0^∞dωωb_ω^\\dagger b_ω 
+``.
 
 """
 function chaincoeffs_ohmic(nummodes, α, s; ωc=1, soft=false)
@@ -479,6 +500,30 @@ function readchaincoeffs(fdir, params...)
     return dat
 end
 
+"""
+    ibmmpo(ω0, d, N, chainparams; tree=false)
+
+Generate the MPO for the independent boson model Hamiltonian in a chain mapped representation
+
+``
+H = \\frac{ω_0}{2}σ_z  + c_0σ_z(b_0^\\dagger+b_0) + \\sum_{i=0}^{N-1} t_i (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N} ϵ_ib_i^\\dagger b_i
+``.
+
+The spin is on site 1 of the MPS and the bath modes are to the right.
+
+This Hamiltonain is unitarily equivalent (before the truncation to `N` sites) to the spin-boson Hamiltonian defined by
+
+``
+H =  \\frac{ω_0}{2}σ_z + σ_z\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω ωb_ω^\\dagger b_ω
+``.
+
+This Hamiltonian is equivalent (up to a rotation around the y-axis) to a spin-boson model with without biais.
+
+The chain parameters, supplied by `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature.
+
+The MPO can be considered as a Tree Tensor Network by setting `tree=true`.
+
+"""
 function ibmmpo(ω0, d, N, chainparams; tree=false)
     u = unitmat(2)
     
@@ -525,6 +570,16 @@ function tunnelingmpo(ϵ, delta, α, s, β, d::Int, nummodes::Int; tree=false, �
     end
 end
 
+"""
+    nearestneighbourmpo(N::Int, h0, A, Ad = A')
+
+Generate the MPO for a N sites system with on-site Hamiltonian `h0` and nearest-neighbour interactions ``A_i A^\\dagger_{i+1}``
+
+``
+H = \sum_{i = 1}^{N-1} A_{i}A^\\dagger_{i+1}  + Nh_0  
+``.
+
+"""
 function nearestneighbourmpo(N::Int, h0, A, Ad = A')
     size(h0) == size(A) || error("physical dimensions don't match")
     size(h0) == size(Ad) || error("physical dimensions don't match")
