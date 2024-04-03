@@ -62,8 +62,6 @@ Propagate the MPS `A` with the MPO `H` up to time `tmax` in time steps of `dt`. 
 * `name`: Used to describe the calculation. This name will appear in the log.txt file
  
 """
-
-
 function runsim(dt, tmax, A, H;
                 method=:TDVP1,
                 machine=LocalMachine(),
