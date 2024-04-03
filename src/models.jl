@@ -576,7 +576,7 @@ end
 Generate the MPO for a N sites system with on-site Hamiltonian `h0` and nearest-neighbour interactions ``A_i A^\\dagger_{i+1}``
 
 ``
-H = \sum_{i = 1}^{N-1} A_{i}A^\\dagger_{i+1}  + Nh_0  
+H = \\sum_{i = 1}^{N-1} A_{i}A^\\dagger_{i+1}  + Nh_0  
 ``.
 
 """
