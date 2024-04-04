@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/shareloqs/MPSDynamics/doc-writing/docs/src/assets/logo.png" alt="MPSDynamics.jl logo" width="250" height="auto">
+
 # MPSDynamics.jl
 *Tensor network simulations for finite temperature, open quantum system dynamics.*
 
