@@ -88,7 +88,50 @@ Explain that for some weight function/SD they are known analytically and that fo
 
 ## Time-Dependent Variational Principal
 
-Explain the concept behind TDVP and give references
+The original idea behind TDVP goes back to Dirac \cite{dirac_note_1930} and Frenkel \cite{frenkel_wave_1934}.
+The main point, in the modern tensor networks formulation, is that instead of solving the Schrödinger equation and then truncating the MPS representation of the quantum state, one can solve the equations of motion projected into a space of restricted bond dimension \cite{haegeman_time-dependent_2011, haegeman_unifying_2016}.
+
+The general formulation of the Dirac-Frenkel Variational Principle~\cite{raab_diracfrenkelmclachlan_2000} is that one looks for a solution ``|\varphi\rangle \in \mathcal{M}`` of the Schrödinger equation where ``\mathcal{M} \subset \mathcal{H}`` is a manifold of the total Hilbert space ``\mathcal{H}`` in which we think that the relevant physical states `live'.
+
+We define ``T_{|\varphi\rangle}\mathcal{M}`` the tangent space of ``\mathcal{M}`` around the state ``|\varphi\rangle``.
+The criterion to find ``|\varphi\rangle`` is that for every state ``|\chi\rangle \in T_{|\varphi\rangle}\mathcal{M}``
+
+```math
+\begin{align}
+    \langle\chi|\left(\frac{\mathrm{d}}{\mathrm{d}t} - \frac{1}{\mathrm{i}\hbar}\hat{H}\right)|\varphi\rangle &=0\ ,
+\end{align}
+```
+
+which can be interpreted as saying that the time evolution procedure should keep ``|\varphi\rangle`` inside of the manifold ``\mathcal{M}``.
+
+The term *variational* in the name of the method comes from the fact that in practice one aims at minimising the right-hand side of Eq.~(\ref{eq:DiracFrenkel1}) to find ``|\varphi\rangle``.
+
+Introducing ``\hat{P}_{T_{|\varphi\rangle}\mathcal{M}}`` the projector onto the tangent space ``T_{|\varphi\rangle}\mathcal{M}``, we can write the state ``|\chi\rangle = \hat{P}_{T_{|\varphi\rangle}\mathcal{M}}|\phi\rangle`` with ``|\phi\rangle`` a state in ``\mathcal{H}``.
+Leading to
+
+```math
+\begin{align}
+    \forall |\phi\rangle \in \mathcal{H}, \ \langle\phi|\hat{P}_{T_{|\varphi\rangle}\mathcal{M}}\left(\frac{\mathrm{d}}{\mathrm{d}t} - \frac{1}{\mathrm{i}\hbar}\hat{H}\right)|\varphi\rangle &=0\ .
+\end{align}
+```
+Because the time derivation and the projector commute, we have
+
+```math
+\begin{align}
+    \forall |\phi\rangle \in \mathcal{H}, \ \langle\phi|\left(\frac{\mathrm{d}}{\mathrm{d}t} - \frac{1}{\mathrm{i}\hbar}\hat{P}_{T_{|\varphi\rangle}\mathcal{M}}\hat{H}\right)|\varphi\rangle &=0\ .
+\end{align}
+```
+This equation must be true for any ``|\phi\rangle \in \mathcal{H}``, Eq.~(\ref{eq:DiracFrenkel1}) can thus be written
+
+```math
+\begin{align}
+    \left(\frac{\mathrm{d}}{\mathrm{d}t} - \frac{1}{\mathrm{i}\hbar}\hat{P}_{T_{|\varphi\rangle}\mathcal{M}}\hat{H}\right)|\varphi\rangle &=0\ .
+\end{align}
+```
+
+In the context of MPS, the manifold ``\mathcal{M}`` will correspond to the space of full-ranked MPS of a given bond dimension ``D``, and the tangent space will be the space spanned by variations of single MPS tensors.
+
+The major advantage of this method is that it naturally preserves the unitarity of the time evolution and conserves the energy.
 
 ## Tensor Networks
 
