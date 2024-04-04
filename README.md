@@ -150,6 +150,8 @@ Import["~/MPSDynamics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
 
 # Publications
 Publications which make use of MPSDynamics:
+* Lacroix et al. From Non-Markovian Dissipation to Spatiotemporal Control of Quantum Nanodevices. *Quantum* 8, 1305, April 2024
+    * [https://doi.org/10.22331/q-2024-04-03-1305](https://doi.org/10.22331/q-2024-04-03-1305)
 * Riva et al. Thermal cycle and polaron formation in structured bosonic environments. *Phys. Rev. B*  108(19):195138, November 2023
     * [https://doi.org/10.1103/PhysRevB.108.195138](https://doi.org/10.1103/PhysRevB.108.195138)
 
