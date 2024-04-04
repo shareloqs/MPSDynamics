@@ -9,13 +9,13 @@ States (MPS). MPSDynamics.jl is a versatile package which supports both chain an
 providing a choice of several time evolution algorithms. The package also provides strong support for the measurement
 of observables, as well as the storing and logging of data, which makes it a useful tool for the study of many-body
 physics. The package was originally developed with the aim of studying open system dynamics at finite temperature using
-the T-TEDOPA mapping [1], however the methods implemented can equally be applied to other areas of physics.
+the T-TEDOPA mapping [^1], however the methods implemented can equally be applied to other areas of physics.
 
 The methods currently implemented are
 
-* 1-site TDVP on tree and chain MPS [2]
-* 2-site TDVP on chain MPS [2]
-* a variant of 1-site TDVP with dynamic bond-dimensions on chain MPS [3]
+* 1-site TDVP on tree and chain MPS [^2]
+* 2-site TDVP on chain MPS [^2]
+* a variant of 1-site TDVP with dynamic bond-dimensions on chain MPS [^3]
 
 The elementary tensor operations are implemented in all cases using the [TensorOperations.jl](https://github.com/Jutho/TensorOperations.jl) package.
 
@@ -189,9 +189,9 @@ Contributions are welcome! Don't hesitate to contact us if you
  
 # References
 
-* [[1]](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.123.090402) D. Tamascelli, A. Smirne, J. Lim, S. F. Huegla, and M. B. Plenio, Physical Review Letters 123, 090402 (2019) arXiv: 1811.12418
+[^1]: [D. Tamascelli, A. Smirne, J. Lim, S. F. Huegla, and M. B. Plenio, Physical Review Letters 123, 090402 (2019) arXiv: 1811.12418](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.123.090402)
 
-* [[2]](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.94.165116) J. Haegeman, C. Lubich, I. Oseledets, B. Vandereycken, and F. Verstraete, Physical Review B 94, 165116 (2016), arXiv: 1408.5056
+[^2]: [J. Haegeman, C. Lubich, I. Oseledets, B. Vandereycken, and F. Verstraete, Physical Review B 94, 165116 (2016), arXiv: 1408.5056](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.94.165116)
 
-* [[3]](https://doi.org/10.1103/PhysRevB.104.214302) A. J. Dunnett & A. W. Chin, Physical Review B, 104(21), 214302 (2021)
+[^3]: [A. J. Dunnett & A. W. Chin, Physical Review B, 104(21), 214302 (2021)](https://doi.org/10.1103/PhysRevB.104.214302)
 
