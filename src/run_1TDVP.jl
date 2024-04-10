@@ -1,5 +1,6 @@
-function run_1TDVP(dt, tmax, A, H, Dmax; obs=[], timed=false, reduceddensity=false, kwargs...)
+function run_1TDVP(dt, tmax, A, H, Dmax; obs=[], timed=false, reduceddensity=false, timedep=false, kwargs...)
     A0=deepcopy(A)
+    H0=deepcopy(H)
     data = Dict{String,Any}()
 
     numsteps = length(collect(0:dt:tmax))-1
@@ -23,13 +24,18 @@ function run_1TDVP(dt, tmax, A, H, Dmax; obs=[], timed=false, reduceddensity=fal
     for tstep=1:numsteps
         @printf("%i/%i, t = %.3f ", tstep, numsteps, times[tstep])
         println()
+        if timedep
+	   Ndrive = kwargs[:Ndrive]
+	   Htime = kwargs[:Htime]
+           H0[Ndrive][1,1,:,:] = H[Ndrive][1,1,:,:] + Htime[tstep][:,:]
+        end
         if timed
-            val, t, bytes, gctime, memallocs = @timed tdvp1sweep!(dt, A0, H, F; kwargs...)
+            val, t, bytes, gctime, memallocs = @timed tdvp1sweep!(dt, A0, H0, F; kwargs...)
             println("\t","ΔT = ", t)
             A0, F = val
             ttdvp[tstep] = t
         else
-            A0, F = tdvp1sweep!(dt, A0, H, F; kwargs...)
+            A0, F = tdvp1sweep!(dt, A0, H0, F; kwargs...)
         end
         exp = measure(A0, obs; t=times[tstep])
         for (i, ob) in enumerate(obs)
