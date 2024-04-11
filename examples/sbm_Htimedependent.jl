@@ -35,6 +35,7 @@ Trabi = 30.0 # Rabi period of the drive
 ωdrive = ω0 # Frequency of the drive
 
 Ndrive = 1 #Number of the site on which the drive is applied
+
 #-----------------------
 # Simulation parameters
 #-----------------------
@@ -51,14 +52,14 @@ D = [6] # MPS bond dimension
 # MPO and initial state MPS
 #---------------------------
 
-numsteps = length(collect(0:dt:tfinal))-1
-timelist = [(i-1)*dt for i=1:numsteps+1]
+timelist = collect(0:dt:tfinal)
+numsteps = length(timelist)-1
 
-Ht = [ϵ*sx*sin(ωdrive*tstep) for tstep in timelist] # Time dependent Hamiltonian term MPO
+Ht = [ϵ*sx*sin(ωdrive*tstep) for tstep in timelist] # Time-dependent Hamiltonian term
 
 H = spinbosonmpo(ω0, Δ, d, N, cpars) # MPO representation of the Hamiltonian
 
-ψ = unitcol(2,2) # Initial low-z system state 
+ψ = unitcol(2,2) # Initial down-z system state 
 
 A = productstatemps(physdims(H), state=[ψ, fill(unitcol(1,d), N)...]) # MPS representation of |ψ>|Vacuum>
 
@@ -83,9 +84,9 @@ A, dat = runsim(dt, tfinal, A, H;
                 convobs = [ob1],
                 params = @LogParams(N, d, α, Δ, ω0, s),
                 convparams = D,
-                timedep = true,
-                Ndrive = Ndrive,
-                Htime = Ht,
+                timedep = true, # the Hamiltonian is time dependent
+                Ndrive = Ndrive, # the first site of the MPS/MPO (i.e. the system) is concerned
+                Htime = Ht, # list of time-dependent terms
                 verbose = false,
                 save = true,
                 plot = true,
@@ -95,4 +96,4 @@ A, dat = runsim(dt, tfinal, A, H;
 # Plots
 #----------
 
-plot(dat["data/times"], dat["data/sz"], label=["Dmax = $D"], xlabel=L"t",ylabel=L"\sigma_z", title="")
+plot(dat["data/times"], dat["data/sz"], label="Dmax = $(D...)", xlabel=L"t",ylabel=L"\sigma_z", title="")
