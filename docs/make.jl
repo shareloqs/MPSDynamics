@@ -22,5 +22,6 @@ makedocs(
 
 deploydocs(
     repo = "github.com/shareloqs/MPSDynamics.git",
-    devurl = "docs"
+    devurl = "docs",
+    devbranch = "doc-writing"
 )
