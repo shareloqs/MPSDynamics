@@ -9,8 +9,8 @@
     coefficients in the second column, of the nx2 array ab.
 """
 function stieltjes(N,xw) #return ab
-    tiny = 10*realmin
-    huge = .1*realmax
+    #tiny = 10*realmin
+    #huge = .1*realmax
 
     ## Remove data with zero weights ##
 
@@ -19,7 +19,7 @@ function stieltjes(N,xw) #return ab
     xw = xw[I,:]
     index = findfirst(x->x!=0, xw[:,2]) #index = min(find(xw(:,2)~=0))
     xw = xw[index:length(xw[:,2]),:]
-    Ibis = sortper(xw[:,1]) #xw = sortrows(xw,1)
+    Ibis = sortperm(xw[:,1]) #xw = sortrows(xw,1)
     xw = xw[Ibis,:]
     Ncap = size(xw,1)
 
@@ -27,7 +27,8 @@ function stieltjes(N,xw) #return ab
         error("N in sti out of range")
     end
 
-    s0 = ones(1,Ncap)*xw[:,2]
+    s0 = (ones(1,Ncap)*xw[:,2])[1]
+    ab = zeros(N, 2)
     ab[1,1] = transpose(xw[:,1])*xw[:,2]/s0
     ab[1,2] = s0
     if N==1
@@ -50,23 +51,22 @@ function stieltjes(N,xw) #return ab
     # % end
     # %
 
-    c = 1e240
-    p2 = c*p2
-    s0 = c^2*s0
+    #c = 1e240
+    #p2 = c*p2
+    #s0 = c^2*s0
 
     for k=1:N-1
       p0 = p1
       p1 = p2
-      p2 = (xw[:,1] - ab[k,1]).*p1 - ab[k,2]*p0
-      s1 = transpose(xw[:,2])*(p2.^2)
-      s2 = transpose(xw[:,1])*(xw[:,2].*(p2.^2))
-
-      if (max(abs(p2))>huge)||(abs(s2)>huge)
-        error("impending overflow in stieltjes for k=$(k)")
-      end
-      if abs(s1)<tiny
-        error("impending underflow in stieltjes for k=$(k)")
-      end
+      p2 = (xw[:,1] .- ab[k,1]).*p1 .- ab[k,2].*p0
+      s1 = (transpose(xw[:,2])*(p2.^2))[1]
+      s2 = (transpose(xw[:,1])*(xw[:,2].*(p2.^2)))[1]
+      # if (max(abs(p2))>huge)||(abs(s2)>huge)
+      #   error("impending overflow in stieltjes for k=$(k)")
+      # end
+      # if abs(s1)<tiny
+      #   error("impending underflow in stieltjes for k=$(k)")
+      # end
       ab[k+1,1] = s2/s1
       ab[k+1,2] = s1/s0
       s0 = s1
