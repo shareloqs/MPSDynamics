@@ -5,10 +5,9 @@
 We consider, in the Schrödinger picture, a general Hamiltonian where a non-specified system interacts linearly with a bosonic environments
 
 ```math
-\begin{align}
-    \hat{H} =& \hat{H}_S + \int_0^{+\infty} \hbar\omega\hat{a}^\dagger_\omega\hat{a}_\omega\ \mathrm{d}\omega + \hat{A}_S\int_0^{+\infty}\sqrt{J(\omega)}\left(\hat{a}_\omega + \hat{a}^\dagger_\omega\right)\mathrm{d}\omega
-\end{align}
+    \hat{H} = \hat{H}_S + \int_0^{+\infty} \hbar\omega\hat{a}^\dagger_\omega\hat{a}_\omega\ \mathrm{d}\omega + \hat{A}_S\int_0^{+\infty}\sqrt{J(\omega)}\left(\hat{a}_\omega + \hat{a}^\dagger_\omega\right)\mathrm{d}\omega
 ```
+
 
 where ``\hat{a}_\omega`` (``\hat{a}^\dagger_\omega``) is a bosonic annihilation (creation) operator for a normal mode of the environment of energy ``\hbar\omega``, ``\hat{A}_S`` is a system operator, and ``J(\omega) = \sum_k |g_k|^2\delta(\omega - \omega_k)`` is the bath spectral density (SD), defined with the microscopic system-environment coupling strength ``g_k``.
 The SD quantifies the coupling strengths of the different normal modes of the environment with the system.
@@ -20,25 +19,19 @@ Let us consider the Hamiltonian presented in Eq.(1).
 We can introduce a unitary transformation of the continuous normal modes ``\hat{a}_\omega`` to an infinite discrete set of interacting modes ``\hat{b}_n``[^chin_exact_2010].
 
 ```math
-\begin{align}
-    \hat{a}_\omega &= \sum_{n=0}^{+\infty} U_n(\omega)\hat{b}_n = \sum_{n=0}^{+\infty} \sqrt{J(\omega)}P_n(\omega)\hat{b}_n\ ,
-\end{align}
+    \hat{a}_\omega = \sum_{n=0}^{+\infty} U_n(\omega)\hat{b}_n = \sum_{n=0}^{+\infty} \sqrt{J(\omega)}P_n(\omega)\hat{b}_n\ ,
 ```
 
 where ``P_n(\omega)`` are orthonormal polynomials such that
 
 ```math
-\begin{align}
     \int_{0}^{+\infty}P_n(\omega)P_m(\omega)J(\omega)\mathrm{d}\omega = \delta_{n,m}\ ;
-\end{align}
 ```
 
 and the inverse transformation is
 
 ```math
-\begin{align}
-    \hat{b}_n &= \int_0^{+\infty} U_n(\omega)\hat{a}_\omega\mathrm{d}\omega\ .
-\end{align}
+    \hat{b}_n = \int_0^{+\infty} U_n(\omega)\hat{a}_\omega\mathrm{d}\omega\ .
 ```
 
 Note that the orthonormality of the polynomials ensures the unitarity of the transformation defined in Eq.(2).
@@ -47,16 +40,14 @@ The mapping from a continuous set of modes to a (still infinite) discrete set mi
 Under this transformation, the Hamiltonian in Eq.(1) becomes
 
 ```math
-\begin{align}
-    \hat{H}= \hat{H}_S &+ \sum_{n=0}^{+\infty}\varepsilon_n\hat{b}_n^\dagger\hat{b}_n + t_n(\hat{b}_{n+1}^\dagger\hat{b}_n + \mathrm{h.c.}) + \kappa\hat{A}_S(\hat{b}_0 + \hat{b}_0^\dagger)\ .
-\end{align}
+    \hat{H}= \hat{H}_S + \sum_{n=0}^{+\infty}\varepsilon_n\hat{b}_n^\dagger\hat{b}_n + t_n(\hat{b}_{n+1}^\dagger\hat{b}_n + \mathrm{h.c.}) + \kappa\hat{A}_S(\hat{b}_0 + \hat{b}_0^\dagger)\ .
 ```
 
 Hence, this mapping transforms the normal bath Hamiltonian into a tight-binding Hamiltonian with on-site energies ``\varepsilon_n`` and hopping energies ``t_n``.
 Another important consequence of this mapping is that now the system only interacts with the first mode ``n = 0`` of the chain-mapped environment.
 The chain coefficients ``\varepsilon_n``, ``t_n``, and the coupling ``\kappa`` depend solely on the SD.
 
-This makes chain mapping a tool of choice for describing systems coupled to environment with highly structured SD (e.g. experimentally measured or calculated *ab initio*)[^chin_role_2013][^alvertis_nonequilibrium_2019][^dunnett_influence_2021][^caycedosoler_exact_2022]
+This makes chain mapping a tool of choice for describing systems coupled to environment with highly structured SD (e.g. experimentally measured or calculated *ab initio*)[^chin_role_2013][^alvertis_nonequilibrium_2019][^dunnett_influence_2021][^caycedosoler_exact_2022].
 In this new representation, the Hamiltonian in Eq.(5) has naturally a 1D chain topology.
 This makes its representation as a Matrix Product Operator (MPO) and the representation of the joint \{System + Environment\} wave-function as a Matrix Product State (MPS) suited [^orus_practical_2014][^paeckel_timeevolution_2019].
 
@@ -72,9 +63,7 @@ Hence, we can keep the pure state description and avoid moving to density matric
 A useful property of the orthonormal polynomials is that they obey a recurrence relation
 
 ```math
-\begin{align}
-    P_n(\omega) &= (C_{n-1}\omega - A_{n-1})P_{n-1}(\omega) + B_{n-1}P_{n-2}(\omega)\ ,
-\end{align}
+    P_n(\omega) = (C_{n-1}\omega - A_{n-1})P_{n-1}(\omega) + B_{n-1}P_{n-2}(\omega)\ ,
 ```
 
 where ``A_n`` is related to the first moment of ``P_n``, ``B_n`` and ``C_n`` to the norms of ``P_n`` and ``P_{n-1}``[^appel_mathematics_2007].
@@ -91,9 +80,7 @@ Explain that for some weight function/SD they are known analytically and that fo
 A multipartite quantum state ``|\psi\rangle``, e.g. a ``N``-site system where the sites can each be in a state ``|\phi_i\rangle`` belonging to a ``d``-dimensional Hilbert space, can be written as follows
 
 ```math
-\begin{align}
     |\psi\rangle = \sum_{\{i_k\}}c_{i_1\ldots i_N}|\phi_{i_1}\rangle\otimes\ldots\otimes|\phi_{i_N}\rangle\ ,
-\end{align}
 ```
 
 where the complex numbers ``c_{i_1\ldots i_N}`` are the amplitudes of each state ``|\phi_{i_1}\rangle\otimes\ldots\otimes|\phi_{i_N}\rangle`` whose superpositions form in full generality the state ``|\psi\rangle``.
@@ -105,9 +92,7 @@ Here by the rank of a tensor, we simply mean the number of indices it has.
 The tensor ``c`` of a quantum state ``|\psi\rangle`` corresponding to a one-dimensional system can be decomposed into a product of ``N`` smaller rank-3 tensors ``T_{k}`` (except for the first and last sites where the tensors will have a rank-2)
 
 ```math
-\begin{align}
     c_{i_1\ldots i_N} = \sum_{\{\alpha\}} T^{\alpha_1}_{i_1}T^{\alpha_1\alpha_2\ }_{i_2}T^{\alpha_2\alpha_3\ }_{i_3}\ldots T^{\alpha_{N-1}}_{i_N} \ .
-\end{align}
 ```
 
 In this form, the local tensor ``T_k`` contains the information on the quantum state on site ``k`` and its relation (especially the entanglement) with the neighbouring sites.
@@ -146,9 +131,7 @@ In the same fashion as a one-dimensional quantum state can be represented as a M
 For an operator ``\hat{O}``, its MPO can be defined as follows
 
 ```math
-\begin{align}
     \hat{O} = \sum_{\{i_k\}\{i_k^{'}\} \{w\}} W^{i_1\ i^{'}_1}_{1\ w_0w_1}\ldots  W^{i_N\ i^{'}_N}_{N\ w_{N-1}w_N} |\phi_{i_1^{'}}\ldots \phi_{i_N^{'}}\rangle\langle\phi_{i_1}\ldots \phi_{i_N}| 
-\end{align}
 ```
 The contracted indices between the tensors are called _virtual indices_.
 The free indices are called _physical indices_ and correspond to the different input and output local quantum states. 
@@ -174,9 +157,7 @@ We define ``T_{|\varphi\rangle}\mathcal{M}`` the tangent space of ``\mathcal{M}`
 The criterion to find ``|\varphi\rangle`` is that for every state ``|\chi\rangle \in T_{|\varphi\rangle}\mathcal{M}``
 
 ```math
-\begin{align}
-    \langle\chi|\left(\frac{\mathrm{d}}{\mathrm{d}t} - \frac{1}{\mathrm{i}\hbar}\hat{H}\right)|\varphi\rangle &=0\ ,
-\end{align}
+    \langle\chi|\left(\frac{\mathrm{d}}{\mathrm{d}t} - \frac{1}{\mathrm{i}\hbar}\hat{H}\right)|\varphi\rangle =0\ ,
 ```
 
 which can be interpreted as saying that the time evolution procedure should keep ``|\varphi\rangle`` inside of the manifold ``\mathcal{M}``.
@@ -187,23 +168,17 @@ Introducing ``\hat{P}_{T_{|\varphi\rangle}\mathcal{M}}`` the projector onto the 
 Leading to
 
 ```math
-\begin{align}
-    \forall |\phi\rangle \in \mathcal{H}, \ \langle\phi|\hat{P}_{T_{|\varphi\rangle}\mathcal{M}}\left(\frac{\mathrm{d}}{\mathrm{d}t} - \frac{1}{\mathrm{i}\hbar}\hat{H}\right)|\varphi\rangle &=0\ .
-\end{align}
+    \forall |\phi\rangle \in \mathcal{H}, \ \langle\phi|\hat{P}_{T_{|\varphi\rangle}\mathcal{M}}\left(\frac{\mathrm{d}}{\mathrm{d}t} - \frac{1}{\mathrm{i}\hbar}\hat{H}\right)|\varphi\rangle =0\ .
 ```
 Because the time derivation and the projector commute, we have
 
 ```math
-\begin{align}
-    \forall |\phi\rangle \in \mathcal{H}, \ \langle\phi|\left(\frac{\mathrm{d}}{\mathrm{d}t} - \frac{1}{\mathrm{i}\hbar}\hat{P}_{T_{|\varphi\rangle}\mathcal{M}}\hat{H}\right)|\varphi\rangle &=0\ .
-\end{align}
+    \forall |\phi\rangle \in \mathcal{H}, \ \langle\phi|\left(\frac{\mathrm{d}}{\mathrm{d}t} - \frac{1}{\mathrm{i}\hbar}\hat{P}_{T_{|\varphi\rangle}\mathcal{M}}\hat{H}\right)|\varphi\rangle =0\ .
 ```
 This equation must be true for any ``|\phi\rangle \in \mathcal{H}``, Eq.~(\ref{eq:DiracFrenkel1}) can thus be written
 
 ```math
-\begin{align}
-    \left(\frac{\mathrm{d}}{\mathrm{d}t} - \frac{1}{\mathrm{i}\hbar}\hat{P}_{T_{|\varphi\rangle}\mathcal{M}}\hat{H}\right)|\varphi\rangle &=0\ .
-\end{align}
+    \left(\frac{\mathrm{d}}{\mathrm{d}t} - \frac{1}{\mathrm{i}\hbar}\hat{P}_{T_{|\varphi\rangle}\mathcal{M}}\hat{H}\right)|\varphi\rangle =0\ .
 ```
 
 In the context of MPS, the manifold ``\mathcal{M}`` will correspond to the space of full-ranked MPS of a given bond dimension ``D``, and the tangent space will be the space spanned by variations of single MPS tensors.

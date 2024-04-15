@@ -30,7 +30,7 @@ julia> H = spinbosonmpo(ω0, Δ, d, N, cpars)
 julia> A = productstatemps(physdims(H), state=[ψ, fill(unitcol(1,d), N)...]) # MPS representation of |ψ>|Vacuum>
 ```
 
-Alternatively, a chain with a specified number of excitation localiswed on one site, or delocalized accross several sites can be generated with [`MPSDynamics.chainmps`](@ref).
+Alternatively, a chain with a specified number of excitation localised on one site, or delocalized accross several sites can be generated with [`MPSDynamics.chainmps`](@ref).
 
 Random MPS can also be generated with the [`randmps`](@ref) method.
 
@@ -100,7 +100,7 @@ The data (i.e. observables time-series) is stored in the JLD format which is bas
 
 The HDF5 format is natively supported across many platforms and languages (e.g. `Python`, or `Mathematica`).
 
-For the data to be saved to a file after a run, the keyword argument `save=true` needs to be usedin `runsim`.
+For the data to be saved to a file after a run, the keyword argument `save=true` needs to be used in `runsim`.
 
 The directory where the data should be saved can be chosen by setting a path with the `savedir` keyword argument.
 
