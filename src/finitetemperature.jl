@@ -55,7 +55,7 @@ function chaincoeffs_finiteT(nummodes, β, ohmic=true; α=1, s=1, J=nothing, ωc
     elseif procedure==:Stieltjes
         irout = 1 
     else
-        throw(ArgumentError("Procedure should be either Lanczos or Stieltjes"))
+        throw(ArgumentError("Procedure should be either Lanczos or Stieltjes."))
     end
     
     eps0=1e7*eps(Float64)
