@@ -55,17 +55,44 @@ The method [`MPSDynamics.MPOtoVector`](@ref) converts an ITensors chain MPO into
 
 ### Tailored MPO
 
-Explain that a MPO is just a list of tensors with matching bond dimensions.
+One can also construct MPO tailored to the problem one is interested in.
+MPOs are fundamentally a lists of rank-4 tensors such that the right bond dimension of the nth tensor must be equal to the left bond dimension of the n+1th tensor; and the dimension of the physical bonds of the nth tensor must be equal to the corresponding physical bond on the MPS.
 
 ## Observables
 
-System and environment observables can be computed, as well as system-and-environment non-local observables.
+System and environment observables can be computed, as well as system-and-environment 'non-local' observables.
 
-Explain OneSiteObservable and TwoSiteObservable
+Observables that will be passed to `MPSDynamics.runsim`(@ref) to have their expectation value computated at each time step are defined with the [`OneSiteObservable`](@ref) and `[`TwoSiteObservable`](@ref)`.
+
+One-site and two-site obsevables work similarly, they need to be given a name, an (pair of) operator(s) and the (list of) site(s) on which they are evaluated.
+
+For instance one can calculated the average number of excitation in each of the ``N`` environmental modes
+
+```julia
+    ob = OneSiteObservable("chain mode occupation", numb(d), (2,N+1))    
+```
+
+It is also possible to measure composite system/environment observables, for example
+
+```julia
+    ob = TwoSiteObservable("SXdisp", sx, disp(d), [1], collect(2:N+1))
+```
+which measure the correlation between the spin in the x-direction and the displacement of the bath modes.
+
+Purely environmental 'non-local' observables such as 
+
+```julia
+    ob = TwoSiteObservable("bath coherence", crea(d), anih(d), collect(2:N+1), collect(2:N+1))
+```
+that computes all the chain mode coherences ``\langle\hat{a}_n^\dagger\hat{a}_{m}\rangle`` (and the chain mode occupation when ``n = m``).
+
+We note that if one knows the coherences and populations of all the chain modes, it is then possible to reconstruct the populations of the normal mode environment.
 
 ## Time-Evolution
 
-Explain that we do TDVP
+Explain that we do TDVP.
+
+A simulation is runned by the `MPSDynamics.runsim`(@ref) function.
 
 Local one-site and two-site observables, as well as non-local two-site observables, can be efficiently computed for each time-step of the time-evolution.
 
