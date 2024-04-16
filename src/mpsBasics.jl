@@ -680,7 +680,12 @@ function bonddims(M::Vector)
     return Dims(res)
 end
 
-#calculates M1*M2 where M1 and M2 are MPOs
+"""
+    multiply(M1::Vector, M2::Vector)
+
+Calculates M1*M2 where M1 and M2 are MPOs
+
+"""
 function multiply(M1::Vector, M2::Vector)
     N = length(M1)
     length(M2) == N || throw(ArgumentError("MPOs do not have the same length!"))

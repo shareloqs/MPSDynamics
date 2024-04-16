@@ -4,11 +4,13 @@ dn(ops...) = permutedims(cat(reverse(ops)...; dims=3), [3,1,2])
 """
     xyzmpo(N::Int; Jx=1.0, Jy=Jx, Jz=Jx, hx=0., hz=0.)
 
-Return the MPO representation of the `N`-spin XYZ Hamiltonian with external field ``\\vec{h}=(h_x, 0, h_z)``.
+Generate MPO for the `N`-spin XYZ model with external field ``\\vec{h}=(h_x, 0, h_z)``, , defined by the Hamiltonian
 
 ``
 H = \\sum_{n=1}^{N-1} -J_x σ_x^{n} σ_x^{n+1} - J_y σ_y^{n} σ_y^{n+1} - J_z σ_z^{n} σ_z^{n+1} + \\sum_{n=1}^{N}(- h_x σ_x^{n} - h_z σ_z^{n})  
-``.
+``
+
+with ``σ_x^{n}, σ_y^{n}, σ_z^{n}`` the Pauli spin-1/2 matrices of the ``n^\\text{th}`` site.
 
 """
 function xyzmpo(N::Int; Jx=1.0, Jy=Jx, Jz=Jx, hx=0., hz=0.)
@@ -40,13 +42,51 @@ end
 """
     isingmpo(N; J=1.0, h=1.0)
 
-Return the MPO representation of a `N`-spin 1D Ising model with external field ``\\vec{h} = (0,0,h)``.
+Generate MPO for the `N`-spin 1D Ising model with external field ``\\vec{h} = (0,0,h)``, defined by the Hamiltonian
+
+``
+H = \\sum_{n=1}^{N-1} -J_x σ_x^{n} σ_x^{n+1} + \\sum_{n=1}^{N}(- h_z σ_z^{n})  
+``
+
+with ``σ_x^{n}, σ_y^{n}, σ_z^{n}`` the Pauli spin-1/2 matrices of the ``n^\\text{th}`` site.
+
 """
 isingmpo(N::Int; J=1.0, h=1.0) = xyzmpo(N; Jx=J, Jy=0., Jz=0., hz=h, hx=0.)
+"""
+    heisenbergmpo(N::Int, J=1.0) = xyzmpo(N; Jx=J)
 
+Generate MPO for the `N`-spin Heisenberg XXX model, defined by the Hamiltonian
+
+``
+H = \\sum_{n=1}^{N-1} -J σ_x^{n} σ_x^{n+1} - J σ_y^{n} σ_y^{n+1} - J σ_z^{n} σ_z^{n+1}   
+``
+
+with ``σ_x^{n}, σ_y^{n}, σ_z^{n}`` the Pauli spin-1/2 matrices of the ``n^\\text{th}`` site.
+
+
+"""
 heisenbergmpo(N::Int, J=1.0) = xyzmpo(N; Jx=J)
+"""
+    xxzmpo(N::Int, Δ = 1.0, J=1.0) = xyzmpo(N; Jx=J, Jy=J, Jz=J*Δ)
+
+Generate MPO for the `N`-spin XXZ model, defined by the Hamiltonian
+
+``
+H = \\sum_{n=1}^{N-1} -J σ_x^{n} σ_x^{n+1} - J σ_y^{n} σ_y^{n+1} - \\Delta J σ_z^{n} σ_z^{n+1}   
+``
+
+with ``σ_x^{n}, σ_y^{n}, σ_z^{n}`` the Pauli spin-1/2 matrices of the ``n^\\text{th}`` site.
+
+"""
 xxzmpo(N::Int, Δ = 1.0, J=1.0) = xyzmpo(N; Jx=J, Jy=J, Jz=J*Δ)
 
+"""
+    longrange_xyzmpo(N::Int, α::Float64=0.; Jx=1.0, Jy=Jx, Jz=Jx, hx=0., hz=0.)
+
+Gennerate MPO for the `N`-spin long-range XYZ model with external field ``\\vec{h}=(h_x, 0, h_z)``, , defined by the Hamiltonian
+
+
+"""
 function longrange_xyzmpo(N::Int, α::Float64=0.; Jx=1.0, Jy=Jx, Jz=Jx, hx=0., hz=0.)
     u = unitmat(2)
 
@@ -77,10 +117,20 @@ function longrange_xyzmpo(N::Int, α::Float64=0.; Jx=1.0, Jy=Jx, Jz=Jx, hx=0., h
     end
     return Any[M[1:1,:,:,:], fill(M, N-2)..., M[:,D:D,:,:]]
 end
+
+"""
+    longrange_isingmpo(N::Int, α::Float64=0.; J=1.0, h=1.0) = longrange_xyzmpo(N, α; Jx=J, Jy=0., Jz=0., hz=h, hx=0.)
+
+"""
 longrange_isingmpo(N::Int, α::Float64=0.; J=1.0, h=1.0) = longrange_xyzmpo(N, α; Jx=J, Jy=0., Jz=0., hz=h, hx=0.)
 
+"""
+    spinchainmpo(N::Int; J=1.0, hz=1.0, hx=0.0, i=div(N,2))
+
+
+"""
 function spinchainmpo(N::Int; J=1.0, hz=1.0, hx=0.0, i=div(N,2))
-    u = unitmat(2)
+u = unitmat(2)
         
     Mx = zeros(4,4,2,2)
     Mx[1,1,:,:] = u
@@ -103,6 +153,12 @@ function spinchainmpo(N::Int; J=1.0, hz=1.0, hx=0.0, i=div(N,2))
     return Any[M0[1:1,:,:,:], fill(M0, i-2)..., Mx, fill(M0, N-i-1)..., M0[:,4:4,:,:]]
 end
 
+"""
+    tightbindingmpo(N::Int, d::Int; J=1.0, e=1.0)
+
+
+
+"""
 function tightbindingmpo(N::Int, d::Int; J=1.0, e=1.0)
     b = anih(d)
     bd = crea(d)
@@ -124,7 +180,7 @@ end
 """
     hbathchain(N::Int, d::Int, chainparams, longrangecc...; tree=false, reverse=false, coupletox=false)
 
-Create an MPO representing a tight-binding chain of `N` oscillators with `d` Fock states each. Chain parameters are supplied in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``. The output does not itself represent a complete MPO but will possess an end which is *open* and should be attached to another tensor site, usually representing the *system*.
+Generate MPO representing a tight-binding chain of `N` oscillators with `d` Fock states each. Chain parameters are supplied in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``. The output does not itself represent a complete MPO but will possess an end which is *open* and should be attached to another tensor site, usually representing the *system*.
 
 # Arguments
 
@@ -387,6 +443,26 @@ function spinbosonmpo(ω0, Δ, d, N, chainparams; rwa=false, tree=false)
     end
 end
 
+"""
+    twobathspinmpo(ω0, Δ, Nl, Nr, dl, dr, chainparamsl=[fill(1.0,N),fill(1.0,N-1), 1.0], chainparamsr=chainparamsl; tree=false)
+
+Generate MPO for a spin-1/2 coupled to two chains of harmonic oscillators, defined by the Hamiltonian
+
+``
+H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0^rσ_x(b_0^\\dagger+b_0) + \\sum_{i=0}^{N_r-1} t_i^r (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N_r} ϵ_i^rb_i^\\dagger b_i + c_0^lσ_x(d_0^\\dagger+d_0) + \\sum_{i=0}^{N_l-1} t_i^l (d_{i+1}^\\dagger d_i +h.c.) + \\sum_{i=0}^{N_l} ϵ_i^l d_i^\\dagger d_i
+``.
+
+The spin is on site ``N_l + 1`` of the MPS, surrounded by the left chain modes and the right chain modes.
+
+This Hamiltonain is unitarily equivalent (before the truncation to `N` sites) to the spin-boson Hamiltonian defined by
+
+``
+H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{\\frac{J(ω)}{π}}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω ωb_ω^\\dagger b_ωi + σ_x\\int_0^∞ dω\\sqrt{\\frac{J^l(ω)}{π}}(d_ω^\\dagger+d_ω) + \\int_0^∞ dω ωd_ω^\\dagger d_ω
+``.
+
+The chain parameters, supplied by `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature. The two chains can have a different spectral density.
+
+"""
 function twobathspinmpo(ω0, Δ, Nl, Nr, dl, dr, chainparamsl=[fill(1.0,N),fill(1.0,N-1), 1.0], chainparamsr=chainparamsl; tree=false)
     u = unitmat(2)
 
@@ -458,6 +534,13 @@ function getchaincoeffs(nummodes, α, s, beta, ωc=1)
 end
 ##
 
+"""
+    readchaincoeffs(fdir, params...)
+
+
+
+
+"""
 function readchaincoeffs(fdir, params...)
     n = length(params)
     dat = h5open(fdir, "r") do fid
@@ -479,6 +562,26 @@ function readchaincoeffs(fdir, params...)
     return dat
 end
 
+"""
+    ibmmpo(ω0, d, N, chainparams; tree=false)
+
+Generate MPO for a spin-1/2 coupled to a chain of harmonic oscillators with the interacting boson model (IBM), defined by the Hamiltonian
+
+``
+H = \\frac{ω_0}{2}σ_z +  c_0σ_z(b_0^\\dagger+b_0) + \\sum_{i=0}^{N-1} t_i (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N} ϵ_ib_i^\\dagger b_i
+``.
+
+The spin is on site 1 of the MPS and the bath modes are to the right.
+
+This Hamiltonain is unitarily equivalent (before the truncation to `N` sites) to the spin-boson Hamiltonian defined by
+
+``
+H =  \\frac{ω_0}{2}σ_z + σ_z\\int_0^∞ dω\\sqrt{\\frac{J(ω)}{π}}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω ωb_ω^\\dagger b_ω
+``.
+
+The chain parameters, supplied by `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature.
+
+"""
 function ibmmpo(ω0, d, N, chainparams; tree=false)
     u = unitmat(2)
     
@@ -501,6 +604,14 @@ function ibmmpo(ω0, d, N, chainparams; tree=false)
     end
 end
 
+"""
+    tunnelingmpo(ϵ, delta, α, s, β, d::Int, nummodes::Int; tree=false, ωc=1)
+
+
+
+
+
+"""
 function tunnelingmpo(ϵ, delta, α, s, β, d::Int, nummodes::Int; tree=false, ωc=1)
     cps = chaincoeffs_ohmic(nummodes, α, s, β; ωc=ωc)
     λ = 2*α*ωc/s + delta
@@ -525,6 +636,14 @@ function tunnelingmpo(ϵ, delta, α, s, β, d::Int, nummodes::Int; tree=false, �
     end
 end
 
+"""
+    nearestneighbourmpo(N::Int, h0, A, Ad = A')
+
+
+
+
+
+"""
 function nearestneighbourmpo(N::Int, h0, A, Ad = A')
     size(h0) == size(A) || error("physical dimensions don't match")
     size(h0) == size(Ad) || error("physical dimensions don't match")
@@ -541,6 +660,14 @@ function nearestneighbourmpo(N::Int, h0, A, Ad = A')
     return Any[M[D:D,:,:,:], fill(M, N-2)..., M[:,1:1,:,:]]
 end
 
+"""
+    nearestneighbourmpo(tree_::Tree, h0, A, Ad = A')
+
+
+
+
+
+"""
 function nearestneighbourmpo(tree_::Tree, h0, A, Ad = A')
     size(h0) == size(A) || error("physical dimensions don't match")
     size(h0) == size(Ad) || error("physical dimensions don't match")
