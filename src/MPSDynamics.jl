@@ -28,6 +28,7 @@ include("run_DTDVP.jl")
 include("run_A1TDVP.jl")
 include("chainA1TDVP.jl")
 include("switchmpo.jl")
+include("finitetemperature.jl")
 
 """
     runsim(dt, tmax, A, H; 
@@ -172,6 +173,8 @@ export @LogParams
 export MPOtoVector, MPStoVector
 
 export rhoreduced_2sites, rhoreduced_1site
+
+export chaincoeffs_finiteT
 
 end
 

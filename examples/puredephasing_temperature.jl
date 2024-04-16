@@ -26,12 +26,17 @@ s = 1 # ohmicity
 
 β = 100
 
+#----------------------------
+# Thermalized ohmic spectral density
+#----------------------------
+
+cpars = chaincoeffs_finiteT(N, β; α=α, s=1, J=nothing, ωc=ωc, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=false)  # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
+
+#= #If cpars is stored in "../ChainOhmT/ohmicT" 
 curdir = @__DIR__
-
 dir_chaincoeff = abspath(joinpath(curdir, "../ChainOhmT/ohmicT"))
-
-#cpars is built here with the ChainOhmT routine for a thermalized ohmic 
 cpars  = readchaincoeffs("$dir_chaincoeff/chaincoeffs.h5",N,α,s,β) # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
+=#
 
 #-----------------------
 # Simulation parameters
