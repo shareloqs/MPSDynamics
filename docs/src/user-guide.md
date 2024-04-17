@@ -2,7 +2,7 @@
 
 Here we explain the different steps to perform a simulation.
 
-Examples with detailed explanations can be found in .
+Examples with detailed explanations can be found in [Examples](@ref).
 
 ## Initial State
 
@@ -45,6 +45,8 @@ Write a quick explanation of the how trees are structured: parents, child, nodes
 In order to perform time evolution and have access to the dynamics of the many-body state a Hamiltonian needs to be specified in the form of a Matrix Product Operator (MPO) of as a tree tensor network.
 Either way, this can be done by using a [Build-in Hamiltonian](@ref), [Convert a MPO from ITensor](@ref), or creating a [Tailored MPO](@ref).
 
+In the context of Open Quantum Systems, custom chain coefficients for the environment can be generated for finite temperature simulations, and/or user provided spectral densities (SDs).
+
 ### Build-in Hamiltonian
 
 MPSDynamics provides several topical Hamiltonians directly in the form of MPO or Tree Tensor Networks such as the Ising model [`MPSDynamics.isingmpo`](@ref), the XYZ Hamiltonian [`MPSDynamics.xyzmpo`](@ref), the Spin Boson Model [`MPSDynamics.spinbosonmpo`](@ref), a spin coupled to two bosonic baths `MPSDynamics.twobathspinmpo`, nearest neighbour interactions Hamiltonian `MPSDynamics.nearestneighbourmpo`, the independent boson model `MPSDynamics.ibmmpo`, (non-)uniform tight-binding chain Hamiltonian [`MPSDynamics.tightbindingmpo`](@ref).
@@ -58,6 +60,13 @@ The method [`MPSDynamics.MPOtoVector`](@ref) converts an ITensors chain MPO into
 One can also construct MPO tailored to the problem one is interested in.
 MPOs are fundamentally a lists of rank-4 tensors such that the right bond dimension of the nth tensor must be equal to the left bond dimension of the n+1th tensor; and the dimension of the physical bonds of the nth tensor must be equal to the corresponding physical bond on the MPS.
 
+### Finite Temperature and Custom SD
+
+In the T-TEDOPA framework (see [Theoretical Background](@ref) for more details) finite temperature simulations are done with an effective pure state description of the system and the environment where the coupling coefficients (or the SD) is temperature-dependent.
+
+The corresponding chain coefficients for an Ohmic or a user provided spectral density (that can thus in pratice be either at zero or finite temperature) are computed with the `[`chaincoeffs_finiteT`](@ref)`.
+This method is based on the `ORTHOPOL` routines[^Gautschi]
+
 ## Observables
 
 System and environment observables can be computed, as well as system-and-environment 'non-local' observables.
@@ -69,7 +78,7 @@ One-site and two-site obsevables work similarly, they need to be given a name, a
 For instance one can calculated the average number of excitation in each of the ``N`` environmental modes
 
 ```julia
-    ob = OneSiteObservable("chain mode occupation", numb(d), (2,N+1))    
+    ob = OneSiteObservable("chain mode occupation", numb(d), (2,N+1))
 ```
 
 It is also possible to measure composite system/environment observables, for example
@@ -173,3 +182,7 @@ Dict{String, Any} with 6 entries:
   "times"    => [0.0, 0.0005, 0.001, 0.0015, 0.002, 0.0025, 0.003, 0.0035, 0.00…
 
 ```
+
+[^Gautschi]:
+	> Gautschi, W. Algorithm 726: ORTHPOL–a package of routines for generating orthogonal polynomials and Gauss-type quadrature rules. ACM Trans. Math. Softw. 20, 21–62 (1994).
+
