@@ -37,8 +37,9 @@ using MPSDynamics, Plots, LaTeXStrings
 ```
 We then define variables for the physical parameters of the symulation.
 Among these, two are convergence parameters:
-	*  `d` is the number of states we retain for the truncated harmonic oscillators representation of environmental modes 
-	* `N` is the number of chain (environmental) modes we keep. This parameters determines the maximum simulation time of the simulation: indeed excitations that arrive at the end of the chain are reflected towards the system and can lead to unphysical results
+
+*  `d` is the number of states we retain for the truncated harmonic oscillators representation of environmental modes 
+* `N` is the number of chain (environmental) modes we keep. This parameters determines the maximum simulation time of the simulation: indeed excitations that arrive at the end of the chain are reflected towards the system and can lead to unphysical results
 
 ```julia
 #----------------------------
@@ -63,8 +64,9 @@ cpars = chaincoeffs_ohmic(N, α, s) # chain parameters, i.e. on-site energies ϵ
 We set the simulation parameters and choose a time evolution method.
 As always for simulations of dynamics, the time step must be chosen wisely. The error of the TDVP methods is ``\mathcal{O}(dt^3)``.
 In this example we present two one-site implementation of TDVP that both preserves the unitarity of the evolution:
-	* the regular one-site method with the keyword `:TDVP1` where all the virtual bonds of the MPS have the same bond dimension ``D``
-	* the adaptive method with the keyword `:DTDVP` where the bond dimension is locally increased at each time step if the TDVP projection error crosses a threshold value
+
+* the regular one-site method with the keyword `:TDVP1` where all the virtual bonds of the MPS have the same bond dimension ``D``
+* the adaptive method with the keyword `:DTDVP` where the bond dimension is locally increased at each time step if the TDVP projection error crosses a threshold value
 
 Logically the constant bond dimension of the MPS for TDVP1 and the threshold of the projection error for DTDVP are their respective convergence parameter. 
 ```julia
