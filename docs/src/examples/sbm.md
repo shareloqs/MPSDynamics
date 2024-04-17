@@ -5,7 +5,7 @@
 The Spin-Boson Model (SBM) is a prototypical model in the theory of open quantum systems where a two level system interacts linearly with a bosonic bath
 
 ```math
-	\hat{H} = \frac{\omega_0}{2}\hat{\sigma}_z + \Delta\hat{\sigma}_y + \int_0^{+\infty}\omega \hat{a}^\dagger_\omega\hat{a}_\omega \mathrm{d}\omega + \hat{\sigma}_x\int_0^{+\infty}\sqrt{J(\omega)}(\hat{a}_\omega\hat{a}^\dagger_\omega)\mathrm{d}\omega
+	\hat{H} = \frac{\omega_0}{2}\hat{\sigma}_z + \Delta\hat{\sigma}_x + \int_0^{+\infty}\omega \hat{a}^\dagger_\omega\hat{a}_\omega \mathrm{d}\omega + \hat{\sigma}_x\int_0^{+\infty}\sqrt{J(\omega)}(\hat{a}_\omega\hat{a}^\dagger_\omega)\mathrm{d}\omega
 ```
 Even though this model is fairly simple it is physically very rich and it is not analytically solvable. For these reason it has become a test-bed for numerical methods simulating open quantum systems dynamics in the non-perturbative non-Markovian regime.
 
