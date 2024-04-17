@@ -15,7 +15,7 @@ Here we break out and comment the script in `MPSDynamics/examples/sbm_zero_tempe
 
 The T-TEDOPA method relies on a truncated chain mapping that transform the initial Hamiltonian into
 ```math
-	\hat{H} = \frac{\omega_0}{2} \hat{\sigma}_z + \Delta \hat{\sigma}_x + c_0 \hat{\sigma}_x(\hat{b}_0^\\dagger + \hat{b}_0) + \sum_{i=0}^{N-1} t_i (\hat{b}_{i+1}^\dagger \hat{b}_i + \mathrm{h.c.}) + \sum_{i=0}^{N-1} \epsilon_i \hat{b}_i^\dagger \hat{b}_i 
+	\hat{H} = \frac{\omega_0}{2} \hat{\sigma}_z + \Delta \hat{\sigma}_x + c_0 \hat{\sigma}_x(\hat{b}_0^\dagger + \hat{b}_0) + \sum_{i=0}^{N-1} t_i (\hat{b}_{i+1}^\dagger \hat{b}_i + \mathrm{h.c.}) + \sum_{i=0}^{N-1} \epsilon_i \hat{b}_i^\dagger \hat{b}_i 
 ```
 ## The code
 
