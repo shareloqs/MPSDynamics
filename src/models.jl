@@ -446,23 +446,22 @@ end
 """
     twobathspinmpo(ω0, Δ, Nl, Nr, dl, dr, chainparamsl=[fill(1.0,N),fill(1.0,N-1), 1.0], chainparamsr=chainparamsl; tree=false)
 
-Generate MPO for a spin-1/2 coupled to a chain of harmonic oscillators on its left and another one on its right, defined by the Hamiltonian
+Generate MPO for a spin-1/2 coupled to two chains of harmonic oscillators, defined by the Hamiltonian
 
 ``
-H = \\frac{ω_0}{2}σ_z + Δσ_x + c_Lσ_x(b_0^\\dagger+b_0) + c_Rσ_x(c_0^\\dagger+c_0) + \\sum_{i=0}^{N-1} t^L_i (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N} ϵ^L_i c_i^\\dagger c_i + \\sum_{i=0}^{N-1} t^R_i (c_{i+1}^\\dagger c_i + h.c.) + \\sum_{i=0}^{N} ϵ^R_ic_i^\\dagger c_i
+H = \\frac{ω_0}{2}σ_z + Δσ_x + c_0^rσ_x(b_0^\\dagger+b_0) + \\sum_{i=0}^{N_r-1} t_i^r (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N_r} ϵ_i^rb_i^\\dagger b_i + c_0^lσ_x(d_0^\\dagger+d_0) + \\sum_{i=0}^{N_l-1} t_i^l (d_{i+1}^\\dagger d_i +h.c.) + \\sum_{i=0}^{N_l} ϵ_i^l d_i^\\dagger d_i
 ``.
 
-The spin is on site N+2 of the MPS.
+The spin is on site ``N_l + 1`` of the MPS, surrounded by the left chain modes and the right chain modes.
 
-This Hamiltonain is unitarily equivalent (before the truncation to `N` sites) to the two-bath spin-boson Hamiltonian defined by
+This Hamiltonain is unitarily equivalent (before the truncation to `N` sites) to the spin-boson Hamiltonian defined by
 
 ``
-H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x(\\int_0^∞ dω\\sqrt{J_L(ω)}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω\\sqrt{J_R(ω)}(c_ω^\\dagger+c_ω) ) + \\int_0^∞ dω ωb_ω^\\dagger b_ω  + \\int_0^∞ dω ωc_ω^\\dagger c_ω
+H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{\\frac{J(ω)}{π}}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω ωb_ω^\\dagger b_ωi + σ_x\\int_0^∞ dω\\sqrt{\\frac{J^l(ω)}{π}}(d_ω^\\dagger+d_ω) + \\int_0^∞ dω ωd_ω^\\dagger d_ω
 ``.
 
-The chain parameters, supplied by `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature.
+The chain parameters, supplied by `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature. The two chains can have a different spectral density.
 
-The MPO can be considered as a Tree Tensor Network by setting `tree=true`.
 """
 function twobathspinmpo(ω0, Δ, Nl, Nr, dl, dr, chainparamsl=[fill(1.0,N),fill(1.0,N-1), 1.0], chainparamsr=chainparamsl; tree=false)
     u = unitmat(2)
