@@ -129,7 +129,7 @@ function measurempo(A::Vector, M::Vector, sites::Tuple{Int, Int})
     for k=sites[1]:sites[2]
         F = updateleftenv(A[k], M[k], F)
     end
-    F = tensortrace(F, [1,2,1], [2])
+    F = tensortrace([2], F, [1,2,1])
     real(only(F))
 end
 
