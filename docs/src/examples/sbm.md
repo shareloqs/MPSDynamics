@@ -5,7 +5,7 @@
 The Spin-Boson Model (SBM) is a prototypical model in the theory of open quantum systems where a two level system interacts linearly with a bosonic bath
 
 ```math
-	\hat{H} = \frac{\omega_0}{2}\hat{\sigma}_z + \Delta\hat{\sigma}_x + \int_0^{+\infty}\omega \hat{a}^\dagger_\omega\hat{a}_\omega \mathrm{d}\omega + \hat{\sigma}_x\int_0^{+\infty}\sqrt{J(\omega)}(\hat{a}_\omega\hat{a}^\dagger_\omega)\mathrm{d}\omega
+	\hat{H} = \frac{\omega_0}{2}\hat{\sigma}_z + \Delta\hat{\sigma}_x + \int_0^{+\infty}\omega \hat{a}^\dagger_\omega\hat{a}_\omega \mathrm{d}\omega + \hat{\sigma}_x\int_0^{+\infty}\sqrt{J(\omega)}(\hat{a}_\omega + \hat{a}^\dagger_\omega)\mathrm{d}\omega
 ```
 Even though this model is fairly simple it is physically very rich and it is not analytically solvable. For these reason it has become a test-bed for numerical methods simulating open quantum systems dynamics in the non-perturbative non-Markovian regime.
 
@@ -35,7 +35,7 @@ We load the `MPSdynamics.jl` package to be able to perform the simulation, the `
 ```julia
 using MPSDynamics, Plots, LaTeXStrings
 ```
-We then define variables for the physical parameters of the symulation.
+We then define variables for the physical parameters of the simulation.
 Among these, two are convergence parameters:
 
 *  `d` is the number of states we retain for the truncated harmonic oscillators representation of environmental modes 
@@ -87,7 +87,7 @@ convparams = [2,4,6] # MPS bond dimension (1TDVP)
 # convparams = [1e-2, 1e-3, 1e-4] # threshold value of the projection error (DTDVP)
 ```
 Using `MPSDynamics.jl` built-in methods we define the SBM MPO and the MPS representing the initial state.
-This initial state is a product state between the system and the chain. It is constructed using a list of the 'local state' of each site of the MPS, and the dimensions of the physical legs of the MPS are set to be the same as the ones dof the MPO.
+This initial state is a product state between the system and the chain. It is constructed using a list of the 'local state' of each site of the MPS, and the dimensions of the physical legs of the MPS are set to be the same as the ones of the MPO.
 
 ```julia
 #---------------------------
