@@ -1,5 +1,5 @@
 #=
-    Example of a Pure Dephasing Model at zero temperature with an hard cut-off Ohmic spectral density J(ω) = 2αω when ω < ωc and 0 otherwise#
+    Example of a Pure Dephasing Model at zero temperature with an hard cut-off Ohmic spectral density J(ω) = 2α(ω^s)/(ω_c^(s-1)) when ω < ωc and 0 otherwise#
 
     The dynamics is simulated using the T-TEDOPA method that maps the normal modes environment into a non-uniform tight-binding chain.
 

@@ -1,5 +1,5 @@
 #=
-    Example of a Pure Dephasing Model at zero temperature with an hard cut-off Ohmic spectral density J(ω) = 2αω when ω < ωc and 0 otherwise#
+    Example of a Pure Dephasing Model at finite temperature with an hard cut-off Ohmic spectral density J(ω) = 2α(ω^s)/(ω_c^(s-1)) when ω < ωc and 0 otherwise#
 
     The dynamics is simulated using the T-TEDOPA method that maps the normal modes environment into a non-uniform tight-binding chain.
 
@@ -30,7 +30,7 @@ s = 1 # ohmicity
 # Thermalized ohmic spectral density
 #----------------------------
 
-cpars = chaincoeffs_finiteT(N, β; α=α, s=1, J=nothing, ωc=ωc, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=false)  # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
+cpars = chaincoeffs_finiteT(N, β; α=α, s=s, J=nothing, ωc=ωc, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=false)  # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
 
 #= #If cpars is stored in "../ChainOhmT/ohmicT" 
 curdir = @__DIR__

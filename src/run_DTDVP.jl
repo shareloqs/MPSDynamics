@@ -1,5 +1,6 @@
-function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=false, timed=false, savebonddims=false, Dplusmax=nothing, Dlim=50, kwargs...)
+function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=false, timed=false, savebonddims=false, Dplusmax=nothing, Dlim=50, reduceddensity=false, timedep=false, kwargs...)
     A0=deepcopy(A)
+    H0=deepcopy(H)
     data = Dict{String,Any}()
 
     numsteps = length(collect(0:dt:tmax))-1
@@ -10,6 +11,10 @@ function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=false, tim
     exp = measure(A0, obs; t=times[1])
     for i=1:length(obs)
         push!(data, obs[i].name => reshape(exp[i], size(exp[i])..., 1))
+    end
+    if reduceddensity
+        exprho = rhoreduced_1site(A0,1)
+        push!(data, "Reduced ρ" => reshape(exprho, size(exprho)..., 1))
     end
 
     bonds = bonddims(A0)
@@ -25,7 +30,12 @@ function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=false, tim
     for tstep=1:numsteps
         maxbond = max(bonds...)
         @printf("%i/%i, t = %.3f, Dmax = %i \n", tstep, numsteps, times[tstep], maxbond)
-        A0, Afull, F, info = tdvp1sweep_dynamic!(dt, A0, H, Afull, F;
+        if timedep
+           Ndrive = kwargs[:Ndrive]
+           Htime = kwargs[:Htime]
+           H0[Ndrive][1,1,:,:] = H[Ndrive][1,1,:,:] + Htime[tstep][:,:]
+        end
+        A0, Afull, F, info = tdvp1sweep_dynamic!(dt, A0, H0, Afull, F;
                                                  obs=obs,
                                                  prec=prec,
                                                  Dlim=Dlim,
@@ -46,6 +56,10 @@ function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=false, tim
             for (i, ob) in enumerate(obs)
                 data[ob.name] = cat(data[ob.name], exp[i]; dims=ndims(exp[i])+1)
             end
+            if reduceddensity
+            	exprho = rhoreduced_1site(A0,1)
+            	data["Reduced ρ"] = cat(data["Reduced ρ"], exprho; dims=ndims(exprho)+1)
+            end
         end
         if savebonddims
             data["bonddims"] = cat(data["bonddims"], bonds, dims=2)
@@ -55,6 +69,11 @@ function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=false, tim
     for (i, ob) in enumerate(obs)
         data[ob.name] = cat(data[ob.name], exp[i]; dims=ndims(exp[i])+1)
     end
+    if reduceddensity
+        exprho = rhoreduced_1site(A0,1)
+        data["Reduced ρ"] = cat(data["Reduced ρ"], exprho; dims=ndims(exprho)+1)
+    end
+
     
     if effects
         efftarray = efft[1]
