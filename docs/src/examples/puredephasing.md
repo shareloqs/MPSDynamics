@@ -2,7 +2,7 @@
 
 ## Context 
 
-The Pure-Dephasing Model describes a two-level system interacting linearly with an environment characterised by a spectral density (SD) ``J(\omega)``. The coupling only acts on diagonal terms through the ``\sigma_z`` operator. The Hamiltonian reads :
+The Pure-Dephasing Model describes a two-level system interacting linearly with an environment characterised by a spectral density (SD) ``J(\omega)``. The coupling only acts on diagonal terms through the ``\sigma_z`` operator. The Hamiltonian reads
 
 ```math
         \hat{H} = \frac{\omega_0}{2}\hat{\sigma}_z + \int_0^{+\infty}\omega \hat{a}^\dagger_\omega\hat{a}_\omega \mathrm{d}\omega + \frac{\hat{\sigma}_z}{2}\int_0^{+\infty}\sqrt{J(\omega)}(\hat{a}_\omega + \hat{a}^\dagger_\omega)\mathrm{d}\omega
@@ -12,28 +12,28 @@ Although this interaction will not change the population of the two-level system
 
 The density matrix can be calculated within the MPS formalism with the MPO ``|\psi\rangle \langle \psi|``. Tracing out the environment leads to the reduced density matrix. This can be done with the function [`MPSDynamics.rhoreduced_1site`](@ref). 
 
-An analytical formula can be found for the decoherence function ``\Gamma(t)``, taking into account the SD as well as the temperature of the environment [^breuer]:
+An analytical formula can be found for the decoherence function ``\Gamma(t)``, taking into account the SD as well as the temperature of the environment [^breuer]
 
 ```math
-    \Gamma(t) = - \int_0^{\omega_c} \mathrm{d} \omega J(\omega)\frac{(1 - \cos(\omega*t))}{\omega^2} \coth(β\omega/2) ,
+    \Gamma(t) = - \int_0^{\omega_c} \mathrm{d} \omega J(\omega)\frac{(1 - \cos(\omega t))}{\omega^2} \coth(β\omega/2) ,
 ```
-with ``\beta = (k_B T)^{-1}``. For the case where ``\beta \longrightarrow \infty``, the integral reads :
+with ``\beta = (k_B T)^{-1}``. For the case where ``\beta \longrightarrow \infty``, the integral reads
 ```math
-    \Gamma(t) = - \int_0^{\omega_c} \mathrm{d} \omega J(\omega)\frac{(1 - \cos(\omega*t))}{\omega^2} ,
+    \Gamma(t) = - \int_0^{\omega_c} \mathrm{d} \omega J(\omega)\frac{(1 - \cos(\omega t))}{\omega^2} ,
 ```
-The time-dependent anti-diagonal terms of the reduced density matrix are then expressed as:
+The time-dependent anti-diagonal terms of the reduced density matrix are then expressed as
 
 ```math
     \rho_{12}(t) = \rho_{21}(t)^* =\rho_{12}(0) \exp(\Gamma(t)) 
 ```
 
-Setting up the initial two-level system as an entangled state ``|\psi\rangle_S(0) = \frac{|0\rangle \pm |1\rangle}{\sqrt{2}}``, this leads to ``\rho_{12}(0)=\frac{1}{2}``.
+Setting up the initial two-level system as a cat state ``|\psi\rangle_S(0) = \frac{|0\rangle \pm |1\rangle}{\sqrt{2}}``, this leads to ``\rho_{12}(0)=\frac{1}{2}``.
 
 Here we break out and comment the script in `MPSDynamics/examples/puredephasing.jl` and `MPSDynamics/examples/puredephasing_temperature.jl` to show how to simulate this model with an Ohmic SD (hard cut-off) using the T-TEDOPA method as implemented in `MPSDynamics.jl`.
 
 The T-TEDOPA method relies on a truncated chain mapping that transform the initial Hamiltonian into
 ```math
-        \hat{H} = \frac{\omega_0}{2} \hat{\sigma}_z + \Delta \hat{\sigma}_x + c_0 \hat{\sigma}_x(\hat{b}_0^\dagger + \hat{b}_0) + \sum_{i=0}^{N-1} t_i (\hat{b}_{i+1}^\dagger \hat{b}_i + \mathrm{h.c.}) + \sum_{i=0}^{N-1} \epsilon_i \hat{b}_i^\dagger \hat{b}_i
+        \hat{H} = \frac{\omega_0}{2} \hat{\sigma}_z +  c_0 \frac{\hat{\sigma}_z}{2}(\hat{b}_0^\dagger + \hat{b}_0) + \sum_{i=0}^{N-1} t_i (\hat{b}_{i+1}^\dagger \hat{b}_i + \mathrm{h.c.}) + \sum_{i=0}^{N-1} \epsilon_i \hat{b}_i^\dagger \hat{b}_i
 ```
 
 ## The code
