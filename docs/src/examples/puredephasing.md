@@ -44,11 +44,10 @@ First, we load the `MPSdynamics.jl` package to be able to perform the simulation
 using MPSDynamics, Plots, LaTeXStrings, QuadGK
 ```
 We then define variables for the physical parameters of the simulation.
-Among these, three are convergence parameters:
+Among these, two are convergence parameters:
 
 *  `d` is the number of states we retain for the truncated harmonic oscillators representation of environmental modes
 * `N` is the number of chain (environmental) modes we keep. This parameters determines the maximum simulation time of the simulation: indeed excitations that arrive at the end of the chain are reflected towards the system and can lead to unphysical results
-*  `dt` is the timestep
 
 ```julia
 #----------------------------
