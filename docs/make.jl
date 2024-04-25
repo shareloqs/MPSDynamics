@@ -11,7 +11,7 @@ makedocs(
     pages = [
         "index.md",
         "user-guide.md",
-        "Examples" => ["./examples/sbm.md", "./examples/puredephasing.md"],
+        "Examples" => ["./examples/sbm.md", "./examples/puredephasing.md", "./examples/timedep.md"],
         "theory.md",
         "Methods" => "methods.md",
         "dev.md"

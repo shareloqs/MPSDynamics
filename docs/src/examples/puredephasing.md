@@ -38,10 +38,12 @@ The T-TEDOPA method relies on a truncated chain mapping that transform the initi
 
 ## The code
 
-First, we load the `MPSdynamics.jl` package to be able to perform the simulation, the `Plots.jl` one to plot the results, the `LaTeXStrings.jl` one to be able to use ``\LaTeX`` in the plots and eventually `QuadGK.jl` to perform the analytical integral calculations.
+First, we load the `MPSdynamics.jl` package to be able to perform the simulation, the `Plots.jl` one to plot the results, the `LaTeXStrings.jl` one to be able to use ``\LaTeX`` in the plots and eventually `QuadGK.jl` to perform the analytical integral calculations. A notation is introduced for `+∞`.
 
 ```julia
 using MPSDynamics, Plots, LaTeXStrings, QuadGK
+
+const ∞  = Inf
 ```
 We then define variables for the physical parameters of the simulation.
 Among these, two are convergence parameters:
@@ -49,35 +51,43 @@ Among these, two are convergence parameters:
 *  `d` is the number of states we retain for the truncated harmonic oscillators representation of environmental modes
 * `N` is the number of chain (environmental) modes we keep. This parameters determines the maximum simulation time of the simulation: indeed excitations that arrive at the end of the chain are reflected towards the system and can lead to unphysical results
 
+The value of `β` determines whether the environment is thermalized or not. The example as it is is the zero-temperature case. For the finite-temperature case, 'β = ∞' has be commented instead of the line above that precises a `β` value.
+
 ```julia
 #----------------------------
 # Physical parameters
 #----------------------------
 
-ΔE = 0.008 # Energy of the electronic states
-
-d = 5 # number of Fock states of the chain modes
+d = 10 # number of Fock states of the chain modes
 
 N = 30 # length of the chain
 
 α = 0.01 # coupling strength
 
+ω0 = 0.008 # TLS gap
+
 s = 1 # ohmicity
 
 ωc = 0.035 # Cut-off of the spectral density J(ω)
 
-```
-The chain coefficient have still to be calculated. This part is the only difference in parameters for the zero-temperature case and the thermalized bath. For ``T = 0 ~ \text{K}``, the chain coeffficients can be calculated with the function [`MPSDynamics.chaincoeffs_ohmic`](@ref) :
-```julia
-cpars = chaincoeffs_ohmic(N, α, s; ωc=ωc) # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
-``` 
-Concerning the case ``T \neq 0 ~ \text{K}``, after having set up a temperature value, the chain coefficients can be calculated with the function [`MPSDynamics.chaincoeffs_finiteT`](@ref)
+#β = 100 # Thermalized environment
 
-```julia
-β = 100
-
-cpars = chaincoeffs_finiteT(N, β; α=α, s=s, J=nothing, ωc=ωc, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=false)  # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
+β = ∞ # Case zero temperature T=0, β → ∞
 ```
+The chain coefficient have then to be calculated. This part differs for the zero-temperature case and the thermalized bath. For ``β = ∞``, the chain coeffficients can be calculated with the function [`MPSDynamics.chaincoeffs_ohmic`](@ref) whereas the function [`MPSDynamics.chaincoeffs_finiteT`](@ref) is used when ``T \neq 0 ~ \text{K}``:
+```julia
+if β == ∞
+    cpars = chaincoeffs_ohmic(N, α, s; ωc=ωc)  # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
+else
+    cpars = chaincoeffs_finiteT(N, β; α=α, s=s, J=nothing, ωc=ωc, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=false)  # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
+    #= #If cpars is stored in "../ChainOhmT/ohmicT" 
+    curdir = @__DIR__
+    dir_chaincoeff = abspath(joinpath(curdir, "../ChainOhmT/ohmicT"))
+    cpars  = readchaincoeffs("$dir_chaincoeff/chaincoeffs.h5",N,α,s,β) # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
+    =#
+end
+```
+An option is provided if the coefficient are saved to be reused.
 
 We set the simulation parameters and choose a time evolution method.
 As always for simulations of dynamics, the time step must be chosen wisely. The error of the TDVP methods is ``\mathcal{O}(dt^3)``.
@@ -97,6 +107,8 @@ dt = 1.0 # time step
 tfinal = 300.0 # simulation time
 
 method = :TDVP1 # time-evolution method
+
+#method = :DTDVP # time-evolution method
 
 D = 2 # MPS bond dimension
 ```
@@ -130,7 +142,7 @@ ob1 = OneSiteObservable("sz", sz, 1)
 # Simulation
 #------------
 
-A, dat = runsim(dt, tfinal, A, H;
+A, dat = runsim(dt, tfinal, A, H, prec=1E-4;
                 name = "pure dephasing model with temperature",
                 method = method,
                 obs = [ob1],
@@ -143,7 +155,7 @@ A, dat = runsim(dt, tfinal, A, H;
                 plot = true,
                 );
 ```
-After having performed the dynamics, the analytical decoherence function is numerically calculated with the help of the quadgk function (from the `QuadGK.jl` package). For the case ``T = 0 ~ \text{K}`` it reads
+After having performed the dynamics, the analytical decoherence function is numerically calculated with the help of the quadgk function (from the `QuadGK.jl` package). It reads
 ```julia
 #----------
 # Analytical results at specified temperature 
@@ -154,13 +166,9 @@ Johmic(ω,s) = (2*α*ω^s)/(ωc^(s-1))
 
 time_analytical = LinRange(0.0,tfinal,Int(tfinal))
 
-Γohmic(t) = - quadgk(x -> Johmic(x,s)*(1 - cos(x*t))/x^2, 0, ωc)[1]
+Γohmic(t) = - quadgk(x -> Johmic(x,s)*(1 - cos(x*t))*coth(β*x/2)/x^2, 0, ωc)[1]
 
 Decoherence_ohmic(t) = 0.5*exp(Γohmic(t))
-```
-whereas the analytical integral is changed for the case ``T \neq 0 ~ \text{K}``
-```julia
-Γohmic(t) = - quadgk(x -> Johmic(x,s)*(1 - cos(x*t))*coth(β*x/2)/x^2, 0, ωc)[1]
 ```
 
 Eventually, the stored reduced density matrix is compared against the analytical formula

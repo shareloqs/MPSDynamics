@@ -7,7 +7,7 @@ To simulate a drive or a laser pulse, a time-dependent Hamiltonian is often need
 ```math
         \hat{H}_\text{drive}(t) = \epsilon \hat{\sigma}_x \sin(\omega_\text{drive} t)
 ```
-with ``\epsilon = \frac{2 \pi}{\T_\text{Rabi}}`` the amplitude of the drive, ``T_\text{Rabi}`` the Rabi period, and ``\omega_\text{drive}`` the frequency of the drive. The drive is set up to be on resonance with the two-level system.
+with ``\epsilon = \frac{2 \pi}{T_\text{Rabi}}`` the amplitude of the drive, ``T_\text{Rabi}`` the Rabi period, and ``\omega_\text{drive}`` the frequency of the drive. The drive is set up to be on resonance with the two-level system.
 
 ## The code
 First we load the `MPSdynamics.jl` package to be able to perform the simulation, the `Plots.jl` one to plot the results, and the `LaTeXStrings.jl` one to be able to use ``\LaTeX`` in the plots. The function [`MPSDynamics.disp`](@ref) is also imported.
@@ -55,12 +55,11 @@ Ndrive = 1 #Number of the site on which the drive is applied
 ```
 We set the simulation parameters and choose a time evolution method.
 As always for simulations of dynamics, the time step must be chosen wisely. The error of the TDVP methods is ``\mathcal{O}(dt^3)``.
-In this example we present two one-site implementation of TDVP that both preserves the unitarity of the evolution:
+In this example we present only one-site implementation of TDVP that preserves the unitarity of the evolution:
 
 * the regular one-site method with the keyword `:TDVP1` where all the virtual bonds of the MPS have the same bond dimension ``D``
-* the adaptive method with the keyword `:DTDVP` where the bond dimension is locally increased at each time step if the TDVP projection error crosses a threshold value
 
-Logically the constant bond dimension of the MPS for TDVP1 and the threshold of the projection error for DTDVP are their respective convergence parameter.
+Logically the constant bond dimension of the MPS for TDVP1 is the respective convergence parameter.
 
 ```julia
 #-----------------------
@@ -79,7 +78,7 @@ Using `MPSDynamics.jl` built-in methods we define the SBM MPO and the MPS repres
 This initial state is a product state between the system and the chain. It is constructed using a list of the 'local state' of each site of the MPS, and the dimensions of the physical legs of the MPS are set to be the same as the ones of the MPO.
 
 
-In this part, the time-dependent terms of the MPO are stored in a list. This enables to add these terms to the MPO elements at each timestep and avoid the calculation of a new MPO. This way is not cumbersome since it adds a matrix sum at each time step.
+In this part, the time-dependent terms of the MPO are stored in a list. This enables to add these terms to the MPO elements at each timestep and avoid the calculation of an entire new MPO. This way is not cumbersome since it adds a matrix sum at each time step.
 
 ```julia
 #---------------------------
@@ -97,7 +96,7 @@ H = spinbosonmpo(ω0, Δ, d, N, cpars) # MPO representation of the Hamiltonian
 
 A = productstatemps(physdims(H), state=[ψ, fill(unitcol(1,d), N)...]) # MPS representation of |ψ>|Vacuum>
 ```
-We then chose the observables that will be stored in the data and the [`MPSDynamics.runsim`](@ref) arguments.
+We then choose the observables that will be stored in the data and the [`MPSDynamics.runsim`](@ref) arguments.
 ```julia
 #---------------------------
 # Definition of observables
