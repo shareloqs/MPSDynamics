@@ -698,3 +698,239 @@ function nearestneighbourmpo(tree_::Tree, h0, A, Ad = A')
     Ms[hn] = Ms[hn][D:D, fill(:,nc+2)...]
     return TreeNetwork(tree, Ms)
 end
+
+
+
+"""
+    tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
+
+
+
+
+
+"""
+function tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
+
+    e1 = chainparams1[1]
+    t1 = chainparams1[2]
+    c1 = chainparams1[3]
+
+    e2 = chainparams2[1]
+    t2 = chainparams2[2]
+    c2 = chainparams2[3]
+
+    d = 2 # physical dimension for fermionic Hilbert space
+    D = 4 # bond dimensions of the MPO
+    u = unitmat(d)
+    n = numb(d)
+    b = anih(d)
+    bd = crea(d)
+
+    W = Any[]
+
+    # SECOND CHAIN: filled modes
+
+    # the initial matrix for the first filled site:
+    Min = zeros(ComplexF64, 1, D, d, d)
+    Min[1,1,:,:] = u
+    Min[1,D,:,:] = e2[N]*n
+    Min[1,2,:,:] = t2[N-1]*bd
+    Min[1,3,:,:] = t2[N-1]*b
+    push!(W, Min)
+
+    if N!=1
+
+        M2 = zeros(ComplexF64, D, D, d, d)
+        for i in 1:(N-2)
+            M2[1,1,:,:] = u
+            M2[D,D,:,:] = u
+            M2[1,D,:,:] = e2[N-i]*n
+            M2[1,2,:,:] = t2[N-i-1]*bd
+            M2[3,D,:,:] = bd
+            M2[1,3,:,:] = t2[N-i-1]*b
+            M2[2,D,:,:] = b
+            push!(W, M2)
+        end
+    end
+
+    # MPO for the filled site of the second chain coupled to the system:
+    Mcoup2 = zeros(ComplexF64, D, D, d, d)
+    Mcoup2[1,1,:,:] = u
+    Mcoup2[D,D,:,:] = u
+    Mcoup2[1,D,:,:] = e2[1]*n
+    Mcoup2[1,2,:,:] = c2*bd
+    Mcoup2[3,D,:,:] = bd
+    Mcoup2[1,3,:,:] = c2*b
+    Mcoup2[2,D,:,:] = b
+    push!(W, Mcoup2)
+
+
+    #system MPO
+    Md = zeros(ComplexF64, D, D, d, d)
+    Md[1,1,:,:] = u
+    Md[D,D,:,:] = u
+    Md[1,D,:,:] = ϵd*n
+    Md[1,2,:,:] = bd
+    Md[3,D,:,:] = bd
+    Md[1,3,:,:] = b
+    Md[2,D,:,:] = b
+    push!(W, Md)
+
+    # FIRST CHAIN: empty modes
+
+    # MPO for the empty site of the first chain coupled to the system:
+    Mcoup1 = zeros(ComplexF64, D, D, d, d)
+    Mcoup1[1,1,:,:] = u
+    Mcoup1[D,D,:,:] = u
+    Mcoup1[1,D,:,:] = e1[1]*n
+    Mcoup1[1,2,:,:] = bd
+    Mcoup1[3,D,:,:] = c1*bd
+    Mcoup1[1,3,:,:] = b
+    Mcoup1[2,D,:,:] = c1*b
+    push!(W, Mcoup1)
+
+
+    if N!=1
+        M1 = zeros(ComplexF64, D, D, d, d)
+        for i in 2:(N-1)
+            M1[1,1,:,:] = u
+            M1[D,D,:,:] = u
+            M1[1,D,:,:] = e1[i]*n
+            M1[1,2,:,:] = bd
+            M1[3,D,:,:] = t1[i-1]*bd
+            M1[1,3,:,:] = b
+            M1[2,D,:,:] = t1[i-1]*b
+            push!(W, M1)
+        end
+    end
+    # the final matrix for the last empty site:
+    Mfin = zeros(ComplexF64, D, 1, d, d)
+    Mfin[1,1,:,:] = e1[N]*n
+    Mfin[D,1,:,:] = u
+    Mfin[3,1,:,:] = t1[N-1]*bd
+    Mfin[2,1,:,:] = t1[N-1]*b
+    push!(W, Mfin)
+    return W
+end
+
+"""
+    interleaved_tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
+
+
+
+
+
+"""
+
+function interleaved_tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
+
+    e1 = chainparams1[1]
+    t1 = chainparams1[2]
+    c1 = chainparams1[3]
+#    c1 = 0.
+
+    e2 = chainparams2[1]
+    t2 = chainparams2[2]
+    c2 = chainparams2[3]
+#    c2 = 0.
+
+    d = 2 # physical dimension for fermionic Hilbert space
+    D = 6 # bond dimensions of the MPO
+    u = unitmat(d)
+    n = numb(d)
+    b = anih(d)
+    bd = crea(d)
+    F = u .- 2.0.*n
+
+    W = Any[]
+
+
+    # the initial matrix for the system:
+    Min = zeros(ComplexF64, 1, D, d, d)
+    Min[1,1,:,:] = u
+    Min[1,D,:,:] = ϵd*n
+    Min[1,2,:,:] = b
+    Min[1,3,:,:] = bd
+
+    push!(W, Min)
+
+    if N!=1
+        # SECOND CHAIN: filled modes
+        M2in = zeros(ComplexF64, D, D, d, d)
+        # FIRST CHAIN: empty modes
+        M1in = zeros(ComplexF64, D, D, d, d)
+        # first site, COUPLED TO THE SYSTEM
+        M2in[1,1,:,:] = u
+        M2in[1,2,:,:] = b
+        M2in[1,3,:,:] = bd
+        M2in[1,D,:,:] = e2[1]*n
+        M2in[2,4,:,:] = F
+        M2in[3,5,:,:] = F
+        M2in[2,D,:,:] = c2*bd
+        M2in[3,D,:,:] = c2*b
+        M2in[D,D,:,:] = u
+        push!(W, M2in)
+
+        M1in[1,1,:,:] = u
+        M1in[1,2,:,:] = b
+        M1in[1,3,:,:] = bd
+        M1in[1,D,:,:] = e1[1]*n
+        M1in[2,4,:,:] = F
+        M1in[3,5,:,:] = F
+        M1in[4,D,:,:] = c1*bd
+        M1in[5,D,:,:] = c1*b
+        M1in[D,D,:,:] = u
+        push!(W, M1in)
+
+        for i in 2:(N-1)
+            # SECOND CHAIN: filled modes
+            M2 = zeros(ComplexF64, D, D, d, d)
+            # FIRST CHAIN: empty modes
+            M1 = zeros(ComplexF64, D, D, d, d)
+
+            M2[1,1,:,:] = u
+            M2[1,2,:,:] = b
+            M2[1,3,:,:] = bd
+            M2[1,D,:,:] = e2[i]*n
+            M2[2,4,:,:] = F
+            M2[3,5,:,:] = F
+            M2[4,D,:,:] = t2[i-1]*bd
+            M2[5,D,:,:] = t2[i-1]*b
+            M2[D,D,:,:] = u
+            push!(W, M2)
+
+            M1[1,1,:,:] = u
+            M1[1,2,:,:] = b
+            M1[1,3,:,:] = bd
+            M1[1,D,:,:] = e1[i]*n
+            M1[2,4,:,:] = F
+            M1[3,5,:,:] = F
+            M1[4,D,:,:] = t1[i-1]*bd
+            M1[5,D,:,:] = t1[i-1]*b
+            M1[D,D,:,:] = u
+            push!(W, M1)
+
+        end
+    end
+    # The final matrix for the SECOND chain:
+    M2fin = zeros(ComplexF64, D, D, d, d)
+    M2fin[1,1,:,:] = u
+    M2fin[1,2,:,:] = b
+    M2fin[1,3,:,:] = bd
+    M2fin[1,D,:,:] = e2[N]*n
+    M2fin[2,4,:,:] = F
+    M2fin[3,5,:,:] = F
+    M2fin[4,D,:,:] = t2[N-1]*bd
+    M2fin[5,D,:,:] = t2[N-1]*b
+    M2fin[D,D,:,:] = u
+    push!(W, M2fin)
+
+    # The final matrix for the FIRST chain:
+    M1fin = zeros(ComplexF64, D, 1, d, d)
+    M1fin[1,1,:,:] = e1[N]*n
+    M1fin[4,1,:,:] = t1[N-1]*bd
+    M1fin[5,1,:,:] = t1[N-1]*b
+    M1fin[D,1,:,:] = u
+    push!(W, M1fin)
+    return W
+end
