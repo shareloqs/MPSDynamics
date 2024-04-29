@@ -73,3 +73,26 @@ function ohmicspectraldensity_finiteT(x,i,α,s,ωc,β)
     end
     return y
 end
+
+"""
+    fermionicspectraldensity_finiteT(x, i, β, chain; ϵ=x)
+
+    Fermionic spectral density at finite temperature β. A function f(x,i) where x is the frequency 
+    and i ∈ {1,...,mc} labels the intervals on which the SD is defined.
+
+"""
+
+function fermionicspectraldensity_finiteT(x, i, β, chain, ϵ)
+    if i==1
+        y = 0
+    elseif i==2 || i==3
+        if chain==1
+            y = (sqrt.(1 .- x.^2) .* sqrt.(1. ./(exp.(-β .* ϵ.(x)) .+ 1))).^2
+        elseif chain==2
+            y = (sqrt.(1 .- x.^2) .* sqrt.(1. ./(exp.(β .* ϵ.(x)) .+ 1))).^2
+        end
+    elseif i==4
+        y = 0
+    end
+    return y
+end

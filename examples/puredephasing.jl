@@ -36,11 +36,11 @@ s = 1 # ohmicity
 if β == ∞
     cpars = chaincoeffs_ohmic(N, α, s; ωc=ωc)  # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
 else
-    cpars = chaincoeffs_finiteT(N, β; α=α, s=s, J=nothing, ωc=ωc, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=false)  # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
-    #= #If cpars is stored in "../ChainOhmT/ohmicT" 
+    cpars = chaincoeffs_finiteT(N, β; α=α, s=s, J=nothing, ωc=ωc, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=true)  # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
+    #=#If cpars is stored in "../ChainOhmT/ohmicT" 
     curdir = @__DIR__
     dir_chaincoeff = abspath(joinpath(curdir, "../ChainOhmT/ohmicT"))
-    cpars  = readchaincoeffs("$dir_chaincoeff/chaincoeffs.h5",N,α,s,β) # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
+    cpars  = readchaincoeffs("$dir_chaincoeff/chaincoeffs.h5", N, α, s, β) # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
     =#
 end
 
@@ -51,7 +51,7 @@ end
 
 dt = 1.0 # time step
 
-tfinal = 300.0 # simulation time
+tfinal = 10.0 # simulation time
 
 method = :TDVP1 # time-evolution method
 
