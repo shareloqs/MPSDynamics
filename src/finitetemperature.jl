@@ -188,7 +188,9 @@ function chaincoeffs_fermionic(nummodes, β, chain; ϵ=nothing, ωc=1, mc=4, mp=
 
     if save==true
         # Write a HDF5 file
-        curdir = @__DIR__
+        #curdir = @__DIR__
+        dir = @__DIR__
+        curdir = abspath(joinpath(dir, "../ChainOhmT"))
 
         Nstr=string(N)
         cstr=string(chain)
