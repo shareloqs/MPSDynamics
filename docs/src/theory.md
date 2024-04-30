@@ -95,7 +95,9 @@ The Hamiltonian of the system interacting with this extended bath now includes t
 
 This method simplifies the simulation of finite temperature effects by treating them within an effective zero-temperature framework, thereby keeping the computational advantages of using pure states.
 
+### Finite temperature with the thermofield transformation
 
+Write about thermofield transfomation [^devega_thermo_2015].
 
 ## Computation of the chain coefficients
 
@@ -263,3 +265,6 @@ The major advantage of this method is that it naturally preserves the unitarity 
 
 [^appel_mathematics_2007]:
     > Appel, W. Mathematics for Physics and Physicists; Princeton University Press, 2007.
+
+[^devega_thermo_2015]
+    > de Vega, I.; Banuls, M-.C. Thermofield-based chain-mapping approach for open quantum systems. Phys. Rev. A 2015, 92 (5), 052116. https://doi.org/10.1103/PhysRevA.92.052116.
