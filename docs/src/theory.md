@@ -11,20 +11,20 @@ We consider, in the Schrödinger picture, a general Hamiltonian where a non-spec
 ```
 
 
-where ``\hat{a}_\omega`` (``\hat{a}^\dagger_\omega``) is a bosonic annihilation (creation) operator for a normal mode of the environment of energy ``\hbar\omega``, ``\hat{A}_S`` is a system operator, and ``J(\omega) = \sum_k |g_k|^2\delta(\omega - \omega_k)`` is the bath spectral density (SD), defined with the microscopic system-environment coupling strength ``g_k``.
+where $\hat{a}_\omega$ ($\hat{a}^\dagger_\omega$) is a bosonic annihilation (creation) operator for a normal mode of the environment of energy $\hbar\omega$, $\hat{A}_S$ is a system operator, and $J(\omega) = \sum_k |g_k|^2\delta(\omega - \omega_k)$ is the bath spectral density (SD), defined with the microscopic system-environment coupling strength $g_k$.
 The SD quantifies the coupling strengths of the different normal modes of the environment with the system.
 Any SD that is not flat corresponds to a non-Markovian environment.
 
 ### Zero Temperature
 
 Let us consider the Hamiltonian presented in Eq.(1).
-We can introduce a unitary transformation of the continuous normal modes ``\hat{a}_\omega`` to an infinite discrete set of interacting modes ``\hat{b}_n``[^chin_exact_2010].
+We can introduce a unitary transformation of the continuous normal modes $\hat{a}_\omega$ to an infinite discrete set of interacting modes $\hat{b}_n$[^chin_exact_2010].
 
 ```math
     \hat{a}_\omega = \sum_{n=0}^{+\infty} U_n(\omega)\hat{b}_n = \sum_{n=0}^{+\infty} \sqrt{J(\omega)}P_n(\omega)\hat{b}_n\ ,
 ```
 
-where ``P_n(\omega)`` are orthonormal polynomials such that
+where $P_n(\omega)$ are orthonormal polynomials such that
 
 ```math
     \int_{0}^{+\infty}P_n(\omega)P_m(\omega)J(\omega)\mathrm{d}\omega = \delta_{n,m}\ ;
@@ -45,9 +45,9 @@ Under this transformation, the Hamiltonian in Eq.(1) becomes
     \hat{H}= \hat{H}_S + \sum_{n=0}^{+\infty}\varepsilon_n\hat{b}_n^\dagger\hat{b}_n + t_n(\hat{b}_{n+1}^\dagger\hat{b}_n + \mathrm{h.c.}) + \kappa\hat{A}_S(\hat{b}_0 + \hat{b}_0^\dagger)\ .
 ```
 
-Hence, this mapping transforms the normal bath Hamiltonian into a tight-binding Hamiltonian with on-site energies ``\varepsilon_n`` and hopping energies ``t_n``.
-Another important consequence of this mapping is that now the system only interacts with the first mode ``n = 0`` of the chain-mapped environment.
-The chain coefficients ``\varepsilon_n``, ``t_n``, and the coupling ``\kappa`` depend solely on the SD.
+Hence, this mapping transforms the normal bath Hamiltonian into a tight-binding Hamiltonian with on-site energies $\varepsilon_n$ and hopping energies $t_n$.
+Another important consequence of this mapping is that now the system only interacts with the first mode $n = 0$ of the chain-mapped environment.
+The chain coefficients $\varepsilon_n$, $t_n$, and the coupling $\kappa$ depend solely on the SD.
 
 This makes chain mapping a tool of choice for describing systems coupled to environment with highly structured SD (e.g. experimentally measured or calculated *ab initio*)[^chin_role_2013][^alvertis_nonequilibrium_2019][^dunnett_influence_2021][^caycedosoler_exact_2022].
 In this new representation, the Hamiltonian in Eq.(5) has naturally a 1D chain topology.
@@ -75,7 +75,7 @@ Initially, the system state, $\hat{\rho}_S(0)$, can be pure or mixed, and the en
 The system's evolution is dictated by the environment's two-time correlation function, which in turn is determined by the spectral density function $J$ and the temperature $\beta$:
 
 ```math
-\hat{S}(t) = \int_0^\infty d\omega J(\omega)\left[e^{-i\omega t}(1 + \hat{n}_\omega(\beta)) + e^{i\omega t} \hat{n}_\omega(\beta)\right],```
+\hat{S}(t) = \int_0^\infty d\omega J(\omega)\left[e^{-i\omega t}(1 + \hat{n}_\omega(\beta)) + e^{i\omega t} \hat{n}_\omega(\beta)\right],
 ```
 
 To simulate finite temperature effects using a zero-temperature model, we extend the spectral density function to cover both positive and negative frequencies, allowing us to use a pure state description for the environment. This is achieved by defining a new spectral density function $J(\omega, \beta)$ that incorporates the Boltzmann factors, supporting the entire real axis:
@@ -108,76 +108,76 @@ A useful property of the orthonormal polynomials is that they obey a recurrence 
     P_n(\omega) = (C_{n-1}\omega - A_{n-1})P_{n-1}(\omega) + B_{n-1}P_{n-2}(\omega)\ ,
 ```
 
-where ``A_n`` is related to the first moment of ``P_n``, ``B_n`` and ``C_n`` to the norms of ``P_n`` and ``P_{n-1}``[^appel_mathematics_2007].
-This recurrence relation can be used to construct the polynomials with the conditions that ``P_0(\omega) = ||p_0||^{-1} = \left(\int_{\mathbb{R}^{+}} J(\omega)\mathrm{d}\omega \right)^{-\frac{1}{2}}`` and ``P_{-1}(\omega) = 0``, with ``||\bullet||`` the norm of ``\bullet`` with respect to the measure ``J(\omega)``, and ``P_n(\omega) = p_n(\omega)||p_n||^{-1}`` ; where the polynomials ``\{p_n\}_{n\in\mathbb{N}}`` are the so called _monic polynomials_ where the factor ``a_n`` in front of ``\omega^{n}`` is equal to 1.
+where $A_n$ is related to the first moment of $P_n$, $B_n$ and $C_n$ to the norms of $P_n$ and $P_{n-1}$[^appel_mathematics_2007].
+This recurrence relation can be used to construct the polynomials with the conditions that $P_0(\omega) = ||p_0||^{-1} = \left(\int_{\mathbb{R}^{+}} J(\omega)\mathrm{d}\omega \right)^{-\frac{1}{2}}$ and $P_{-1}(\omega) = 0$, with $||\bullet||$ the norm of $\bullet$ with respect to the measure $J(\omega)$, and $P_n(\omega) = p_n(\omega)||p_n||^{-1}$ ; where the polynomials $\{p_n\}_{n\in\mathbb{N}}$ are the so called _monic polynomials_ where the factor $a_n$ in front of $\omega^{n}$ is equal to 1.
 
-The energy of the chain mode ``n`` is given by ``\varepsilon_n = A_n C_n^{-1}`` and ``t_n=C_n^{-1}`` is the coupling between mode ``n`` and ``n+1``[^chin_exact_2010].
+The energy of the chain mode $n$ is given by $\varepsilon_n = A_n C_n^{-1}$ and $t_n=C_n^{-1}$ is the coupling between mode $n$ and $n+1$[^chin_exact_2010].
 
-The system couples _only_ to the first mode with the coupling strength ``\kappa = ||p_0||``.
+The system couples _only_ to the first mode with the coupling strength $\kappa = ||p_0||$.
 
 Explain that for some weight function/SD they are known analytically and that for others we can use the build-in routines inspired by Gautschi or the PolyChaos.jl package.
 
 ## Tensor Networks
 
-A multipartite quantum state ``|\psi\rangle``, e.g. a ``N``-site system where the sites can each be in a state ``|\phi_i\rangle`` belonging to a ``d``-dimensional Hilbert space, can be written as follows
+A multipartite quantum state $|\psi\rangle$, e.g. a $N$-site system where the sites can each be in a state $|\phi_i\rangle$ belonging to a $d$-dimensional Hilbert space, can be written as follows
 
 ```math
     |\psi\rangle = \sum_{\{i_k\}}c_{i_1\ldots i_N}|\phi_{i_1}\rangle\otimes\ldots\otimes|\phi_{i_N}\rangle\ ,
 ```
 
-where the complex numbers ``c_{i_1\ldots i_N}`` are the amplitudes of each state ``|\phi_{i_1}\rangle\otimes\ldots\otimes|\phi_{i_N}\rangle`` whose superpositions form in full generality the state ``|\psi\rangle``.
-Thus the state ``|\psi\rangle`` can be completely represented by a rank-``N`` tensor ``c`` that is the collection of all possible amplitudes ``c_{i_1\ldots i_N}``.
+where the complex numbers $c_{i_1\ldots i_N}$ are the amplitudes of each state $|\phi_{i_1}\rangle\otimes\ldots\otimes|\phi_{i_N}\rangle$ whose superpositions form in full generality the state $|\psi\rangle$.
+Thus the state $|\psi\rangle$ can be completely represented by a rank-$N$ tensor $c$ that is the collection of all possible amplitudes $c_{i_1\ldots i_N}$.
 Here by the rank of a tensor, we simply mean the number of indices it has.
 
 ### MPS
 
-The tensor ``c`` of a quantum state ``|\psi\rangle`` corresponding to a one-dimensional system can be decomposed into a product of ``N`` smaller rank-3 tensors ``T_{k}`` (except for the first and last sites where the tensors will have a rank-2)
+The tensor $c$ of a quantum state $|\psi\rangle$ corresponding to a one-dimensional system can be decomposed into a product of $N$ smaller rank-3 tensors $T_{k}$ (except for the first and last sites where the tensors will have a rank-2)
 
 ```math
     c_{i_1\ldots i_N} = \sum_{\{\alpha\}} T^{\alpha_1}_{i_1}T^{\alpha_1\alpha_2\ }_{i_2}T^{\alpha_2\alpha_3\ }_{i_3}\ldots T^{\alpha_{N-1}}_{i_N} \ .
 ```
 
-In this form, the local tensor ``T_k`` contains the information on the quantum state on site ``k`` and its relation (especially the entanglement) with the neighbouring sites.
+In this form, the local tensor $T_k$ contains the information on the quantum state on site $k$ and its relation (especially the entanglement) with the neighbouring sites.
 
 The decomposition of the tensor of the amplitudes of a quantum state into a product of smaller rank tensors is called a **Matrix Product State** decomposition.
 
-The contracted indices ``\alpha_k`` between the tensors are called _virtual indices_ and carry information about the correlations between bi-partitions of the state at bond ``k``.
-The number of different values a virtual index can take is called the _bond dimension_ and is denoted ``D``.
-The free indices ``i_k`` associated with local quantum states are called _physical indices_.
-Thus, they can take ``d`` values (with ``d`` the dimension of the local Hilbert space).
+The contracted indices $\alpha_k$ between the tensors are called _virtual indices_ and carry information about the correlations between bi-partitions of the state at bond $k$.
+The number of different values a virtual index can take is called the _bond dimension_ and is denoted $D$.
+The free indices $i_k$ associated with local quantum states are called _physical indices_.
+Thus, they can take $d$ values (with $d$ the dimension of the local Hilbert space).
 
-Any state in the Hilbert space of a one-dimensional many-body system can in principle be represented by a MPS by choosing a sufficiently large value for the bond dimension ``D`` \cite{Orus}.
-On top of this intellectually satisfying property of MPSs being a dense set of states for a 1d-system, they can also be used as a practical Ansätze for a many-body quantum states by setting a maximal allowed value ``\chi`` for the bond dimension ``D``.
+Any state in the Hilbert space of a one-dimensional many-body system can in principle be represented by a MPS by choosing a sufficiently large value for the bond dimension $D$ \cite{Orus}.
+On top of this intellectually satisfying property of MPSs being a dense set of states for a 1d-system, they can also be used as a practical Ansätze for a many-body quantum states by setting a maximal allowed value $\chi$ for the bond dimension $D$.
 In doing so, we restrict ourselves to a corner of the total Hilbert space.
-The rationale behind this Ansatz is the following: if the initial quantum state of a many-body system has a low bond dimension (typically if the initial state is a product state with ``D = 1``), then in a finite time it will only be able to explore a region of the Hilbert space that is not to far away from its starting point.
+The rationale behind this Ansatz is the following: if the initial quantum state of a many-body system has a low bond dimension (typically if the initial state is a product state with $D = 1$), then in a finite time it will only be able to explore a region of the Hilbert space that is not to far away from its starting point.
 Thus, the bond dimension will not have the time to diverge exponentially \cite{poulin_quantum_2011}.
 However, depending on the physical system at hand, this sub-manifold of the Hilbert space could still be "too large".
 There is an additional reason that explains why MPSs are good Ansätze for 1d physical systems.
 Most many-body Hamiltonians we (physicists) are interested in are local, meaning that the interactions they describe involve objects that are "neighbours".
 For such Hamiltonians, the ground states (outside of potential critical phases) follow the so called _area law_ for the entanglement entropy.\cite{srednicki_entropy_1993, vidal_entanglement_2003, wolf_area_2008}.
-This law states that the entanglement entropy ``S_{vN}`` of a bi-partition of the system is proportional, not to the volume of the partition as one might expect, but to the hyper-surface of the partition's boundary; hence the name "area law".
-For a 3d system this corresponds to an actual surface area ``A``, ``S_{vN} \sim A``; for a 2d system it corresponds to the length ``L`` of the partition's boundary, ``S_{vN} \sim L``; and in 1d the boundary reduces to a point, thus the entropy will be independent of the size of the system ``S_{vN} \sim \text{constant}``.
+This law states that the entanglement entropy $S_{vN}$ of a bi-partition of the system is proportional, not to the volume of the partition as one might expect, but to the hyper-surface of the partition's boundary; hence the name "area law".
+For a 3d system this corresponds to an actual surface area $A$, $S_{vN} \sim A$; for a 2d system it corresponds to the length $L$ of the partition's boundary, $S_{vN} \sim L$; and in 1d the boundary reduces to a point, thus the entropy will be independent of the size of the system $S_{vN} \sim \text{constant}$.
 The MPSs are states that satisfy this area law.
 
 An application of the [Singular Value Decomposition](https://en.wikipedia.org/wiki/Singular_value_decomposition) is to create efficient approximations of quantum states to perform computations.
 The main idea is to reduce the content of the MPS to keep only the parts that contain the physics of interest.
-One method to realise this approximation is to do a SVD on each of the tensors of the MPS after each time step of the state time-evolution and to trim the smallest singular values in order to decrease the bond dimension of the MPS down to a chosen maximal value ``\chi``.
-The corresponding columns and rows of the unitary matrices ``U`` and ``V^\dagger`` are also removed.
-Then, the trimmed matrices ``\tilde{U}``, ``\tilde{S}`` and ``\tilde{V}^\dagger`` are contracted back to give an approximated tensor ``T`` with a smaller bond dimension.
-Another way to apply the restricted rank approximation is to restrict oneself into working in a manifold of fixed bond dimension ``D`` and to use methods that can enforce this constraint.
+One method to realise this approximation is to do a SVD on each of the tensors of the MPS after each time step of the state time-evolution and to trim the smallest singular values in order to decrease the bond dimension of the MPS down to a chosen maximal value $\chi$.
+The corresponding columns and rows of the unitary matrices $U$ and $V^\dagger$ are also removed.
+Then, the trimmed matrices $\tilde{U}$, $\tilde{S}$ and $\tilde{V}^\dagger$ are contracted back to give an approximated tensor $T$ with a smaller bond dimension.
+Another way to apply the restricted rank approximation is to restrict oneself into working in a manifold of fixed bond dimension $D$ and to use methods that can enforce this constraint.
 
 ### MPO
 
 In order to compute expectation values of observables or apply unitary transformations to a quantum state, we need a TN representation of operators.
 In the same fashion as a one-dimensional quantum state can be represented as a MPS, operators acting on those states can be represented as **Matrix Product Operators** (MPO).
-For an operator ``\hat{O}``, its MPO can be defined as follows
+For an operator $\hat{O}$, its MPO can be defined as follows
 
 ```math
     \hat{O} = \sum_{\{i_k\}\{i_k^{'}\} \{w\}} W^{i_1\ i^{'}_1}_{1\ w_0w_1}\ldots  W^{i_N\ i^{'}_N}_{N\ w_{N-1}w_N} |\phi_{i_1^{'}}\ldots \phi_{i_N^{'}}\rangle\langle\phi_{i_1}\ldots \phi_{i_N}| 
 ```
 The contracted indices between the tensors are called _virtual indices_.
 The free indices are called _physical indices_ and correspond to the different input and output local quantum states. 
-They can take ``d`` values (with ``d`` the dimension of the local Hilbert space).
+They can take $d$ values (with $d$ the dimension of the local Hilbert space).
 
 ### TTN
 A natural extension to the MPS is the (loop-free) tree tensor network. 
@@ -193,20 +193,20 @@ The first node is known as the head-node and has a dummy parent leg with dimensi
 The original idea behind TDVP goes back to Dirac \cite{dirac_note_1930} and Frenkel \cite{frenkel_wave_1934}.
 The main point, in the modern tensor networks formulation, is that instead of solving the Schrödinger equation and then truncating the MPS representation of the quantum state, one can solve the equations of motion projected into a space of restricted bond dimension \cite{haegeman_time-dependent_2011, haegeman_unifying_2016}.
 
-The general formulation of the Dirac-Frenkel Variational Principle~\cite{raab_diracfrenkelmclachlan_2000} is that one looks for a solution ``|\varphi\rangle \in \mathcal{M}`` of the Schrödinger equation where ``\mathcal{M} \subset \mathcal{H}`` is a manifold of the total Hilbert space ``\mathcal{H}`` in which we think that the relevant physical states `live'.
+The general formulation of the Dirac-Frenkel Variational Principle~\cite{raab_diracfrenkelmclachlan_2000} is that one looks for a solution $|\varphi\rangle \in \mathcal{M}$ of the Schrödinger equation where $\mathcal{M} \subset \mathcal{H}$ is a manifold of the total Hilbert space $\mathcal{H}$ in which we think that the relevant physical states `live'.
 
-We define ``T_{|\varphi\rangle}\mathcal{M}`` the tangent space of ``\mathcal{M}`` around the state ``|\varphi\rangle``.
-The criterion to find ``|\varphi\rangle`` is that for every state ``|\chi\rangle \in T_{|\varphi\rangle}\mathcal{M}``
+We define $T_{|\varphi\rangle}\mathcal{M}$ the tangent space of $\mathcal{M}$ around the state $|\varphi\rangle$.
+The criterion to find $|\varphi\rangle$ is that for every state $|\chi\rangle \in T_{|\varphi\rangle}\mathcal{M}$
 
 ```math
     \langle\chi|\left(\frac{\mathrm{d}}{\mathrm{d}t} - \frac{1}{\mathrm{i}\hbar}\hat{H}\right)|\varphi\rangle =0\ ,
 ```
 
-which can be interpreted as saying that the time evolution procedure should keep ``|\varphi\rangle`` inside of the manifold ``\mathcal{M}``.
+which can be interpreted as saying that the time evolution procedure should keep $|\varphi\rangle$ inside of the manifold $\mathcal{M}$.
 
-The term *variational* in the name of the method comes from the fact that in practice one aims at minimising the right-hand side of Eq.~(\ref{eq:DiracFrenkel1}) to find ``|\varphi\rangle``.
+The term *variational* in the name of the method comes from the fact that in practice one aims at minimising the right-hand side of Eq.~(\ref{eq:DiracFrenkel1}) to find $|\varphi\rangle$.
 
-Introducing ``\hat{P}_{T_{|\varphi\rangle}\mathcal{M}}`` the projector onto the tangent space ``T_{|\varphi\rangle}\mathcal{M}``, we can write the state ``|\chi\rangle = \hat{P}_{T_{|\varphi\rangle}\mathcal{M}}|\phi\rangle`` with ``|\phi\rangle`` a state in ``\mathcal{H}``.
+Introducing $\hat{P}_{T_{|\varphi\rangle}\mathcal{M}}$ the projector onto the tangent space $T_{|\varphi\rangle}\mathcal{M}$, we can write the state $|\chi\rangle = \hat{P}_{T_{|\varphi\rangle}\mathcal{M}}|\phi\rangle$ with $|\phi\rangle$ a state in $\mathcal{H}$.
 Leading to
 
 ```math
@@ -217,13 +217,13 @@ Because the time derivation and the projector commute, we have
 ```math
     \forall |\phi\rangle \in \mathcal{H}, \ \langle\phi|\left(\frac{\mathrm{d}}{\mathrm{d}t} - \frac{1}{\mathrm{i}\hbar}\hat{P}_{T_{|\varphi\rangle}\mathcal{M}}\hat{H}\right)|\varphi\rangle =0\ .
 ```
-This equation must be true for any ``|\phi\rangle \in \mathcal{H}``, Eq.~(\ref{eq:DiracFrenkel1}) can thus be written
+This equation must be true for any $|\phi\rangle \in \mathcal{H}$, Eq.~(\ref{eq:DiracFrenkel1}) can thus be written
 
 ```math
     \left(\frac{\mathrm{d}}{\mathrm{d}t} - \frac{1}{\mathrm{i}\hbar}\hat{P}_{T_{|\varphi\rangle}\mathcal{M}}\hat{H}\right)|\varphi\rangle =0\ .
 ```
 
-In the context of MPS, the manifold ``\mathcal{M}`` will correspond to the space of full-ranked MPS of a given bond dimension ``D``, and the tangent space will be the space spanned by variations of single MPS tensors.
+In the context of MPS, the manifold $\mathcal{M}$ will correspond to the space of full-ranked MPS of a given bond dimension $D$, and the tangent space will be the space spanned by variations of single MPS tensors.
 
 The major advantage of this method is that it naturally preserves the unitarity of the time evolution and conserves the energy.
 
