@@ -19,12 +19,22 @@ T = 30.0
 
 dir = "/Users/ariva/Documents/fermions/"
 
-#chainparams2 = readchaincoeffs(dir*"fermionic.h5", β, 2.0) #filled
-#chainparams1 = readchaincoeffs(dir*"fermionic.h5", β, 1.0) #empty
+# define the dispersion relation
 
-chainparams2 = readchaincoeffs(dir*"fermionic.h5", β, 2.0) # filled
-chainparams1 = readchaincoeffs(dir*"fermionic.h5", β, 1.0) # empty
+function ϵ(x)
+    return x
+end
 
+
+chainparams1 = chaincoeffs_fermionic(20, 2.0, 1.0; ϵ, save=false) # empty
+chainparams2 = chaincoeffs_fermionic(20, 2.0, 2.0; ϵ, save=false) # filled
+
+#=
+curdir = @__DIR__
+dir_chaincoeff = abspath(joinpath(curdir, "../ChainOhmT/fermionicT/"))
+chainparams2  = readchaincoeffs("$dir_chaincoeff/chaincoeffs.h5", N, β, 2.0) #filled
+chainparams1  = readchaincoeffs("$dir_chaincoeff/chaincoeffs.h5", N, β, 1.0) #empty
+=#
 
 c1 = chainparams1[3]
 c2 = chainparams2[3]
@@ -61,3 +71,4 @@ A, dat = runsim(dt, T, A, H;
                 savedir = dir,
                 plot = true,
                 );
+
