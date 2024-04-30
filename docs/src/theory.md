@@ -266,5 +266,5 @@ The major advantage of this method is that it naturally preserves the unitarity 
 [^appel_mathematics_2007]:
     > Appel, W. Mathematics for Physics and Physicists; Princeton University Press, 2007.
 
-[^devega_thermo_2015]
+[^devega_thermo_2015]:
     > de Vega, I.; Banuls, M-.C. Thermofield-based chain-mapping approach for open quantum systems. Phys. Rev. A 2015, 92 (5), 052116. https://doi.org/10.1103/PhysRevA.92.052116.
