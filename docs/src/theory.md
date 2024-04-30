@@ -55,10 +55,7 @@ This makes its representation as a Matrix Product Operator (MPO) and the represe
 
 The orthogonal polynomial-based chain mapping and the subsequent representation of the joint wave-function as a MPS (and the operators as MPO) are the building blocks of the Time-dependent Density operator with Orthonormal Polynomials Algorithm (TEDOPA) one of the state-of-the-art numerically exact method to simulate the dynamics of open quantum systems especially in the non-Markovian, non-perturbative regimes both at zero and finite temperatures [^prior_efficient_2010][^woods_simulating_2015][^tamascelli_efficient_2019][^dunnett_simulating_2021][^lacroix_unveiling_2021].
 
-### Finite Temperature
-
-Explain that by extending the bath to negative frequencies and having temperature-dependent system environment couplings, it is possible to describe the finite temperature case as an effective zero temperature one.
-Hence, we can keep the pure state description and avoid moving to density matrices at the cost of doubling the size of the environment.
+### Finite Temperature with T-TEDOPA
 
 Assuming a unitary evolution for both the system and environment, the system's dynamics can be isolated by tracing out the environmental degrees of freedom. The density operator for the system at time $t$ is described as:
 
@@ -78,7 +75,7 @@ The system's evolution is dictated by the environment's two-time correlation fun
 \hat{S}(t) = \int_0^\infty d\omega J(\omega)\left[e^{-i\omega t}(1 + \hat{n}_\omega(\beta)) + e^{i\omega t} \hat{n}_\omega(\beta)\right],
 ```
 
-To simulate finite temperature effects using a zero-temperature model, we extend the spectral density function to cover both positive and negative frequencies, allowing us to use a pure state description for the environment. This is achieved by defining a new spectral density function $J(\omega, \beta)$ that incorporates the Boltzmann factors, supporting the entire real axis:
+To simulate finite temperature effects using a zero-temperature model with the T-TEDOPA method [^tamascelli_efficient_2019], we extend the spectral density function to cover both positive and negative frequencies, allowing us to use a pure state description for the environment. This is achieved by defining a new spectral density function $J(\omega, \beta)$ that incorporates the Boltzmann factors, supporting the entire real axis:
 
 ```math
 J(\omega, \beta) = \frac{\text{sign}(\omega)J(\left|\omega\right|)}{2} \Big(1 + \coth\Big(\frac{\beta \omega}{2}\Big)\Big).
