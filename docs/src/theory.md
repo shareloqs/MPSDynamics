@@ -60,7 +60,7 @@ The orthogonal polynomial-based chain mapping and the subsequent representation 
 Explain that by extending the bath to negative frequencies and having temperature-dependent system environment couplings, it is possible to describe the finite temperature case as an effective zero temperature one.
 Hence, we can keep the pure state description and avoid moving to density matrices at the cost of doubling the size of the environment.
 
-Assuming a unitary evolution for both the system and environment, the system's dynamics can be isolated by tracing out the environmental degrees of freedom. The density operator for the system at time ``t`` is described as:
+Assuming a unitary evolution for both the system and environment, the system's dynamics can be isolated by tracing out the environmental degrees of freedom. The density operator for the system at time $t$ is described as:
 
 ```math
 \hat{\rho}_S(t) = \Tr_E\left\{\hat{U}(t) \hat{\rho}_S(0) \otimes \hat{\rho}_E(0) \hat{U}^\dagger(t)\right\}.
