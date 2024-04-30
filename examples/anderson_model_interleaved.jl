@@ -7,7 +7,7 @@ import MPSDynamics: interleaved_tightbinding_mpo, productstatemps, tightbinding_
 # Physical parameters
 #----------------------------
 
-N = 20      # number of chain sites
+N = 40      # number of chain sites
 β = 2.0     # inverse temperature
 μ = 0.      # chemical potential
 Ed = 0.6    # energy of the impurity
@@ -21,8 +21,8 @@ function ϵ(x)
     return x
 end
 
-chainparams1 = chaincoeffs_fermionic(20, 2.0, 1.0; ϵ, save=false) # empty
-chainparams2 = chaincoeffs_fermionic(20, 2.0, 2.0; ϵ, save=false) # filled
+chainparams1 = chaincoeffs_fermionic(N, β, 1.0; ϵ, save=false) # empty
+chainparams2 = chaincoeffs_fermionic(N, β, 2.0; ϵ, save=false) # filled
 
 #=
 curdir = @__DIR__
@@ -39,10 +39,10 @@ c2 = chainparams2[3]
 #-----------------------
 
 dt = 0.5            # time step
-T = 30.0            # simulation time
+T = 10.0            # simulation time
 method = :DTDVP     # time-evolution method
-Dmax = 2            # MPS max bond dimension
-prec = 0.1          # precision for the adaptive TDVP
+Dmax = 40           # MPS max bond dimension
+prec = 0.0001       # precision for the adaptive TDVP
 
 dir = "/Users/ariva/Documents/fermions/"
 
@@ -91,24 +91,83 @@ A, dat = runsim(dt, T, A, H;
                 );
 
 
-#----------------------------
-# Post-processing of the data
-#----------------------------
+#-------------------------------------------------------------
+# Post-processing of the data: unfolding the chain for clarity
+#-------------------------------------------------------------
+unfolded_occ = Vector{Vector{Float64}}()  # Assuming the elements are of type Float64
+unfolded_bonds = Vector{Vector{Float64}}()  # Adjust the type based on actual data
 
-occ_unfold = similar(dat["data/folded_chain_occup"])
-
-# Loop through each element, modifying as necessary
-for i in 1:size(dat["data/folded_chain_occup"], 1)
-    for j in 1:size(dat["data/folded_chain_occup"], 2)
-        if j % 2 != 0  # Check if the column index is odd
-            occ_unfold[i, j] = 1 - dat["data/folded_chain_occup"][i, j]
-        else
-            occ_unfold[i, j] = dat["data/folded_chain_occup"][i, j]
-        end
-    end
+# Populate unfolded_occ by iterating in the specific order mentioned
+for i in 1:N  # Adjusted for 1-based indexing
+    push!(unfolded_occ, dat[ "data/folded_chain_occup"][2N + 1 - 2i, :])
 end
+
+push!(unfolded_occ, dat["data/folded_chain_occup"][1,:])
+
+for i in 2:N
+    push!(unfolded_occ, dat["data/folded_chain_occup"][2i,:])
+end
+
+# Populate unfolded_bonds similarly
+for i in 1:(N+1)  # Adjusted for 1-based indexing
+    push!(unfolded_bonds, dat["data/bonddims"][2N + 3 - 2i,:])  # Assuming bonddims is directly accessible
+end
+
+push!(unfolded_bonds, dat["data/bonddims"][1,:])
+
+for i in 2:(N+1)
+    push!(unfolded_bonds, dat["data/bonddims"][2i,:])
+end
+
+unfolded_bonds_matrix = hcat(unfolded_bonds...)'
+unfolded_occ_matrix = hcat(unfolded_occ...)'
 
 #-------------
 # Plots
 #-------------
 
+# Plot the occupation of the chain sites
+heatmap(
+    collect(1:2*N),
+    dat["data/times"],
+    transpose(unfolded_occ_matrix),  # Use the matrix form
+    cmap = :coolwarm,
+    aspect_ratio = :auto,
+    xlabel = L"$N_{i,j}$ chain sites",
+    ylabel = L"$t$",
+    title = "Chain Occupation",
+    colorbar = true,
+    size = (700, 500)
+)
+
+# Plot the bond dimensions
+heatmap(
+    collect(1:2*N+2),
+    dat["data/times"],
+    transpose(unfolded_bonds_matrix),
+    cmap = :magma,
+    aspect_ratio = :auto,
+    xlabel = L"$N_{i,j}$ chain sites",
+    ylabel = L"$t$",
+    title = "Bond Dimensions",
+    colorbar = true,
+    size = (700, 500)
+)
+
+# Define indices for columns to be plotted
+columns_to_plot = [1, 5, 10, 15, 20]
+
+# Plot vertical slices for occupancy
+p1 = plot(title = "Chain occupation")
+for col in columns_to_plot
+    plot!(p1, unfolded_occ_matrix[:, col], label = L"$t =$"*"$col", xlabel = L"$N_{i,j}$ chain sites", ylabel = "chain occupation")
+end
+
+# Plot vertical slices for bond dimensions
+p2 = plot(title = "Bond Dimensions")
+for col in columns_to_plot
+    plot!(p2, unfolded_bonds_matrix[:, col], label = L"$t =$"*"$col", xlabel = L"$N_{i,j}$ chain sites", ylabel = L"$\chi$")
+end
+
+# Display the plots
+plot(p1, p2, layout = (2, 1), size = (600, 800))
