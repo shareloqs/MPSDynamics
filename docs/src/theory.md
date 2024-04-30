@@ -60,41 +60,41 @@ The orthogonal polynomial-based chain mapping and the subsequent representation 
 Explain that by extending the bath to negative frequencies and having temperature-dependent system environment couplings, it is possible to describe the finite temperature case as an effective zero temperature one.
 Hence, we can keep the pure state description and avoid moving to density matrices at the cost of doubling the size of the environment.
 
-Assuming a unitary evolution for both the system and environment, the system's dynamics can be isolated by tracing out the environmental degrees of freedom. The density operator for the system at time \( t \) is described as:
+Assuming a unitary evolution for both the system and environment, the system's dynamics can be isolated by tracing out the environmental degrees of freedom. The density operator for the system at time ``t`` is described as:
 
-\[
+```math
 \hat{\rho}_S(t) = \Tr_E\left\{\hat{U}(t) \hat{\rho}_S(0) \otimes \hat{\rho}_E(0) \hat{U}^\dagger(t)\right\}.
-\]
+```
 
-Initially, the system state, \(\hat{\rho}_S(0)\), can be pure or mixed, and the environment is in a thermal state defined by the inverse temperature \(\beta = (k_B T)^{-1}\). This state is represented by a product of Gaussian states:
+Initially, the system state, ``\hat{\rho}_S(0)``, can be pure or mixed, and the environment is in a thermal state defined by the inverse temperature ``\beta = (k_B T)^{-1}``. This state is represented by a product of Gaussian states:
 
-\[
+```math
 \hat{\rho}_E(0) = \bigotimes_\omega \frac{e^{-\beta \omega \hat{b}_\omega^\dagger \hat{b}_\omega}}{Z_\omega(\beta)},
-\]
+```
 
-The system's evolution is dictated by the environment's two-time correlation function, which in turn is determined by the spectral density function \( J \) and the temperature \(\beta\):
+The system's evolution is dictated by the environment's two-time correlation function, which in turn is determined by the spectral density function ``J`` and the temperature ``\beta``:
 
-\[
-\hat{S}(t) = \int_0^\infty d\omega J(\omega)\left[e^{-i\omega t}(1 + \hat{n}_\omega(\beta)) + e^{i\omega t} \hat{n}_\omega(\beta)\right],
-\]
+```math
+\hat{S}(t) = \int_0^\infty d\omega J(\omega)\left[e^{-i\omega t}(1 + \hat{n}_\omega(\beta)) + e^{i\omega t} \hat{n}_\omega(\beta)\right],```
+```
 
-To simulate finite temperature effects using a zero-temperature model, we extend the spectral density function to cover both positive and negative frequencies, allowing us to use a pure state description for the environment. This is achieved by defining a new spectral density function \( J(\omega, \beta) \) that incorporates the Boltzmann factors, supporting the entire real axis:
+To simulate finite temperature effects using a zero-temperature model, we extend the spectral density function to cover both positive and negative frequencies, allowing us to use a pure state description for the environment. This is achieved by defining a new spectral density function ``J(\omega, \beta)`` that incorporates the Boltzmann factors, supporting the entire real axis:
 
-\[
+```math
 J(\omega, \beta) = \frac{\text{sign}(\omega)J(\left|\omega\right|)}{2} \Big(1 + \coth\Big(\frac{\beta \omega}{2}\Big)\Big).
-\]
+```
 
 This modified bath allows us to maintain a pure state description of the environment, represented as a vacuum state, and avoid the computational complexities of density matrices:
 
-\[
+```math
 \ket{\text{vac}} = \bigotimes_\omega \ket{0}_\omega,
-\]
+```
 
 The Hamiltonian of the system interacting with this extended bath now includes temperature-dependent interactions:
 
-\[
+```math
 \hat{H} = \hat{H}_S + \int_{-\infty}^{+\infty} d\omega \omega \hat{b}_\omega^\dagger \hat{b}_\omega + \frac{\hat{\sigma}_x}{2} \otimes \int_{-\infty}^{+\infty} d\omega \sqrt{J(\omega,\beta)}\left(\hat{b}_\omega^\dagger+\hat{b}_\omega\right),
-\]
+```
 
 This method simplifies the simulation of finite temperature effects by treating them within an effective zero-temperature framework, thereby keeping the computational advantages of using pure states.
 
