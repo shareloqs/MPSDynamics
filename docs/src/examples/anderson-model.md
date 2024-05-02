@@ -1,9 +1,10 @@
 # The Anderson Impurity Model 
 
-We use the fermionic chain mapping proposed in [1] to perform tensor network simulations of the Single Impurity Anderson Model (SIAM). The SIAM Hamiltonian is defined as:
+In these two examples, we use the fermionic chain mapping proposed in [1] to perform tensor network simulations of the Single Impurity Anderson Model (SIAM). The SIAM Hamiltonian is defined as:
 \begin{equation}
     \hat H^\text{SIAM}  = \hat H_\text{loc} + \hat H_\text{hyb} + \hat H_\text{cond} = \overbrace{\epsilon_d \hat d^\dagger \hat d}^{\hat H_\text{loc}} + \underbrace{\sum_{k} V_k \Big( \hat d^\dagger \hat c_k + \hat c_k^\dagger \hat d \Big)}_{H_\text{hyb}} + \underbrace{\sum_k \epsilon_k \hat c_k^\dagger \hat c_k}_{H_I^\text{chain}}.
 \end{equation}
+
 All of the operators obey to the usual fermionic anti-commutation relations: $\{\hat c_i, \hat c_j^\dagger \} = \delta_{ij}$, $\{\hat c_i, \hat c_j \} =\{\hat c_i^\dagger, \hat c_j^\dagger \} =0$ $\forall i,j$. The chain mapping is based on a thermofield-like transformation [2], performed with fermions: ancillary fermionic operators $\hat c_{2k}$ are defined, one for each of the original fermionic modes $\hat c_{1k}$. A Bogoliubov transformation is then applied, so that two new fermionic modes $\hat f_{1k}$ and $\hat f_{2k}$ are defined as a linear combination of $\hat c_{1k}$ and $\hat c_{2k}$. Two chains are defined: the chain labelled $1$ for the empty modes, the chain labelled $2$ for the filled modes.
 The following relations are used to define the functions equivalent to the spectral density of the bosonic case, one for each chain:
 \begin{equation}
@@ -23,7 +24,6 @@ where the $J_{i,n}$ coefficients are the couplings between the chain sites and t
 \begin{equation}
     \hat a_{i}^\dagger \hat a_{i+1} + \hat a_{i+1}^\dagger \hat a_{i} = \hat b_{i}^\dagger \hat b_{i+1} + \hat b_{i+1}^\dagger \hat b_{i}.  
 \end{equation}
-
 
 ## Double chain mapping
 
@@ -69,7 +69,7 @@ The drawback of such a representation though, is that the particle-hole pairs ar
 \begin{equation}
     \hat a_{i}^\dagger \hat a_{i+2} + \hat a_{i+2}^\dagger \hat a_{i} = \hat b_{i}^\dagger \hat F_{i+1} \hat b_{i+2} + \hat b_{i} \hat F_{i+1} \hat b_{i+2}^\dagger,
 \end{equation}
-where the string operator $\hat F_i$ is defined as: $\hat F_i = (-1)^{\hat n_i} = \hat{\mathbb I} -2 \hat n_i = \hat{\mathbb I}-2 \hat b_i^\dagger \hat b_i$. It is possible to find the analytical form also for MPOs with long range interaction \cite{mpo}. In the case of next-nearest neighbors interactions between spinless fermions, the MPO representation will require a bond dimension $\chi=6$. We explicitly write it as:
+where the string operator $\hat F_i$ is defined as: $\hat F_i = (-1)^{\hat n_i} = \hat{\mathbb I} -2 \hat n_i = \hat{\mathbb I}-2 \hat b_i^\dagger \hat b_i`. It is possible to find the analytical form also for MPOs with long range interaction \cite{mpo}. In the case of next-nearest neighbors interactions between spinless fermions, the MPO representation will require a bond dimension $\chi=6`. We explicitly write it as:
 \begin{equation}
 \begin{split}
 &
@@ -114,6 +114,7 @@ ________________
 [1] Lucas Kohn and Giuseppe E. Santoro. Efficient mapping for anderson impurity problems with matrix product states. Physical Review B, 104(1):014303, Jul 2021. arXiv: [2012.01424](https://arxiv.org/abs/2012.01424).
 
 
-[2] Ines de Vega and Mari-Carmen Banuls. Thermofield-based chain mapping approach for open quantum systems. Physical Review A, 92(5):052116, Nov 2015. arXiv:[1504.07228](https://arxiv.org/abs/1504.07228).
-
+[^devega_thermo_2015]:
+    > de Vega, I.; Banuls, M-.C. Thermofield-based chain-mapping approach for open quantum systems. Phys. Rev. A 2015, 92 (5), 052116. https://doi.org/10.1103/PhysRevA.92.052116.
+    
 [3] L. Kohn and G. E. Santoro. Quenching the anderson impurity model at finite temperature: Entanglement and bath dynamics using matrix product states. arXiv:2107.02807 [cond-mat, physics:quant-ph], Jul 2021. arXiv: [2107.02807](https://arxiv.org/abs/2107.02807)
