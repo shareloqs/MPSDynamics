@@ -90,7 +90,7 @@ This modified bath has the same correlation function $S(t)$ and thus allows us t
 The Hamiltonian of the system interacting with this extended bath now includes temperature-dependent interactions:
 
 ```math
-\hat{H} = \hat{H}_S + \int_{-\infty}^{+\infty} d\omega \omega \hat{a}_\omega^\dagger \hat{a}_\omega + \frac{\hat{\sigma}_x}{2} \otimes \int_{-\infty}^{+\infty} d\omega \sqrt{J(\omega,\beta)}\left(\hat{a}_\omega^\dagger+\hat{a}_\omega\right),
+\hat{H} = \hat{H}_S + \int_{-\infty}^{+\infty} d\omega \omega \hat{a}_\omega^\dagger \hat{a}_\omega + \hat{A}_S \otimes \int_{-\infty}^{+\infty} d\omega \sqrt{J(\omega,\beta)}\left(\hat{a}_\omega^\dagger+\hat{a}_\omega\right),
 ```
 
 This method simplifies the simulation of finite temperature effects by treating them within an effective zero-temperature framework, thereby keeping the computational advantages of using pure states.
@@ -145,15 +145,15 @@ The number of different values a virtual index can take is called the _bond dime
 The free indices $i_k$ associated with local quantum states are called _physical indices_.
 Thus, they can take $d$ values (with $d$ the dimension of the local Hilbert space).
 
-Any state in the Hilbert space of a one-dimensional many-body system can in principle be represented by a MPS by choosing a sufficiently large value for the bond dimension $D$ \cite{Orus}.
+Any state in the Hilbert space of a one-dimensional many-body system can in principle be represented by a MPS by choosing a sufficiently large value for the bond dimension $D$ [^Orus].
 On top of this intellectually satisfying property of MPSs being a dense set of states for a 1d-system, they can also be used as a practical Ansätze for a many-body quantum states by setting a maximal allowed value $\chi$ for the bond dimension $D$.
 In doing so, we restrict ourselves to a corner of the total Hilbert space.
 The rationale behind this Ansatz is the following: if the initial quantum state of a many-body system has a low bond dimension (typically if the initial state is a product state with $D = 1$), then in a finite time it will only be able to explore a region of the Hilbert space that is not to far away from its starting point.
-Thus, the bond dimension will not have the time to diverge exponentially \cite{poulin_quantum_2011}.
+Thus, the bond dimension will not have the time to diverge exponentially [^poulin_quantum_2011].
 However, depending on the physical system at hand, this sub-manifold of the Hilbert space could still be "too large".
 There is an additional reason that explains why MPSs are good Ansätze for 1d physical systems.
 Most many-body Hamiltonians we (physicists) are interested in are local, meaning that the interactions they describe involve objects that are "neighbours".
-For such Hamiltonians, the ground states (outside of potential critical phases) follow the so called _area law_ for the entanglement entropy.\cite{srednicki_entropy_1993, vidal_entanglement_2003, wolf_area_2008}.
+For such Hamiltonians, the ground states (outside of potential critical phases) follow the so called _area law_ for the entanglement entropy [^srednicki_entropy_1993][^vidal_entanglement_2003][^wolf_area_2008].
 This law states that the entanglement entropy $S_{vN}$ of a bi-partition of the system is proportional, not to the volume of the partition as one might expect, but to the hyper-surface of the partition's boundary; hence the name "area law".
 For a 3d system this corresponds to an actual surface area $A$, $S_{vN} \sim A$; for a 2d system it corresponds to the length $L$ of the partition's boundary, $S_{vN} \sim L$; and in 1d the boundary reduces to a point, thus the entropy will be independent of the size of the system $S_{vN} \sim \text{constant}$.
 The MPSs are states that satisfy this area law.
@@ -189,10 +189,10 @@ The first node is known as the head-node and has a dummy parent leg with dimensi
 
 ## Time-Dependent Variational Principal
 
-The original idea behind TDVP goes back to Dirac \cite{dirac_note_1930} and Frenkel \cite{frenkel_wave_1934}.
-The main point, in the modern tensor networks formulation, is that instead of solving the Schrödinger equation and then truncating the MPS representation of the quantum state, one can solve the equations of motion projected into a space of restricted bond dimension \cite{haegeman_time-dependent_2011, haegeman_unifying_2016}.
+The original idea behind TDVP goes back to Dirac [^dirac_note_1930] and Frenkel [^frenkel_wave_1934].
+The main point, in the modern tensor networks formulation, is that instead of solving the Schrödinger equation and then truncating the MPS representation of the quantum state, one can solve the equations of motion projected into a space of restricted bond dimension [^haegeman_time-dependent_2011][^haegeman_unifying_2016].
 
-The general formulation of the Dirac-Frenkel Variational Principle~\cite{raab_diracfrenkelmclachlan_2000} is that one looks for a solution $|\varphi\rangle \in \mathcal{M}$ of the Schrödinger equation where $\mathcal{M} \subset \mathcal{H}$ is a manifold of the total Hilbert space $\mathcal{H}$ in which we think that the relevant physical states `live'.
+The general formulation of the Dirac-Frenkel Variational Principle [^raab_diracfrenkelmclachlan_2000] is that one looks for a solution $|\varphi\rangle \in \mathcal{M}$ of the Schrödinger equation where $\mathcal{M} \subset \mathcal{H}$ is a manifold of the total Hilbert space $\mathcal{H}$ in which we think that the relevant physical states `live'.
 
 We define $T_{|\varphi\rangle}\mathcal{M}$ the tangent space of $\mathcal{M}$ around the state $|\varphi\rangle$.
 The criterion to find $|\varphi\rangle$ is that for every state $|\chi\rangle \in T_{|\varphi\rangle}\mathcal{M}$
@@ -203,7 +203,7 @@ The criterion to find $|\varphi\rangle$ is that for every state $|\chi\rangle \i
 
 which can be interpreted as saying that the time evolution procedure should keep $|\varphi\rangle$ inside of the manifold $\mathcal{M}$.
 
-The term *variational* in the name of the method comes from the fact that in practice one aims at minimising the right-hand side of Eq.~(\ref{eq:DiracFrenkel1}) to find $|\varphi\rangle$.
+The term *variational* in the name of the method comes from the fact that in practice one aims at minimising the right-hand side of the hereinabove Eq. to find $|\varphi\rangle$.
 
 Introducing $\hat{P}_{T_{|\varphi\rangle}\mathcal{M}}$ the projector onto the tangent space $T_{|\varphi\rangle}\mathcal{M}$, we can write the state $|\chi\rangle = \hat{P}_{T_{|\varphi\rangle}\mathcal{M}}|\phi\rangle$ with $|\phi\rangle$ a state in $\mathcal{H}$.
 Leading to
@@ -268,3 +268,35 @@ The major advantage of this method is that it naturally preserves the unitarity 
 
 [^devega_thermo_2015]:
     > de Vega, I.; Banuls, M-.C. Thermofield-based chain-mapping approach for open quantum systems. Phys. Rev. A 2015, 92 (5), 052116. https://doi.org/10.1103/PhysRevA.92.052116.
+
+[^Orus]:
+    > Orus, R. A Practical Introduction to Tensor Networks: Matrix Product States and Projected Entangled Pair States. Annals of Physics 2014, 349, 117–158. https://doi.org/10.1016/j.aop.2014.06.013.
+
+[^poulin_quantum_2011]:
+    > Poulin, D.; Qarry, A.; Somma, R.; Verstraete, F. Quantum Simulation of Time-Dependent Hamiltonians and the Convenient Illusion of Hilbert Space. Phys. Rev. Lett. 2011, 106 (17), 170501. https://doi.org/10.1103/PhysRevLett.106.170501.
+
+[srednicki_entropy_1993]:
+    > Srednicki, M. Entropy and Area. Phys. Rev. Lett. 1993, 71 (5), 666–669. https://doi.org/10.1103/PhysRevLett.71.666.
+
+[^vidal_entanglement_2003]:
+    > Vidal, G.; Latorre, J. I.; Rico, E.; Kitaev, A. Entanglement in Quantum Critical Phenomena. Phys. Rev. Lett. 2003, 90 (22), 227902. https://doi.org/10.1103/PhysRevLett.90.227902.
+
+[^wolf_area_2008]:
+    > Wolf, M. M.; Verstraete, F.; Hastings, M. B.; Cirac, J. I. Area Laws in Quantum Systems: Mutual Information and Correlations. Phys. Rev. Lett. 2008, 100 (7), 070502. https://doi.org/10.1103/PhysRevLett.100.070502.
+
+
+[^dirac_note_1930]:
+    > Dirac, P. A. M. Note on Exchange Phenomena in the Thomas Atom. Mathematical Proceedings of the Cambridge Philosophical Society 1930, 26 (3), 376–385. https://doi.org/10.1017/S0305004100016108.
+
+[^frenkel_wave_1934]:
+    > Frenkel, Y. Wave Mechanics, Advanced General Theory; Oxford, 1934; Vol. 1.
+
+[^haegeman_time-dependent_2011]:
+    > Haegeman, J.; Cirac, J. I.; Osborne, T. J.; Pižorn, I.; Verschelde, H.; Verstraete, F. Time-Dependent Variational Principle for Quantum Lattices. Phys. Rev. Lett. 2011, 107 (7), 070601. https://doi.org/10.1103/PhysRevLett.107.070601.
+
+[^haegeman_unifying_2016]:    
+    > Haegeman, J.; Lubich, C.; Oseledets, I.; Vandereycken, B.; Verstraete, F. Unifying Time Evolution and Optimization with Matrix Product States. Phys. Rev. B 2016, 94 (16), 165116. https://doi.org/10.1103/PhysRevB.94.165116.
+
+[^raab_diracfrenkelmclachlan_2000]:
+    > Raab, A. On the Dirac–Frenkel/McLachlan Variational Principle. Chemical Physics Letters 2000, 319 (5), 674–678. https://doi.org/10.1016/S0009-2614(00)00200-1.
+ 
