@@ -1,6 +1,6 @@
 # The Anderson Impurity Model 
 
-In these two examples, we use the fermionic chain mapping proposed in [1] to perform tensor network simulations of the Single Impurity Anderson Model (SIAM). The SIAM Hamiltonian is defined as:
+In these two examples, we use the fermionic chain mapping proposed in [^khon_efficient_2021] to perform tensor network simulations of the Single Impurity Anderson Model (SIAM). The SIAM Hamiltonian is defined as:
 \begin{equation}
     \hat H^\text{SIAM}  = \hat H_\text{loc} + \hat H_\text{hyb} + \hat H_\text{cond} = \overbrace{\epsilon_d \hat d^\dagger \hat d}^{\hat H_\text{loc}} + \underbrace{\sum_{k} V_k \Big( \hat d^\dagger \hat c_k + \hat c_k^\dagger \hat d \Big)}_{H_\text{hyb}} + \underbrace{\sum_k \epsilon_k \hat c_k^\dagger \hat c_k}_{H_I^\text{chain}}.
 \end{equation}
@@ -14,7 +14,7 @@ The following relations are used to define the functions equivalent to the spect
 \end{split}
 \end{equation}    
 where we choose the spectral function that characterizes the fermionic bath to be: $V_k= \sqrt{1-k^2}$, and we define the dispersion relation as: $e_k = k$, that is, a linear dispersion relation with propagation speed equal to $1$. This latter choice corresponds to a model of metals (gapless energy spectrum). We select a filled state as the initial state of the defect.
-Using the mapping proposed in [1], the chain Hamiltonian becomes:
+Using the mapping proposed in [^khon_efficient_2021], the chain Hamiltonian becomes:
 \begin{equation}
     \begin{split}
     \hat H^\text{chain}  = \hat H_\text{loc} &+ \sum_{i = \{1,2\}}\bigg[ J_{i,0} \Big(\hat d^\dagger \hat a_{i,0} + \hat d \hat a_{i,0}^\dagger \Big) + \\ &+ \sum_{n=1}^\infty  \Big( J_{i,n} \hat a_{i,n}^\dagger \hat a_{i,n-1} +  J_{i,n} \hat  a_{i,n-1}^\dagger \hat a_{i,n} \Big) + \sum_{n=0}^\infty E_{i,n} \hat  a_{i,n}^\dagger \hat a_{i,n} \bigg],
@@ -111,10 +111,9 @@ where the string operator $\hat F_i$ is defined as: $\hat F_i = (-1)^{\hat n_i} 
 ________________
 ### References
 
-[1] Lucas Kohn and Giuseppe E. Santoro. Efficient mapping for anderson impurity problems with matrix product states. Physical Review B, 104(1):014303, Jul 2021. arXiv: [2012.01424](https://arxiv.org/abs/2012.01424).
-
+[^khon_efficient_2021]: 
+    > Kohn, L.; Santoro, G. E. Efficient mapping for anderson impurity problems with matrix product states. Phys. Rev. B 2021, 104 (1), 014303. https://doi.org/10.1103/PhysRevB.104.014303.
 
 [^devega_thermo_2015]:
     > de Vega, I.; Banuls, M-.C. Thermofield-based chain-mapping approach for open quantum systems. Phys. Rev. A 2015, 92 (5), 052116. https://doi.org/10.1103/PhysRevA.92.052116.
     
-[3] L. Kohn and G. E. Santoro. Quenching the anderson impurity model at finite temperature: Entanglement and bath dynamics using matrix product states. arXiv:2107.02807 [cond-mat, physics:quant-ph], Jul 2021. arXiv: [2107.02807](https://arxiv.org/abs/2107.02807)
