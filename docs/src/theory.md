@@ -275,7 +275,7 @@ The major advantage of this method is that it naturally preserves the unitarity 
 [^poulin_quantum_2011]:
     > Poulin, D.; Qarry, A.; Somma, R.; Verstraete, F. Quantum Simulation of Time-Dependent Hamiltonians and the Convenient Illusion of Hilbert Space. Phys. Rev. Lett. 2011, 106 (17), 170501. https://doi.org/10.1103/PhysRevLett.106.170501.
 
-[srednicki_entropy_1993]:
+[^srednicki_entropy_1993]:
     > Srednicki, M. Entropy and Area. Phys. Rev. Lett. 1993, 71 (5), 666–669. https://doi.org/10.1103/PhysRevLett.71.666.
 
 [^vidal_entanglement_2003]:
