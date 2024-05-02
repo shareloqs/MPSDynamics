@@ -10,7 +10,7 @@ All of the operators obey to the usual fermionic anti-commutation relations: $\{
 The following relations are used to define the functions equivalent to the spectral density of the bosonic case, one for each chain:
 
 $$
-   &V_{1k} = V_{k} \sin \theta_k = \sqrt{\frac{1}{e^{\beta \epsilon_k}+1}} \\
+   V_{1k} = V_{k} \sin \theta_k = \sqrt{\frac{1}{e^{\beta \epsilon_k}+1}} \\
    &V_{2k} = V_{k} \cos \theta_k = \sqrt{\frac{1}{e^{-\beta \epsilon_k}+1}}, 
 $$    
 
