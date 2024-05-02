@@ -1,8 +1,5 @@
 using MPSDynamics, Plots, LaTeXStrings, QuadGK
-
-import MPSDynamics: disp, measuremodes, eigenchain, mpsembed!
-import MPSDynamics: setleftbond, setrightbond, mpsrightnorm! 
-import MPSDynamics: interleaved_tightbinding_mpo, productstatemps, tightbinding_mpo
+import MPSDynamics: productstatemps, tightbinding_mpo
 
 #----------------------------
 # Physical parameters
@@ -97,6 +94,16 @@ occ = vcat(occ', dat["data/chain2_empty_occup"])
 #-------------
 # Plots
 #-------------
+
+# Plot the system occupation    
+plot(
+    dat["data/times"],
+    system_occup_col,
+    xlabel = L"$t$",
+    ylabel = L"$n_d$",
+    title = "System Occupation",
+    size = (700, 500)
+)
 
 # Plot the occupation of the chain sites
 heatmap(

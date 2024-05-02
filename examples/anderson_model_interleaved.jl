@@ -126,6 +126,16 @@ unfolded_occ_matrix = hcat(unfolded_occ...)'
 # Plots
 #-------------
 
+# Plot the system occupation    
+plot(
+    dat["data/times"],
+    system_occup_col,
+    xlabel = L"$t$",
+    ylabel = L"$n_d$",
+    title = "System Occupation",
+    size = (700, 500)
+)
+
 # Plot the occupation of the chain sites
 heatmap(
     collect(1:2*N),
@@ -156,6 +166,7 @@ heatmap(
 
 # Define indices for columns to be plotted
 columns_to_plot = [1, 5, 10, 15, 20]
+
 
 # Plot vertical slices for occupancy
 p1 = plot(title = "Chain occupation")
