@@ -1,6 +1,6 @@
 # The Anderson Impurity Model 
 
-In these two examples, we use the fermionic chain mapping proposed in [^khon_efficient_2021] to perform tensor network simulations of the Single Impurity Anderson Model (SIAM). The SIAM Hamiltonian is defined as:
+Here we give some context on the examples provided in `MPSDynamics/examples/anderson_model_double.jl` and `MPSDynamics/examples/anderson_model_interleaved.jl`. In these two examples, we use the fermionic chain mapping proposed in [^khon_efficient_2021] to perform tensor network simulations of the Single Impurity Anderson Model (SIAM). The SIAM Hamiltonian is defined as:
 
 ```math
     \hat H^\text{SIAM}  = \hat H_\text{loc} + \hat H_\text{hyb} + \hat H_\text{cond} = \overbrace{\epsilon_d \hat d^\dagger \hat d}^{\hat H_\text{loc}} + \underbrace{\sum_{k} V_k \Big( \hat d^\dagger \hat c_k + \hat c_k^\dagger \hat d \Big)}_{H_\text{hyb}} + \underbrace{\sum_k \epsilon_k \hat c_k^\dagger \hat c_k}_{H_I^\text{chain}}.
