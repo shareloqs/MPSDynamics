@@ -29,6 +29,7 @@ where the $J_{i,n}$ coefficients are the couplings between the chain sites and t
 
 ## Double chain mapping
 
+![image](doublechain.pdf)
 
 In the double chain geometry of Fig. \ref{subfig:double_ferm}, the MPOs bond dimension is: $\chi = 4$. The MPO has the structure defined in Eq. \ref{eq:mpo} and therefore can be seen as the product of the following matrices:
 ```math
@@ -67,7 +68,6 @@ where the matrices are defined as:
 \end{bmatrix}.
 \end{split}
 ```
-
 The system starts from a filled state, the chain starts as in the Fermi sea.
 
 ## Interleaved chain mapping
