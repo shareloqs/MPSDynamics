@@ -1,7 +1,5 @@
-using MPSDynamics, Plots, LaTeXStrings, QuadGK, Revise
-import MPSDynamics: disp, measuremodes, eigenchain, mpsembed!
-import MPSDynamics: setleftbond, setrightbond, mpsrightnorm! 
-import MPSDynamics: interleaved_tightbinding_mpo, productstatemps, tightbinding_mpo
+using MPSDynamics, Plots, LaTeXStrings
+import MPSDynamics: mpsembed!, interleaved_tightbinding_mpo, productstatemps
 
 #----------------------------
 # Physical parameters
@@ -10,7 +8,7 @@ import MPSDynamics: interleaved_tightbinding_mpo, productstatemps, tightbinding_
 N = 40      # number of chain sites
 β = 2.0     # inverse temperature
 μ = 0.      # chemical potential
-Ed = 0.6    # energy of the impurity
+Ed = 0.3    # energy of the impurity
 ϵd = Ed - μ # energy of the impurity minus the chemical potential
 
 #-----------------------------------------
@@ -38,10 +36,10 @@ c2 = chainparams2[3]
 # Simulation parameters
 #-----------------------
 
-dt = 0.5            # time step
-T = 10.0            # simulation time
+dt = 0.25            # time step
+T = 15.0            # simulation time
 method = :DTDVP     # time-evolution method
-Dmax = 40           # MPS max bond dimension
+Dmax = 150           # MPS max bond dimension
 prec = 0.0001       # precision for the adaptive TDVP
 
 dir = "/Users/ariva/Documents/fermions/"
@@ -127,9 +125,9 @@ unfolded_occ_matrix = hcat(unfolded_occ...)'
 #-------------
 
 # Plot the system occupation    
-plot(
+p1 = plot(
     dat["data/times"],
-    system_occup_col,
+    dat["data/system_occup"],
     xlabel = L"$t$",
     ylabel = L"$n_d$",
     title = "System Occupation",
@@ -137,7 +135,7 @@ plot(
 )
 
 # Plot the occupation of the chain sites
-heatmap(
+p2 = heatmap(
     collect(1:2*N),
     dat["data/times"],
     transpose(unfolded_occ_matrix),  # Use the matrix form
@@ -151,7 +149,7 @@ heatmap(
 )
 
 # Plot the bond dimensions
-heatmap(
+p3 = heatmap(
     collect(1:2*N+2),
     dat["data/times"],
     transpose(unfolded_bonds_matrix),
@@ -169,16 +167,16 @@ columns_to_plot = [1, 5, 10, 15, 20]
 
 
 # Plot vertical slices for occupancy
-p1 = plot(title = "Chain occupation")
+p4 = plot(title = "Chain occupation")
 for col in columns_to_plot
-    plot!(p1, unfolded_occ_matrix[:, col], label = L"$t =$"*"$col", xlabel = L"$N_{i,j}$ chain sites", ylabel = "chain occupation")
+    plot!(p4, unfolded_occ_matrix[:, col], label = L"$t =$"*"$col", xlabel = L"$N_{i,j}$ chain sites", ylabel = "chain occupation")
 end
 
 # Plot vertical slices for bond dimensions
-p2 = plot(title = "Bond Dimensions")
+p5 = plot(title = "Bond Dimensions")
 for col in columns_to_plot
-    plot!(p2, unfolded_bonds_matrix[:, col], label = L"$t =$"*"$col", xlabel = L"$N_{i,j}$ chain sites", ylabel = L"$\chi$")
+    plot!(p5, unfolded_bonds_matrix[:, col], label = L"$t =$"*"$col", xlabel = L"$N_{i,j}$ chain sites", ylabel = L"$\chi$")
 end
 
 # Display the plots
-plot(p1, p2, layout = (2, 1), size = (600, 800))
+plot(p2, p3, p4, p5, p1, layout = (3, 2), size = (1400, 1200))
