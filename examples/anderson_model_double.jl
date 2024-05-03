@@ -33,9 +33,6 @@ chainparams2  = readchaincoeffs("$dir_chaincoeff/chaincoeffs.h5", β, 2.0) #fill
 chainparams1  = readchaincoeffs("$dir_chaincoeff/chaincoeffs.h5", β, 1.0) #empty
 =#
 
-c1 = chainparams1[3]
-c2 = chainparams2[3]
-
 #-----------------------
 # Simulation parameters
 #-----------------------
@@ -45,8 +42,6 @@ T = 15.0            # simulation time
 method = :DTDVP     # time-evolution method
 Dmax = 150           # MPS max bond dimension
 prec = 0.00001       # precision for the adaptive TDVP
-
-dir = "/Users/ariva/Documents/fermions/"
 
 #---------------------------
 # MPO and initial state MPS
@@ -81,8 +76,7 @@ A, dat = runsim(dt, T, A, H;
                 Dlim = Dmax,          
                 savebonddims = true,   # we want to save the bond dimension
                 verbose = false,
-                save = true,
-                savedir = dir,
+                save = false,
                 plot = true,
                 );
 
