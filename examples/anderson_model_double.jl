@@ -6,7 +6,7 @@ import MPSDynamics: productstatemps, tightbinding_mpo, mpsembed!
 #----------------------------
 
 N = 40      # number of chain sites
-β = 2.0     # inverse temperature
+β = 10.0     # inverse temperature
 μ = 0.      # chemical potential
 Ed = 0.3    # energy of the impurity
 ϵd = Ed - μ # energy of the impurity minus the chemical potential
@@ -40,7 +40,7 @@ dt = 0.25            # time step
 T = 15.0            # simulation time
 method = :DTDVP     # time-evolution method
 Dmax = 150           # MPS max bond dimension
-prec = 0.0001       # precision for the adaptive TDVP
+prec = 0.00001       # precision for the adaptive TDVP
 
 dir = "/Users/ariva/Documents/fermions/"
 
@@ -52,7 +52,7 @@ H = tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
 ψ =  unitcol(2,2) # (0,1) filled impurity state
 A = productstatemps(physdims(H), state=[fill(unitcol(2,2), N)..., ψ, fill(unitcol(1,2), N)...]) # MPS
-mpsembed!(A, 4)
+mpsembed!(A, 2)
 
 #----------------------------------------------------
 # Definition of observables for the double chain

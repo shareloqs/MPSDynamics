@@ -6,7 +6,7 @@ import MPSDynamics: mpsembed!, interleaved_tightbinding_mpo, productstatemps
 #----------------------------
 
 N = 40      # number of chain sites
-β = 2.0     # inverse temperature
+β = 10.0     # inverse temperature
 μ = 0.      # chemical potential
 Ed = 0.3    # energy of the impurity
 ϵd = Ed - μ # energy of the impurity minus the chemical potential
