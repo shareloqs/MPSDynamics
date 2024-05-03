@@ -82,14 +82,14 @@ end
 
 """
 
-function fermionicspectraldensity_finiteT(x, i, β, chain, ϵ)
+function fermionicspectraldensity_finiteT(x, i, β, chain, ϵ, J)
     if i==1
         y = 0
     elseif i==2 || i==3
         if chain==1
-            y = (sqrt.(1 .- x.^2) .* sqrt.(1. ./(exp.(-β .* ϵ.(x)) .+ 1))).^2
+            y = (J.(x) .* sqrt.(1. ./(exp.(-β .* ϵ.(x)) .+ 1))).^2
         elseif chain==2
-            y = (sqrt.(1 .- x.^2) .* sqrt.(1. ./(exp.(β .* ϵ.(x)) .+ 1))).^2
+            y = (J.(x) .* sqrt.(1. ./(exp.(β .* ϵ.(x)) .+ 1))).^2
         end
     elseif i==4
         y = 0

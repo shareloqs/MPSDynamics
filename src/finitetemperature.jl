@@ -126,8 +126,9 @@ Generate chain coefficients ``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`` for a fermio
 * nummodes: Number of bath modes
 * β: inverse temperature
 * chain: 1 if the chain modes are empty, 2 if the chain modes are filled
-* ϵ: user-provided dispersion relation. Should be a function f(x) where x is the frequency
-* ωc: the maximum frequency of the dispersion relation
+* ϵ: user-provided dispersion relation. Should be a function f(x) where x is the wavenumber
+* J: user-provided spectral density. Should be a function f(x) where x is the wavenumber
+* ωc: the maximum frequency allowwed in the spectral density
 * mc: the number of component intervals
 * mp: the number of points in the discrete part of the measure (mp=0 if there is none)
 * iq: a parameter to be set equal to 1, if the user provides his or her own quadrature routine, and different from 1 otherwise
@@ -139,7 +140,7 @@ Generate chain coefficients ``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`` for a fermio
 """
 
 
-function chaincoeffs_fermionic(nummodes, β, chain; ϵ=nothing, ωc=1, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=true)
+function chaincoeffs_fermionic(nummodes, β, chain; ϵ=nothing, J=nothing, ωc=1, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=true)
 
     N = nummodes # Number of bath modes
 
@@ -155,8 +156,10 @@ function chaincoeffs_fermionic(nummodes, β, chain; ϵ=nothing, ωc=1, mc=4, mp=
 
     if ϵ==nothing
         throw(ArgumentError("A dispersion relation should have been provided."))
+    elseif J==nothing
+        throw(ArgumentError("The spectral density should be provided."))
     else
-        wf(x,i) = fermionicspectraldensity_finiteT(x, i , β, chain, ϵ)
+        wf(x,i) = fermionicspectraldensity_finiteT(x, i , β, chain, ϵ, J)
     end
 
     if procedure==:Lanczos  # choice between the Stieltjes (irout = 1) and the Lanczos procedure (irout != 1)
