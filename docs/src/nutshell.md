@@ -1,3 +1,3 @@
 
 
-![image](examples/mappings-1.md)
+![image](examples/mappings-1.png)
