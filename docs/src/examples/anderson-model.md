@@ -142,7 +142,7 @@ The fermionic mapping can be strightforwardly implemented with the methods of `M
 They only differ on the way the Hamiltonian MPO is defined. We now briefly review the important bits of the code.
 
 Both of the examples start with the definition of the physical parameters,
-```
+```julia
 N = 40      # number of chain sites
 β = 10.0     # inverse temperature
 μ = 0.      # chemical potential
@@ -150,7 +150,7 @@ Ed = 0.3    # energy of the impurity
 ϵd = Ed - μ # energy of the impurity minus the chemical potential
 ```
 The `chaincoeffs_fermionic` function is needed to compute the chain coefficients. It requires as inputs the number of modes of each chain `N`, the inverse temperature `\beta`, a label to specify if the chain modes are empty (label is `1.0`) or filled (label is `2.0`), and both the dispersion relation $\epsilon_k$ and the fermionic spectral density funciton $V_k$.
-```
+```julia
 function ϵ(x)
     return x
 end
@@ -163,7 +163,7 @@ chainparams1 = chaincoeffs_fermionic(N, β, 1.0; ϵ, J, save=false) # empty
 chainparams2 = chaincoeffs_fermionic(N, β, 2.0; ϵ, J, save=false) # filled
 ```
 We then specify the simulation parameters
-```
+```julia
 dt = 0.25           # time step
 T = 15.0            # simulation time
 method = :DTDVP     # time-evolution method
@@ -175,24 +175,24 @@ and with this we are ready to construct the Hamiltonian MPO and specify the init
 
 #### Double chain geometry
 The Hamiltonian is defined using the `tightbinding_mpo` function, which takes as an input the number of modes of each chain `N`, the defect's energy `\epsilon_d`, and the chain coefficients of the first `chainparams1` and second `chainparams2` chain. The MPS for the initial state is a factorized state made of: N filled states, a filled impurity, and N empty states. 
-```
+```julia
 H = tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
 ψ =  unitcol(2,2) # (0,1) filled impurity state
 A = productstatemps(physdims(H), state=[fill(unitcol(2,2), N)..., ψ, fill(unitcol(1,2), N)...]) # MPS
 ```
 To avoid the `DTDVP` algorithm from getting stuck in a local minimum, it is better to embed the MPS in a manifold of bond dimension 2 (or more):
-```
+```julia
 mpsembed!(A, 2) # to embed the MPS in a manifold of bond dimension 2
 ```
 We can now define the observables for the two chains and for the impurity
-```
+```julia
 ob1 = OneSiteObservable("chain1_filled_occup", numb(2), (1,N))
 ob2 = OneSiteObservable("chain2_empty_occup", numb(2), (N+2, 2N+1))
 ob3 = OneSiteObservable("system_occup", numb(2), N+1)
 ```
 and run the simulation
-```
+```julia
 A, dat = runsim(dt, T, A, H;
                 name = "Anderson impurity problem (folded chain)",
                 method = method,
@@ -208,14 +208,14 @@ A, dat = runsim(dt, T, A, H;
                 );
 ```
 With very minimal post-processing of the data
-```
+```julia
 # Reshaping the vector to a column matrix and horizontal concatenation
 system_occup_col = reshape(dat["data/system_occup"], :, 1)
 occ = hcat(dat["data/chain1_filled_occup"]', system_occup_col)
 occ = vcat(occ', dat["data/chain2_empty_occup"])
 ```
 we plot the results:
-```
+```julia
 # Plot the system occupation    
 p1 = plot(
     dat["data/times"],
@@ -277,7 +277,7 @@ plot(p2, p3, p4, p5, p1, layout = (3, 2), size = (1400, 1200))
 
 #### Interleaved chain geometry
 The Hamiltonian is defined using the `interleaved_tightbinding_mpo` function, which takes as an input the number of modes of each chain `N`, the defect's energy `\epsilon_d`, and the chain coefficients of the first `chainparams1` and second `chainparams2` chain. The MPS for the initial state is a factorized state (bond dimension 1) made of: a filled impurity, and 2N alternate filled-empty states. 
-```
+```julia
 H = interleaved_tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
 ψ =  unitcol(2,2) # (0,1) filled impurity state
@@ -291,16 +291,16 @@ end
 A = productstatemps(physdims(H), state=Tot) # MPS
 ```
 To avoid the `DTDVP` algorithm from getting stuck in a local minimum, it is better to embed the MPS in a manifold of bond dimension 2 (or more):
-```
+```julia
 mpsembed!(A, 2) # to embed the MPS in a manifold of bond dimension 2
 ```
 We can finally define the observables for the interleaved chain
-```
+```julia
 ob1 = OneSiteObservable("system_occup", numb(2), 1)
 ob2 = OneSiteObservable("folded_chain_occup", numb(2), (2,2N+1))
 ```
 and run the simulation
-```
+```julia
 A, dat = runsim(dt, T, A, H;
                 name = "Anderson impurity problem (folded chain)",
                 method = method,
@@ -316,7 +316,7 @@ A, dat = runsim(dt, T, A, H;
                 );
 ```
 To show the data in a clear way, we do a bit of post-processing of the data to _unfold_ the chain, and move back to the double chain representation:
-```
+```julia
 unfolded_occ = Vector{Vector{Float64}}()  # Assuming the elements are of type Float64
 unfolded_bonds = Vector{Vector{Float64}}()  # Adjust the type based on actual data
 
@@ -346,7 +346,7 @@ unfolded_bonds_matrix = hcat(unfolded_bonds...)'
 unfolded_occ_matrix = hcat(unfolded_occ...)'
 ```
 We conclude by plotting the data
-```
+```julia
 # Plot the system occupation    
 p1 = plot(
     dat["data/times"],
