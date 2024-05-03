@@ -187,10 +187,10 @@ The sites of a TTN are usually referred to as _nodes_.
 For our purposes, every node of a TTN state and operator has one _parent_ leg, and any number (including zero) of child legs. 
 The first node is known as the head-node and has a dummy parent leg with dimension 1.
 
-## Time-Dependent Variational Principal
+## Time-Dependent Variational Principle
 
 The original idea behind TDVP goes back to Dirac [^dirac_note_1930] and Frenkel [^frenkel_wave_1934].
-The main point, in the modern tensor networks formulation, is that instead of solving the Schrödinger equation and then truncating the MPS representation of the quantum state, one can solve the equations of motion projected into a space of restricted bond dimension [^haegeman_time-dependent_2011][^haegeman_unifying_2016].
+The main point, in the modern tensor networks formulation, is that instead of solving the Schrödinger equation and then truncating the MPS representation of the quantum state, one can solve the equations of motion projected into a space of restricted bond dimension [^haegeman_timedependent_2011][^haegeman_unifying_2016].
 
 The general formulation of the Dirac-Frenkel Variational Principle [^raab_diracfrenkelmclachlan_2000] is that one looks for a solution $|\varphi\rangle \in \mathcal{M}$ of the Schrödinger equation where $\mathcal{M} \subset \mathcal{H}$ is a manifold of the total Hilbert space $\mathcal{H}$ in which we think that the relevant physical states `live'.
 
@@ -284,14 +284,13 @@ The major advantage of this method is that it naturally preserves the unitarity 
 [^wolf_area_2008]:
     > Wolf, M. M.; Verstraete, F.; Hastings, M. B.; Cirac, J. I. Area Laws in Quantum Systems: Mutual Information and Correlations. Phys. Rev. Lett. 2008, 100 (7), 070502. https://doi.org/10.1103/PhysRevLett.100.070502.
 
-
 [^dirac_note_1930]:
     > Dirac, P. A. M. Note on Exchange Phenomena in the Thomas Atom. Mathematical Proceedings of the Cambridge Philosophical Society 1930, 26 (3), 376–385. https://doi.org/10.1017/S0305004100016108.
 
 [^frenkel_wave_1934]:
     > Frenkel, Y. Wave Mechanics, Advanced General Theory; Oxford, 1934; Vol. 1.
 
-[^haegeman_time-dependent_2011]:
+[^haegeman_timedependent_2011]:
     > Haegeman, J.; Cirac, J. I.; Osborne, T. J.; Pižorn, I.; Verschelde, H.; Verstraete, F. Time-Dependent Variational Principle for Quantum Lattices. Phys. Rev. Lett. 2011, 107 (7), 070601. https://doi.org/10.1103/PhysRevLett.107.070601.
 
 [^haegeman_unifying_2016]:    
