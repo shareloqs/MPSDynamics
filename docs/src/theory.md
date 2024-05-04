@@ -255,9 +255,13 @@ This equation must be true for any $|\phi\rangle \in \mathcal{H}$, Eq.~(\ref{eq:
     \left(\frac{\mathrm{d}}{\mathrm{d}t} - \frac{1}{\mathrm{i}\hbar}\hat{P}_{T_{|\varphi\rangle}\mathcal{M}}\hat{H}\right)|\varphi\rangle =0\ .
 ```
 
-In the context of MPS, the manifold $\mathcal{M}$ will correspond to the space of full-ranked MPS of a given bond dimension $D$, and the tangent space will be the space spanned by variations of single MPS tensors.
+In the context of MPS, the manifold $\mathcal{M}$ will correspond to the space of full-ranked MPS of a given bond dimension $D$, and the tangent space will be the space spanned by variations of single MPS tensors. The projector defines an effective Hamiltonian, $\hat{\mathcal{P}}_{|\psi(t)\rangle, \mathcal{M}}$, under which the dynamics are constrained on $\mathcal{M}$. Constraining the dynamics on a manifold, introduces a projection error: the time evolution will obey to an effective Hamiltonian different from the starting one. After the introduction of TDVP as a time evolution method for MPS, Haegeman \textit{et al.} pointed out [^haegeman_unifying_2016] that there exist an analytical decomposition for the projector operator $\hat{\mathcal{P}}$ that simplifies the resolution of the equation, turning the problem into one where each matrix $A_i$ can be updated with an effective \textit{on site} Hamiltonian $\hat H_\text{eff}$ via a Schroedinger like equation. The effective Hamiltonian $\hat H_\text{eff}$ is a contraction of the Hamiltonian MPO and the current state of the other matrices composing the MPS. This allows to do a sequential update.
 
-The major advantage of this method is that it naturally preserves the unitarity of the time evolution and conserves the energy.
+There exist different versions of the TDVP algorithm. In `MPSDynamics.jl` three methods have been so far implemented:
+- the one-site TDVP (1TDVP)
+- the two-sites TDVP (2TDVP) 
+- the adaptive TDVP (DTDVP) [^dunnett_efficient_2021]
+The main advantage of the one-site 1TDVP algorithm is that it preserves the unitarity of the MPS during the time evolution. Its main problem, conversely, is that the time evolution is constrained to happen on a manifold constituted by tensors of fixed bond dimension, a quantity closely related to the amount of entanglement in the MPS, and such a bond dimension has therefore to be fixed before the beginning of the time evolution. This strategy will necessarily be non optimal: the growth of the bond dimensions required to describe the quantum state should ideally mirror the entanglement growth induced by the time evolution. 2TDVP allows for such a dynamical growth of the bond dimensions, and therefore better describes the entanglement in the MPS. It suffers however of other drawbacks: first of all, a truncation error is introduced (by the means of an SVD decomposition), which entails a loss of unitarity of the time-evolved MPS. Moreover, 2TDVP has bad scaling properties with the size of the local dimensions of the MPS: this is a major issue when dealing with bosons. The DTDVP algorithm combines the best features of 1TDVP and 2TDVP: it preserves unitarity, it has the same scaling properties of 1TDVP, and it adapts the bond dimensions to the entanglement evolution at each site and at each time-step. DTDVP does not suffer from a truncation error, but introduces only a projection error.
 
 ## Bibliography
 [^chin_exact_2010]:
@@ -331,4 +335,7 @@ The major advantage of this method is that it naturally preserves the unitarity 
 
 [^raab_diracfrenkelmclachlan_2000]:
     > Raab, A. On the Dirac–Frenkel/McLachlan Variational Principle. Chemical Physics Letters 2000, 319 (5), 674–678. https://doi.org/10.1016/S0009-2614(00)00200-1.
- 
+
+[^dunnett_efficient_2021]:
+    > Dunnett, A. J.; Chin A. W. Efficient bond-adaptive approach for finite-temperature open quantum dynamics using the one-site time-dependent variational principle for matrix product states. Physical Review B, 104(21):214302, Dec 2021. doi:10.1103/PhysRevB.104.214302. 
+    
