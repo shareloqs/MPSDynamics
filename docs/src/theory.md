@@ -97,7 +97,47 @@ This method simplifies the simulation of finite temperature effects by treating 
 
 ### Finite temperature with the thermofield transformation
 
-Write about thermofield transfomation [^devega_thermo_2015].
+Finite temperature initial states of the system are challenging: in the previous section we have seen that a very efficient solution is to reabsorb the effect of the temperature inside of the spectral density function that characterizes the environment.
+De Vega and Bañuls present[^devega_thermo_2015] another suggestive approach based on the idea of the thermofield transformation. The idea is to double the environmental degrees of freedom and then to apply a Bogoliubov transformation: the real environment in a thermal state is transformed into two virtual environments in the vacuum state, defined as the _thermofield vacuum_. For any operator of the real environment, the expectation values in the thermal state are equivalent to those calculated in the thermofield vacuum. Behind the thermofield approach there is the concept of purification: the initial mixed state of the environment can be represented as the partial trace of a pure state (the thermofield vacuum) defined on the larger Hilbert space of the modes of the two virtual environments at zero temperature. The interaction of the system and each one of the two environments is then mapped on two separate chains, using the TEDOPA chain mapping to define a unitary transformation that can be applied to the bath modes, in order to define new modes for the environment, mapping it from a star-like to a one dimensional chain-like configuration, which is very well suited for the application of tensor network techniques.
+
+In the thermofield approach, the first step is to introduce the auxiliary environment $E^{\text{aux}}$ of non-interacting bosonic modes of negative frequencies:
+```math
+    \hat H^\text{aux} = \hat H - \sum_k \omega_k \hat c_k^\dagger \hat c_k,
+```
+where the Hamiltonian $\hat H$ is the bosonic Hamiltonian defined in Eq. \ref{eq:bosonic_ham}. The two environments, of positive and negative frequencies, are assumed to be in a thermal environment at inverse temperature $\beta$; the second step is to apply a thermal Bogoliubov transformation to change the basis. The applied transformation produces two-modes squeezed states:
+```math
+         \hat a_{1k}=e^{-iG}  \hat b_k e^{iG}= \cosh(\theta_k) \hat b_k -\sinh(\theta_k)  \hat c_k^\dagger \\
+         \hat a_{2k}=e^{-iG} \hat c_k e^{iG}= \cosh(\theta_k)  \hat c_k -\sinh(\theta_k)  \hat b_k^\dagger,
+```
+where the exponent of the squeeze operator is $G = i \sum_k \theta_k(\hat b_k^\dagger \hat c_k^\dagger-\hat c_k \hat b_k)$, and $\theta_k$ is dependent on the temperature as in the following relations, where the number of excitations in the $k$-th mode is $n_k = 1/(e^{\beta \omega_k}-1)$:
+```math
+         \cosh(\theta_k) = \sqrt{1+n_k} = \sqrt{\frac{1}{1-e^{-\beta \omega_k}}} \\
+         \sinh(\theta_k) =\quad\sqrt{n_k}\quad= \sqrt{\frac{1}{e^{\beta \omega_k}-1}}.
+```
+The Bogoliubov transformation defines a new squeezed vacuum state, which we write in terms of the vacuum state $\ket{\Omega_0}$ of the operators $\hat b_k$, $\hat c_k$:
+```math
+    |\Omega\rangle = e^{iG} |\Omega_0\rangle, \quad \text{such that: }\quad \hat a_{1k} |\Omega\rangle = 0,  \hat a_{2k} |\Omega\rangle = 0.
+```
+From the vacuum state, we can obtain the thermal state of the original environment:
+```math
+    \hat \rho_E = \Tr_{\text{aux}}\{\|\Omega\rangle\langle\Omega| \},
+```
+and it can be now used as pure an initial state for both of the environments. Moreover, the expectation value on $\ket{\Omega}$ of the number of physical modes $\hat n_k$ does not vanish:
+```math
+    n_k= \langle\Omega| \hat b_k^\dagger \hat b_k |\Omega\rangle = \sinh^2(\theta_k).
+```
+Therefore, solving the dynamics given by the original Hamiltonian $\hat H$, starting from the initial condition $\hat \rho_S(0) \otimes \hat \rho_E(\beta)$, is equivalent to solving the dynamics given by the following Hamiltonian:
+```math
+       \hat H = \hat H_S +\hat H_E +\hat H_I  = \\
+       = \overbrace{\hat A_S}^{\hat H_S} + \overbrace{\sum_k \omega_k \big(\hat a_{1k}^\dagger \hat a_{1k} - \hat a_{2k}^\dagger \hat a_{2k} \big)}^{H_E} + \overbrace{\hat L_S \otimes \sum_k g_{1k}(\hat a_{1k}^\dagger + \hat a_{1k})+\hat L_S \otimes \sum_k g_{2k}(\hat a_{2k}^\dagger + \hat a_{2k})}^{H_I}.
+```
+where $\hat L_S = \hat L_S^\dagger$, considering $\hat \rho_S(0) \otimes \ket{\Omega}\bra{\Omega}$ as the initial state of system and environment. It is this Hamiltonian that is mapped on two chains, to be able to perform the time evolution using tensor network techniques. In Fig. \ref{fig:thermofield} we give a visual representation of the thermofield procedure.
+
+We end this chapter by comparing the T-TEDOPA to the thermofield approach.
+The T-TEDOPA and the thermofield approach are equivalent from the point of view of the Hamiltonian that 
+dictates the time evolution. 
+The thermoofield approach is potentially more general than T-TEDOPA, since it applies also to Hamiltonians of the Jaynes-Cummings type: for T-TEDOPA to be applied, the operators appearing in the interaction Hamiltonian need to be self-adjoint. 
+There is however a difference in the computational cost of the numerical simulations performed using the two methods. In the thermofield approach, the simulation involves two chains: the tensor network structure is significantly more complex than the single chain structure of T-TEDOPA, making the thermofield approach significantly more expensive. 
 
 ## Computation of the chain coefficients
 
