@@ -12,4 +12,4 @@ Contributions are welcome! Don't hesitate to contact us if you
 * have a suggestion on how to improve the code and/or documentation;
 * would like to get involved in writing code and/or documentation.
 
-You can contact us by raising an [issue on Github](https://github.com/shareloqs/MPSDynamics/issues), or by writing to one of the developpers.
+You can contact us by raising an [issue on Github](https://github.com/shareloqs/MPSDynamics/issues), or by writing to one of the developers.
