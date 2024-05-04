@@ -17,8 +17,7 @@ Any SD that is not flat corresponds to a non-Markovian environment.
 
 ### Zero Temperature
 
-Let us consider the Hamiltonian presented in Eq.(1).
-We can introduce a unitary transformation of the continuous normal modes $\hat{a}_\omega$ to an infinite discrete set of interacting modes $\hat{b}_n$[^chin_exact_2010].
+Let us consider the Hamiltonian presented in Eq.(1). To investigate its rich phenomenology, using the powerful tools provided by tensor network techniques, it is convenient to map the system and its environment from a star-like to a chain-like configuration, with local interactions. To do so, we introduce a unitary transformation of the continuous normal modes $\hat{a}_\omega$ to an infinite discrete set of interacting modes $\hat{b}_n$[^chin_exact_2010].
 
 ```math
     \hat{a}_\omega = \sum_{n=0}^{+\infty} U_n(\omega)\hat{b}_n = \sum_{n=0}^{+\infty} \sqrt{J(\omega)}P_n(\omega)\hat{b}_n\ ,
@@ -93,7 +92,7 @@ The Hamiltonian of the system interacting with this extended bath now includes t
 \hat{H} = \hat{H}_S + \int_{-\infty}^{+\infty} d\omega \omega \hat{a}_\omega^\dagger \hat{a}_\omega + \hat{A}_S \otimes \int_{-\infty}^{+\infty} d\omega \sqrt{J(\omega,\beta)}\left(\hat{a}_\omega^\dagger+\hat{a}_\omega\right),
 ```
 
-This method simplifies the simulation of finite temperature effects by treating them within an effective zero-temperature framework, thereby keeping the computational advantages of using pure states.
+This method simplifies the simulation of finite temperature effects by treating them within an effective zero-temperature framework, thereby keeping the computational advantages of using pure states. In conclusion: the dynamics of the system resulting from the interaction with the original bath, starting in a thermal state at finite temperature, is exactly the same as the one resulting from the interaction with the extended environment, starting in the vacuum state at zero temperature. Once computed the chain coefficients at a given inverse temperature $\beta$, the time evolution of the vacuum state interacting with the extended environment can be efficiently simulated using MPS time evolution methods.
 
 ### Finite temperature with the thermofield transformation
 
@@ -120,7 +119,7 @@ The Bogoliubov transformation defines a new squeezed vacuum state, which we writ
 ```
 From the vacuum state, we can obtain the thermal state of the original environment:
 ```math
-    \hat \rho_E = \Tr_{\text{aux}}\{\|\Omega\rangle\langle\Omega| \},
+    \hat \rho_E = \text{Tr}_{\text{aux}}\{ |\Omega\rangle\langle\Omega| \},
 ```
 and it can be now used as pure an initial state for both of the environments. Moreover, the expectation value on $\ket{\Omega}$ of the number of physical modes $\hat n_k$ does not vanish:
 ```math
@@ -131,13 +130,7 @@ Therefore, solving the dynamics given by the original Hamiltonian $\hat H$, star
        \hat H = \hat H_S +\hat H_E +\hat H_I  = \\
        = \overbrace{\hat A_S}^{\hat H_S} + \overbrace{\sum_k \omega_k \big(\hat a_{1k}^\dagger \hat a_{1k} - \hat a_{2k}^\dagger \hat a_{2k} \big)}^{H_E} + \overbrace{\hat L_S \otimes \sum_k g_{1k}(\hat a_{1k}^\dagger + \hat a_{1k})+\hat L_S \otimes \sum_k g_{2k}(\hat a_{2k}^\dagger + \hat a_{2k})}^{H_I}.
 ```
-where $\hat L_S = \hat L_S^\dagger$, considering $\hat \rho_S(0) \otimes \ket{\Omega}\bra{\Omega}$ as the initial state of system and environment. It is this Hamiltonian that is mapped on two chains, to be able to perform the time evolution using tensor network techniques. In Fig. \ref{fig:thermofield} we give a visual representation of the thermofield procedure.
-
-We end this chapter by comparing the T-TEDOPA to the thermofield approach.
-The T-TEDOPA and the thermofield approach are equivalent from the point of view of the Hamiltonian that 
-dictates the time evolution. 
-The thermoofield approach is potentially more general than T-TEDOPA, since it applies also to Hamiltonians of the Jaynes-Cummings type: for T-TEDOPA to be applied, the operators appearing in the interaction Hamiltonian need to be self-adjoint. 
-There is however a difference in the computational cost of the numerical simulations performed using the two methods. In the thermofield approach, the simulation involves two chains: the tensor network structure is significantly more complex than the single chain structure of T-TEDOPA, making the thermofield approach significantly more expensive. 
+where $\hat L_S = \hat L_S^\dagger$, considering $\hat \rho_S(0) \otimes \ket{\Omega}\bra{\Omega}$ as the initial state of system and environment. It is this Hamiltonian that is mapped on two chains with TEDOPA, to be able to perform the time evolution using tensor network techniques. 
 
 ## Computation of the chain coefficients
 
