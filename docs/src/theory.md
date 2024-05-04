@@ -11,7 +11,7 @@ We consider, in the Schrödinger picture, a general Hamiltonian where a non-spec
 ```
 
 
-where $\hat{a}_\omega$ ($\hat{a}^\dagger_\omega$) is a bosonic annihilation (creation) operator for a normal mode of the environment of energy $\hbar\omega$, $\hat{A}_S$ is a system operator, and $J(\omega) = \sum_k |g_k|^2\delta(\omega - \omega_k)$ is the bath spectral density (SD), defined with the microscopic system-environment coupling strength $g_k$.
+where $\hat a_\omega$ ($\hat a^\dagger_\omega$) is a bosonic annihilation (creation) operator for a normal mode of the environment of energy $\hbar\omega$, $\hat{A}_S$ is a system operator, and $J(\omega) = \sum_k |g_k|^2\delta(\omega - \omega_k)$ is the bath spectral density (SD), defined with the microscopic system-environment coupling strength $g_k$.
 The SD quantifies the coupling strengths of the different normal modes of the environment with the system.
 Any SD that is not flat corresponds to a non-Markovian environment.
 
