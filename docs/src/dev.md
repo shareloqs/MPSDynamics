@@ -1,4 +1,4 @@
-# Developpers
+# Developers
 
 ## Simulation Workflow
 
