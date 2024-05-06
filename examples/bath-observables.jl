@@ -71,7 +71,7 @@ ob4 = TwoSiteObservable("cdagc", crea(d), anih(d), collect(2:N+1), collect(2:N+1
 ob5 = OneSiteObservable("sx", sx, 1)
 
 A, dat = runsim(dt, tfinal, A, H, prec=1E-4;
-                name = "pure dephasing model with temperature",
+                name = "Bath observables in the pure dephasing model",
                 method = method,
                 obs = [ob1],
                 convobs = [ob1],
