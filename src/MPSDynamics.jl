@@ -172,7 +172,7 @@ export @LogParams
 
 export MPOtoVector, MPStoVector
 
-export rhoreduced_2sites, rhoreduced_1site
+export rhoreduced_2sites, rhoreduced_1site, protontransfermpo
 
 export chaincoeffs_finiteT, chaincoeffs_fermionic, fermionicspectraldensity_finiteT
 

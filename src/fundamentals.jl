@@ -4,6 +4,7 @@ crea(d) = diagm(-1 => [sqrt(i) for i=1:d-1])
 anih(d) = Matrix(crea(d)')
 numb(d) = crea(d)*anih(d)
 disp(d) = (1/sqrt(2))*(crea(d)+anih(d))
+disp(d,ωvib,m) = (1/(2*sqrt(m*ωvib/2)))*(crea(d)+anih(d))
 mome(d) = (1/sqrt(2))*(im*(crea(d)-anih(d)))
 sx = [0. 1.; 1. 0.]
 sz = [1. 0.; 0. -1.]

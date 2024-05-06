@@ -13,7 +13,8 @@ function run_2TDVP(dt, tmax, A, H, truncerr; obs=[], Dlim=50, savebonddims=false
         push!(data, obs[i].name => reshape(exp[i], size(exp[i])..., 1))
     end
     if reduceddensity
-        exprho = rhoreduced_1site(A0,1)
+        :Nrho in keys(kwargs) ? Nrho = kwargs[:Nrho] : Nrho = 1
+        exprho = rhoreduced_1site(A0,Nrho)
         push!(data, "Reduced ρ" => reshape(exprho, size(exprho)..., 1))
     end
 
@@ -46,7 +47,7 @@ function run_2TDVP(dt, tmax, A, H, truncerr; obs=[], Dlim=50, savebonddims=false
             data[ob.name] = cat(data[ob.name], exp[i], dims=ndims(exp[i])+1)
         end
         if reduceddensity
-            exprho = rhoreduced_1site(A0,1)
+            exprho = rhoreduced_1site(A0,Nrho)
             data["Reduced ρ"] = cat(data["Reduced ρ"], exprho; dims=ndims(exprho)+1)
         end
         if savebonddims

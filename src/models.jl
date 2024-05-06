@@ -704,7 +704,7 @@ function nearestneighbourmpo(tree_::Tree, h0, A, Ad = A')
     Ms[hn] = Ms[hn][D:D, fill(:,nc+2)...]
     return TreeNetwork(tree, Ms)
 end
-
+#=
 """
     puredephasingmpo(ΔE, dchain, Nchain, chainparams; tree=false)
 
@@ -719,9 +719,8 @@ end
     * `Nchain::Int`: number of sites in the chain
     * `chainparams::Array{Real,1}`: chain parameters for the bath chain. The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
     * `tree::Bool`: if true, return a `TreeNetwork` object, otherwise return a vector of MPO tensors
-    """
 
-
+"""=#
 function puredephasingmpo(ΔE, dchain, Nchain, chainparams; tree=false)
     u = unitmat(2)
 
@@ -1335,3 +1334,33 @@ function correlatedenvironmentmpo(R::Vector, Nm::Int, d::Int; chainparams, fname
 
     return W
 end
+
+function protontransfermpo(ω0e,ω0k,x0e,x0k, Δ, dsystem, dRC, d, N, chainparams, RCparams, λreorg)
+    u = unitmat(dsystem)
+
+    b = anih(dRC)
+    bd = crea(dRC)
+    n = numb(dRC)
+    e = RCparams[1]
+    uRC = unitmat(dRC)
+
+    spos = [-x0e 0.; 0. -x0k]
+
+    c0 = only(chainparams[3])
+    cRC = only(RCparams[2])
+
+    Hs = (ω0e)*[1. 0.; 0. 0.] + (ω0k)*[0. 0.; 0. 1.] + Δ*sx
+
+    M=zeros(1,3,dsystem,dsystem)
+    M[1,:,:,:] = up(Hs, cRC*spos, u)
+
+    MRC = zeros(3,3,dRC,dRC)
+
+    MRC[:, 1, :, :] = dn(e[1]*(n.+diagm([1/2 for i=1:dRC]))+(λreorg)*(b+bd)^2,(b+bd), uRC)
+    MRC[3, :, :, :] = up(e[1]*(n.+diagm([1/2 for i=1:dRC]))+(λreorg)*(b+bd)^2, -c0*(b+bd), uRC)
+
+    chain = hbathchain(N, d, chainparams; coupletox=true)
+
+    return Any[M,MRC,chain...]
+end
+
