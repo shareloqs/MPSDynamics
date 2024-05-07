@@ -704,12 +704,12 @@ function nearestneighbourmpo(tree_::Tree, h0, A, Ad = A')
     Ms[hn] = Ms[hn][D:D, fill(:,nc+2)...]
     return TreeNetwork(tree, Ms)
 end
-#=
+
 """
     puredephasingmpo(ΔE, dchain, Nchain, chainparams; tree=false)
 
     Generate MPO for a pure dephasing model, defined by the Hamiltonian
-    ``H = \frac{ΔE}{2} σ_z +  \frac{σ_z}{2} c_0 (b_0^\dagger + b_0) + \sum_{i=0}^{N-1} t_i (b_{i+1}^\dagger b_i +h.c.) + \sum_{i=0}^{N-1} ϵ_i b_i^\dagger b_i  ``
+    ``H = \\frac{ΔE}{2} σ_z +  \\frac{σ_z}{2} c_0 (b_0^\\dagger + b_0) + \\sum_{i=0}^{N-1} t_i (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_i b_i^\\dagger b_i  ``
 
     The spin is on site 1 of the MPS and the bath modes are to the right.
 
@@ -720,7 +720,7 @@ end
     * `chainparams::Array{Real,1}`: chain parameters for the bath chain. The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
     * `tree::Bool`: if true, return a `TreeNetwork` object, otherwise return a vector of MPO tensors
 
-"""=#
+"""
 function puredephasingmpo(ΔE, dchain, Nchain, chainparams; tree=false)
     u = unitmat(2)
 
@@ -1335,8 +1335,38 @@ function correlatedenvironmentmpo(R::Vector, Nm::Int, d::Int; chainparams, fname
     return W
 end
 
-function protontransfermpo(ω0e,ω0k,x0e,x0k, Δ, dsystem, dRC, d, N, chainparams, RCparams, λreorg)
-    u = unitmat(dsystem)
+"""
+    protontransfermpo(ω0e,ω0k,x0e,x0k, Δ, dRC, d, N, chainparams, RCparams, λreorg)
+
+Generate a MPO for a system described in space with a reaction coordinate (RC) tensor. The RC tensor is coupled to a bosonic bath, taking into account the induced reorganization energy. 
+
+``
+H_S + H_RC + H_int^{S-RC} = \\omega^0_{e} |e\\rangle \\langle e| + \\omega^0_{k} |k\\rangle \\langle k| + \\Delta (|e\\rangle \\langle k| + |k\\rangle \\langle e|) + \\omega_{RC} (d^{\\dagger}d + \\frac{1}{2}) + g_{e} |e\\rangle \\langle e|( d + d^{\\dagger})+ g_{k} |k \\rangle \\langle k|( d + d^{\dagger})
+``
+``
+H_B + H_int^{RC-B} = \\int_{-∞}^{+∞} dk ω_k b_k^\\dagger b_k - (d + d^{\\dagger})\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\lambda_{reorg}(d + d^{\\dagger})^2
+``.
+``
+\\lambda_{reorg} = \\int \\frac{J(\\omega)}{\\omega}d\\omega
+``.
+
+
+# Arguments
+
+* `ω0e`: enol energy at x=0 
+* `ω0k`: keto energy at x=0
+* `x0e`: enol equilibrium displacement
+* `x0k`: keto equilibrium displacement 
+* `Δ`: direct coupling between enol and keto
+* `dRC`: fock space of the RC tensor 
+* `d`: number of Fock states of the chain modes
+* `N`: length of the chain
+* `chainparams`: chain parameters, of the form `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature. 
+* `RCparams`: RC tensor parameter, of the form `RCparams`=``[ωRC,-g/x]`` 
+* `λreorg`: reorganization energy
+"""
+function protontransfermpo(ω0e,ω0k,x0e,x0k, Δ, dRC, d, N, chainparams, RCparams, λreorg)
+    u = unitmat(2)
 
     b = anih(dRC)
     bd = crea(dRC)
@@ -1351,7 +1381,7 @@ function protontransfermpo(ω0e,ω0k,x0e,x0k, Δ, dsystem, dRC, d, N, chainparam
 
     Hs = (ω0e)*[1. 0.; 0. 0.] + (ω0k)*[0. 0.; 0. 1.] + Δ*sx
 
-    M=zeros(1,3,dsystem,dsystem)
+    M=zeros(1,3,2,2)
     M[1,:,:,:] = up(Hs, cRC*spos, u)
 
     MRC = zeros(3,3,dRC,dRC)

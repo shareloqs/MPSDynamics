@@ -1,9 +1,18 @@
 #=
-    Example of a Proton Transfer model at zero temperature with an hard cut-off Ohmic spectral density J(ω) = 2αω when ω < ωc and 0 otherwise#
+    Example of a Proton Transfer model at zero temperature for an isolated system or with an environment characterised by an hard cut-off Ohmic spectral density J(ω) = 2αω when ω < ωc and 0 otherwise#
 
     The dynamics is simulated using the T-TEDOPA method that maps the normal modes environment into a non-uniform tight-binding chain.
 
-    H = \frac{ΔE}{2} σ_z +  \frac{σ_z}{2} c_0 (b_0^\dagger + b_0) + \sum_{i=0}^{N-1} t_i (b_{i+1}^\dagger b_i +h.c.) + \sum_{i=0}^{N-1} ϵ_i b_i^\dagger b_i  
+    The RC tensor is initially displaced at the value γ corresponding to a space coordinate.
+
+    The intiial electronic system is initialized in the adiabatic LOW surface at the RC displacement. 
+
+    H_S + H_RC + H_int^{S-RC} = ω^0_{e} |e⟩ ⟨e| + ω^0_{k} |k⟩ ⟨k| + \\Delta (|e⟩ ⟨k| + |k⟩ ⟨ e|) + ω_{RC} (d^{\dagger}d + \\frac{1}{2}) + g_{e} |e⟩ ⟨e|( d + d^{\dagger})+ g_{k} |k⟩ ⟨k|( d + d^{\dagger})
+``
+    H_B + H_int^{RC-B} = ∫_{-∞}^{+∞} dk ω_k b_k^\dagger b_k - (d + d^{\dagger})∫_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + λ_{reorg}(d + d^{\\dagger})^2
+``.
+    λ_{reorg} = ∫ \frac{J(ω)}{ω}dω
+
 =#
 
 using MPSDynamics, Plots, LaTeXStrings, QuadGK, ColorSchemes, PolyChaos, LinearAlgebra
@@ -11,39 +20,40 @@ using MPSDynamics, Plots, LaTeXStrings, QuadGK, ColorSchemes, PolyChaos, LinearA
 #----------------------------
 # Physical parameters
 #----------------------------
+# Enol / Keto
 
-ω0e= 0.8 
-ω0k= 0.8
+ω0e= 0.8  # Enol energy at x=0
+ω0k= 0.8  # Keto energy at x=0
 
-x0e = -0.25
-x0k = 0.25
+x0e = -0.25 # Enol Equilibrium displacement 
+x0k = 0.25 # Keto Equilibrium displacement 
 
-Δ = 0.05
+Δ = 0.05 # Direct coupling between enol and keto
 
-m=1.83E3
-ħ=1
+m=1.83E3 # Mass of the reaction coordinate particle. 1.83E3 is the proton mass in atomic units. 
+ħ=1 # Atomic Units convention
 
-dFockRC = 25
+dFockRC = 25 # Fock space of the RC tensor
 
-ωRC = 0.0347
+ωRC = 0.0347 # Frequency of the RC tensor
 
 γ = sqrt(m*ωRC/2)*x0e # γ = displacement RC ; γ = \sqrt{m\omega/2} x_disp
 
-cparsRC = [ωRC,ωRC*sqrt(m*ωRC/2)] # Energy and g coupling parameter
+cparsRC = [ωRC,ωRC*sqrt(m*ωRC/2)] # Energy and g RC coupling parameter
 
-isolated = true
-# If isolated system, set up d=1, α =0 and N = 2
+isolated = true # isolated = true : no environment
+# Creates the chain depending on the isolated condition. The parameters for isolated = false can be modified as desired.
 if isolated
-    d=1; N=2; α = 0.0 
+    d=1; N=2; α = 0.0  # number of Fock states of the chain modes ; length of the chain ; coupling strength
 else
-    d=4; N=40; α = 0.008
+    d=4; N=40; α = 0.008 # number of Fock states of the chain modes ; length of the chain ; coupling strength
 end
 
 s = 1 # ohmicity
 
 ωc = 2*ωRC # Cut-off of the spectral density J(ω)
 
-λreorg = (2*α*ωc)/s
+λreorg = (2*α*ωc)/s # Reorganisation Energy taken into account in the Hamiltonian
 
 cpars = chaincoeffs_ohmic(N, α, s; ωc=ωc) # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
 
@@ -53,7 +63,7 @@ cpars = chaincoeffs_ohmic(N, α, s; ωc=ωc) # chain parameters, i.e. on-site en
 
 dt = 10.0 # time step
 
-tfinal = 2000.0  #1000.0 # simulation time
+tfinal = 2000.0 # simulation time
 
 numsteps = length(collect(0:dt:tfinal))-1
 
@@ -68,7 +78,7 @@ D = 5 # MPS bond dimension
 xlist_rho =collect(-1.2:0.05:1.2) # x definition for the reduced density matrix expressed in space
 # other values of xlist_rho can be chosen to gain numerical time
 
-palette = ColorSchemes.okabe_ito
+palette = ColorSchemes.okabe_ito # color palette for plots
 
 #---------------------------
 # MPO and initial state MPS
@@ -107,9 +117,9 @@ end
 
 coherent_RC[1] = hcat(chainpop_RCini[:,1]...) #Manipulation to get good format for MPS, does not change value
 
-H = protontransfermpo(ω0e, ω0k, x0e, x0k, Δ, length(ψ), dFockRC, d, N, cpars, cparsRC, λreorg)
+H = protontransfermpo(ω0e, ω0k, x0e, x0k, Δ, dFockRC, d, N, cpars, cparsRC, λreorg)
 
-A = productstatemps(physdims(H), state=[ψ, coherent_RC..., fill(unitcol(1,d), N)...]) # MPS representation of |ψ>|Vacuum>
+A = productstatemps(physdims(H), state=[ψ, coherent_RC..., fill(unitcol(1,d), N)...]) # MPS representation of |ψ>|Displaced RC>|Vacuum>
 
 Eini = measurempo(A,H)
 print("\n Energy =",Eini)
@@ -146,7 +156,7 @@ A, dat = runsim(dt, tfinal, A, H;
 # Plots
 #------------
 
-#### Plot the doublewell in the adiabatic basis #####
+#### Plot the doublewell in the adiabatic basis. It is obtained with the diagonalization of the diabatic space Hamiltonian #####
 
 function fp(ɸ)
     H11 = Ae + 0.5*m*ωRC^2*(ɸ-x0e)^2
@@ -170,10 +180,7 @@ end
 
 ɸ = [i for i in -0.75:0.001:0.75]
 ɸwp = [i for i in -0.45:0.001:-0.05]
-xmin = -0.75
-xmax = 0.75
-ymin = 0.7
-ymax =0.9 
+xmin = -0.75 ; xmax = 0.75 ; ymin = 0.7 ; ymax = 0.9 
 
 plt=plot(ɸ,fm, label="LOW",xlabel="Reaction Coordinate (arb. units)",ylabel=L"$\omega$ (arb. units)",linewidth=4,thickness_scaling = 1, bg_legend=:transparent, legendfont=16, legendfontsize=16, xguidefontsize=16, yguidefontsize=16, tickfontsize=(12), xlims=(xmin,xmax),ylims=(ymin,ymax),xticks=(xmin:0.25:xmax),yticks=(ymin:0.05:ymax),legend=(0.6,0.6), grid=false,linecolor =palette[8])
 
