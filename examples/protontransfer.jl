@@ -15,7 +15,7 @@
 
 =#
 
-using MPSDynamics, Plots, LaTeXStrings, QuadGK, ColorSchemes, PolyChaos, LinearAlgebra
+using MPSDynamics, Plots, LaTeXStrings, ColorSchemes, PolyChaos, LinearAlgebra
 
 #----------------------------
 # Physical parameters
@@ -41,7 +41,7 @@ dFockRC = 25 # Fock space of the RC tensor
 
 cparsRC = [ωRC,ωRC*sqrt(m*ωRC/2)] # Energy and g RC coupling parameter
 
-isolated = true # isolated = true : no environment
+isolated = true # isolated = true : no environment ; isolated = false : system coupled to a bosonic environment
 # Creates the chain depending on the isolated condition. The parameters for isolated = false can be modified as desired.
 if isolated
     d=1; N=2; α = 0.0  # number of Fock states of the chain modes ; length of the chain ; coupling strength
