@@ -8,6 +8,8 @@
 
 using MPSDynamics, Plots, LaTeXStrings, QuadGK
 
+import MPSDynamics: chaincoeffs_ohmic, puredephasingmpo
+
 const ∞  = Inf
 #----------------------------
 # Physical parameters

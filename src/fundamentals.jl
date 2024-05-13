@@ -177,6 +177,38 @@ function measuremodes(adaga, e::Vector, t::Vector)
 end
 
 """
+    measurecorrs(oper, , e::Vector, t::Vector)
+
+    ### Parameters
+
+    `oper``: Square matrix (Matrix{Float64}) representing the operator to be transformed.
+    `e``: Vector (Vector{Float64}) of diagonal (on-site energy) chain coefficients.
+    `t`: Vector (Vector{Float64}) of off-diagonal (hopping terms) chain coefficients.
+
+    ### Returns
+
+    Matrix{Float64}: This matrix is the operator `oper` transformed back from the chain 
+    representation to the representation corresponding to the extended bath. The resulting 
+    operator represents quantities like mode occupations or other properties in the basis 
+    of environmental modes associated with specific frequencies $\omega_i$.
+
+    ### Description
+    
+    This function performs a basis transformation of the operator `oper`. Specifically, 
+    this transformation reverses the unitary transformation that maps the extended bath
+    Hamiltonian into the chain representation. 
+
+"""
+
+function measurecorrs(oper, e::Vector, t::Vector)
+    N = size(oper)[1]
+    hmat = diagm(0=>e[1:N], 1=>t[1:N-1], -1=>t[1:N-1])
+    F = eigen(hmat)
+    U = F.vectors
+    return (U' * oper * U)
+end
+
+"""
     findchainlength(T, cparams...; eps=10^-6)
 
 Estimate length of chain required for a particular set of chain parameters by calculating how long an excitation on the
