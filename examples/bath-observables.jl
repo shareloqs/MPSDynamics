@@ -1,6 +1,7 @@
-using MPSDynamics, Plots, LaTeXStrings, QuadGK, LinearAlgebra
+using MPSDynamics, Plots, LaTeXStrings, QuadGK, LinearAlgebra, Interpolations
 
-import MPSDynamics: measuremodes, measurecorrs, mpsembed!, eigenchain
+import MPSDynamics: measuremodes, measurecorrs, mpsembed!, eigenchain, physical_occup
+
 
 const ∞  = Inf
 #----------------------------
@@ -8,13 +9,13 @@ const ∞  = Inf
 #----------------------------
 
 d = 10      # number of Fock states of the chain modes
-N = 30      # length of the chain
+N = 60      # length of the chain
 α = 0.01    # coupling strength
-ω0 = 0.008  # TLS gap
+ω0 = 0.2  # TLS gap
 s = 1       # ohmicity
-ωc = 0.035  # Cut-off of the spectral density J(ω)
-#β = 100    # Thermalized environment
-β = ∞       # Case zero temperature T=0, β → ∞
+ωc = 1.  # Cut-off of the spectral density J(ω)
+β = 20    # Thermalized environment
+#β = ∞       # Case zero temperature T=0, β → ∞
 
 #----------------------------
 # Ohmic spectral density
@@ -23,7 +24,7 @@ s = 1       # ohmicity
 if β == ∞
     cpars = chaincoeffs_ohmic(N, α, s; ωc=ωc)  # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
 else
-    cpars = chaincoeffs_finiteT(N, β; α=α, s=s, J=nothing, ωc=ωc, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=true)  # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
+    cpars = chaincoeffs_finiteT(N, β; α=α, s=s, J=nothing, ωc=ωc, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=false)  # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
     #=#If cpars is stored in "../ChainOhmT/ohmicT" 
     curdir = @__DIR__
     dir_chaincoeff = abspath(joinpath(curdir, "../ChainOhmT/ohmicT"))
@@ -44,7 +45,7 @@ end
 method = :TDVP1         # time-evolution method
 conv = 3                # bond dimension for the TDVP1
 dt = 0.5                # time step
-tfinal = 100.0           # simulation time
+tfinal = 60.0           # simulation time
 Tsteps = Int(tfinal / dt)
 
 #---------------------------
@@ -121,6 +122,9 @@ correlations_cdag = [
     cdagcdag_average[i, j, t] - cdag_average[i, 1, t] .* cdag_average[j, 1, t]
     for i in 1:size(cdagcdag_average, 1), j in 1:size(cdagcdag_average, 2), t in 1:size(cdagcdag_average,3)
 ]
+
+bath_occup_phys = physical_occup(correlations_cdag[:,:,Tsteps], correlations_c[:,:,Tsteps], omeg, bath_occup[:,:,Tsteps], β, N)
+
 #--------------------
 # Analytical results 
 #--------------------
@@ -160,11 +164,19 @@ cumul = [bath_occup_analytical(omeg[i], tfinal)*(omeg[i+1]-omeg[i]) for i in 1:(
 
 p2 = plot(omeg[1:length(omeg)-1], cumul,
              xlabel=L"\omega", ylabel=L"\langle n^b_\omega \rangle", label="Analytics",
-             title="Mode occupation")
+             title="Mode occupation in the extended bath")
 p2 = plot!(omeg, bath_occup[:, :, Tsteps], label="Numerics")
 
 p3 = heatmap(omeg, omeg, abs.(real.(correlations_cdag[:,:,Tsteps]) .+ im*imag.(correlations_cdag[:,:,Tsteps])), 
             xlabel=L"\omega",
             ylabel=L"\omega", title="Environmental correlations")
 
-plot(p1, p2, p3, layout = (2, 2), size = (1400, 1200))
+
+Mhalf = Int(length(omeg)*0.5)+1
+M = length(omeg)
+
+p4 = plot(omeg[Mhalf:M], bath_occup_phys,
+            xlabel=L"\omega", ylabel=L"\langle n^b_\omega \rangle", label="Analytics",
+            title="Mode occupation in the physical bath")
+
+plot(p1, p2, p3, p4, layout = (2, 2), size = (1400, 1200))
