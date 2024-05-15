@@ -100,6 +100,7 @@ H = spinbosonmpo(ω0, Δ, d, N, cpars) # MPO representation of the Hamiltonian
 
 A = productstatemps(physdims(H), state=[ψ, fill(unitcol(1,d), N)...]) # MPS representation of |ψ>|Vacuum>
 ```
+We then chose the observables that will be measured during the time evolution after being passed as an argument of the [`MPSDynamics.runsim`](@ref) method.
 
 ```julia
 #---------------------------
@@ -112,6 +113,8 @@ ob2 = OneSiteObservable("chain mode occupation", numb(d), (2,N+1))
 
 ob3 = TwoSiteObservable("SXdisp", sx, disp(d), [1], collect(2:N+1))
 ```
+We run the simulation from `t = 0` to `tfinal` with time-steps of size `dt` using the `method` method.
+The `convobs` observables will be measured and stored for the convergence parameters `convparams`, whereas the `obs` observables will only be measured and stored for the most precise convergence parameter.
 
 ```julia
 #-------------
@@ -131,6 +134,7 @@ A, dat = runsim(dt, tfinal, A, H;
                 plot = true,
                 );
 ```
+Finally, we plot the simulation results that are stored in the `dat` dictionnary.
 
 ```julia
 #----------
