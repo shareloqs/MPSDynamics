@@ -21,10 +21,10 @@ We remark that this is the same Bogoliubov transformation used in the thermofiel
 The thermofield-transformed Hamiltonian is then mapped on two chains, defined and constructed using the TEDOPA chain mapping: the chain labelled $1$ is for the empty modes, the chain labelled $2$ for the filled modes.
 The following relations are used to define the functions equivalent to the spectral density of the bosonic case, one for each chain:
 ```math
-\begin{align}
+\begin{aligned}
    &V_{1k} = V_{k} \sin \theta_k = \sqrt{\frac{1}{e^{\beta \epsilon_k}+1}} \\
    &V_{2k} = V_{k} \cos \theta_k = \sqrt{\frac{1}{e^{-\beta \epsilon_k}+1}}, 
-\end{align}
+\end{aligned}
 ```    
 where we choose the spectral function that characterizes the fermionic bath to be: $V_k= \sqrt{1-k^2}$, and we define the dispersion relation as: $e_k = k$, that is, a linear dispersion relation with propagation speed equal to $1$. This latter choice corresponds to a model of metals (gapless energy spectrum). We select a filled state as the initial state of the defect.
 Using the mapping proposed in [1], the chain Hamiltonian becomes:
