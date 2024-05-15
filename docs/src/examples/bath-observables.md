@@ -87,9 +87,11 @@ omeg = eigenchain(cpars, nummodes=N).values
 
 At each time step of the simulation, a number of one-site and two-sites observables where evaluated on the chain. To obtain their value in the extended bath of T-tedopa, characterized by $J(\omega,\beta)$, the unitary transformation that maps the extended bath Hamiltonian into the chain representation has to be reversed. For instance, when measuring the single site $\hat n^c_i=\hat c_i^\dagger \hat c_i$ occupation number, we are not measuring the occupation number of the bosonic mode associated to the $\omega_i$ frequency, but the occupation number of the $i-$th chain mode.
 Therefore to calculate the number of modes of the environment associated to a specific frequency $\omega_i$, the mapping must be reversed, to obtain the diagonal representation of the bosonic number operator:
+
 $$
 \hat n^b_{i} = \hat b_i^\dagger \hat b_i = \sum_{k,l} U_{ik}^* \hat c_k^\dagger \hat c_l U_{li}.  
 $$
+
 This is done in the code using the `measuremodes(X, cpars[1], cpars[2])` function, which outputs the vector of the diagonal elements of the operators, in the following way:
 
 ```julia
