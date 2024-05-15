@@ -1,4 +1,4 @@
-using MPSDynamics, Plots, LaTeXStrings, QuadGK, LinearAlgebra, Interpolations
+using MPSDynamics, Plots, LaTeXStrings, QuadGK, LinearAlgebra, Interpolations, Revise
 
 import MPSDynamics: measuremodes, measurecorrs, mpsembed!, eigenchain, physical_occup
 
@@ -17,6 +17,16 @@ s = 1       # ohmicity
 β = 20    # Thermalized environment
 #β = ∞       # Case zero temperature T=0, β → ∞
 
+
+#-----------------------
+# Simulation parameters
+#-----------------------
+
+method = :TDVP1         # time-evolution method
+conv = 3                # bond dimension for the TDVP1
+dt = 0.5                # time step
+tfinal = 60.0           # simulation time
+
 #----------------------------
 # Ohmic spectral density
 #----------------------------
@@ -32,22 +42,6 @@ else
     =#
 end
 
-
-#-----------------------
-# Simulation parameters
-#-----------------------
-
-#method = :TDVP1         # time-evolution method
-#conv = 2                # MPS bond dimension
-#dt = 1.0                # time step
-#tfinal = 10.0           # simulation time
-
-method = :TDVP1         # time-evolution method
-conv = 3                # bond dimension for the TDVP1
-dt = 0.5                # time step
-tfinal = 60.0           # simulation time
-Tsteps = Int(tfinal / dt)
-
 #---------------------------
 # MPO and initial state MPS
 #---------------------------
@@ -61,7 +55,6 @@ H = puredephasingmpo(ω0, d, N, cpars)
 
 
 A = productstatemps(physdims(H), state=[ψ, fill(unitcol(1,d), N)...]) # MPS representation of |ψ>|Vacuum>
-mpsembed!(A, 2)
 #---------------------------
 # Definition of observables
 #---------------------------
@@ -71,7 +64,6 @@ ob2 = OneSiteObservable("sx", sx, 1)
 ob3 = OneSiteObservable("chain_mode_occupation", numb(d), (2,N+1))
 ob4 = OneSiteObservable("c", crea(d), collect(2:N+1))
 ob5 = OneSiteObservable("cdag", crea(d), collect(2:N+1))
-
 ob6 = TwoSiteObservable("cdagc", crea(d), anih(d), collect(2:N+1), collect(2:N+1))
 ob7 = TwoSiteObservable("cdagcdag", crea(d), crea(d), collect(2:N+1), collect(2:N+1))
 ob8 = TwoSiteObservable("cc", anih(d), anih(d), collect(2:N+1), collect(2:N+1))
@@ -87,7 +79,6 @@ A, dat = runsim(dt, tfinal, A, H, prec=1E-4;
                 convobs = [ob1],
                 params = @LogParams(ω0, N, d, α, s, ψ),
                 convparams = conv,
-                Dlim = 100,
                 reduceddensity = true,
                 verbose = false,
                 save = false,
@@ -123,7 +114,6 @@ correlations_cdag = [
     for i in 1:size(cdagcdag_average, 1), j in 1:size(cdagcdag_average, 2), t in 1:size(cdagcdag_average,3)
 ]
 
-bath_occup_phys = physical_occup(correlations_cdag[:,:,Tsteps], correlations_c[:,:,Tsteps], omeg, bath_occup[:,:,Tsteps], β, N)
 
 #--------------------
 # Analytical results 
@@ -162,12 +152,12 @@ p1 = plot!(dat["data/times"], ρ12, lw=4, ls=:dash, label="Numerics")
 
 cumul = [bath_occup_analytical(omeg[i], tfinal)*(omeg[i+1]-omeg[i]) for i in 1:(length(omeg)-1)]
 
-p2 = plot(omeg[1:length(omeg)-1], cumul,
+p2 = plot(omeg[1:length(omeg)-1], cumul, lw = 4, linecolor=:black,
              xlabel=L"\omega", ylabel=L"\langle n^b_\omega \rangle", label="Analytics",
              title="Mode occupation in the extended bath")
-p2 = plot!(omeg, bath_occup[:, :, Tsteps], label="Numerics")
+p2 = plot!(omeg, bath_occup[:, :, T], lw=4, ls=:dash, label="Numerics")
 
-p3 = heatmap(omeg, omeg, abs.(real.(correlations_cdag[:,:,Tsteps]) .+ im*imag.(correlations_cdag[:,:,Tsteps])), 
+p3 = heatmap(omeg, omeg, abs.(real.(correlations_cdag[:,:,T]) .+ im*imag.(correlations_cdag[:,:,T])), 
             xlabel=L"\omega",
             ylabel=L"\omega", title="Environmental correlations")
 
@@ -175,8 +165,8 @@ p3 = heatmap(omeg, omeg, abs.(real.(correlations_cdag[:,:,Tsteps]) .+ im*imag.(c
 Mhalf = Int(length(omeg)*0.5)+1
 M = length(omeg)
 
-p4 = plot(omeg[Mhalf:M], bath_occup_phys,
-            xlabel=L"\omega", ylabel=L"\langle n^b_\omega \rangle", label="Analytics",
+p4 = plot(omeg[Mhalf:M], bath_occup_phys, lw=4,
+            xlabel=L"\omega", ylabel=L"\langle n^b_\omega \rangle",
             title="Mode occupation in the physical bath")
 
 plot(p1, p2, p3, p4, layout = (2, 2), size = (1400, 1200))
