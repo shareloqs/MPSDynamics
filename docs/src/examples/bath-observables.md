@@ -110,13 +110,10 @@ correlations_cdag = [
 ]
 ```
 It is possible to invert the thermofield transformation (details in [^riva_thermal_2023]). The expression of the mean value of the number operator for the physical modes can be expressed as a function of mean values in the extended bath, which we denote $\langle \hat a_{2k}^\dagger \hat a_{2k} \rangle$:
-\begin{equation}\label{eq:physical_occupations}
-\begin{split}
+$$
     \langle \hat b_k^\dagger \hat b_k \rangle = & \cosh{\theta_k}\sinh{\theta_k} \Big(\langle\hat a_{2k}\hat a_{1k}\rangle + \langle \hat a_{1k}^\dagger\hat a_{2k}^\dagger\rangle \Big) + \sinh^2{\theta_k} \Big(1+ \langle \hat a_{2k}^\dagger \hat a_{2k} \rangle \Big) + \\ &+ \cosh^2{\theta_k} \langle \hat a_{1k}^\dagger \hat a_{1k}, \rangle
-    \end{split}
-\end{equation}
-We remark that in the thermofield case, a negative frequency $\omega_{2k}$ is associated to each positive frequency $\omega_{1k}$. The sampling is therefore symmetric around zero. This marks a difference with T-TEDOPA, where the sampling of frequencies was obtained through the thermalized measure $d\mu(\beta) = \sqrt{J(\omega, \beta)}d\omega$, and was not symmetric. To recover the results for the physical bath of frequencies starting from the results of our simulations, that were conducted using the T-TEDOPA chain mapping, we need to do an extrapolation for all of the mean values appearing in Eq. \ref{eq:physical_occupations}, in order to have their values for each $\omega$ at $-\omega$ as well. This is done in the code with the `physical_occup` function:
-```julia
+$$
+We remark that in the thermofield case, a negative frequency $\omega_{2k}$ is associated to each positive frequency $\omega_{1k}$. The sampling is therefore symmetric around zero. This marks a difference with T-TEDOPA, where the sampling of frequencies was obtained through the thermalized measure $d\mu(\beta) = \sqrt{J(\omega, \beta)}d\omega$, and was not symmetric. To recover the results for the physical bath of frequencies starting from the results of our simulations, that were conducted using the T-TEDOPA chain mapping, we need to do an extrapolation for all of the mean values appearing in Eq. \ref{eq:physical_occupations}, in order to have their values for each $\omega$ at $-\omega$ as well. This is done in the code with the `physical_occup` function:```julia
 bath_occup_phys = physical_occup(correlations_cdag[:,:,T], correlations_c[:,:,T], omeg, bath_occup[:,:,T], β, N)
 ```
 
