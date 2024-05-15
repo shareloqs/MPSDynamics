@@ -190,7 +190,7 @@ end
     Matrix{Float64}: This matrix is the operator `oper` transformed back from the chain 
     representation to the representation corresponding to the extended bath. The resulting 
     operator represents quantities like mode occupations or other properties in the basis 
-    of environmental modes associated with specific frequencies $\omega_i$.
+    of environmental modes associated with specific frequencies ``\\omega_i``.
 
     ### Description
     
