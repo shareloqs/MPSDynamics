@@ -21,17 +21,17 @@ We remark that this is the same Bogoliubov transformation used in the thermofiel
 The thermofield-transformed Hamiltonian is then mapped on two chains, defined and constructed using the TEDOPA chain mapping: the chain labelled $1$ is for the empty modes, the chain labelled $2$ for the filled modes.
 The following relations are used to define the functions equivalent to the spectral density of the bosonic case, one for each chain:
 ```math
-\begin{split}
+\begin{align}
    &V_{1k} = V_{k} \sin \theta_k = \sqrt{\frac{1}{e^{\beta \epsilon_k}+1}} \\
    &V_{2k} = V_{k} \cos \theta_k = \sqrt{\frac{1}{e^{-\beta \epsilon_k}+1}}, 
-\end{split}
+\end{align}
 ```    
 where we choose the spectral function that characterizes the fermionic bath to be: $V_k= \sqrt{1-k^2}$, and we define the dispersion relation as: $e_k = k$, that is, a linear dispersion relation with propagation speed equal to $1$. This latter choice corresponds to a model of metals (gapless energy spectrum). We select a filled state as the initial state of the defect.
 Using the mapping proposed in [1], the chain Hamiltonian becomes:
 ```math
-    \begin{split}
+    \begin{aligned}
     \hat H^\text{chain}  = \hat H_\text{loc} &+ \sum_{i = \{1,2\}}\bigg[ J_{i,0} \Big(\hat d^\dagger \hat a_{i,0} + \hat d \hat a_{i,0}^\dagger \Big) + \\ &+ \sum_{n=1}^\infty  \Big( J_{i,n} \hat a_{i,n}^\dagger \hat a_{i,n-1} +  J_{i,n} \hat  a_{i,n-1}^\dagger \hat a_{i,n} \Big) + \sum_{n=0}^\infty E_{i,n} \hat  a_{i,n}^\dagger \hat a_{i,n} \bigg],
-    \end{split}
+    \end{aligned}
 ```
 where the $J_{i,n}$ coefficients are the couplings between the chain sites and the $E_{i,n}$ coefficients are the energies associated to each chain site. Clearly, the interactions are between nearest neighbors. This, combined with the fact that the fermions in our model are spinless, enables a straightforward mapping into fermionic operators of the bosonic creation and annihilation operators, that on their part obey to the bosonic commutation relations: $[\hat b_i, \hat b_j^\dagger] = \delta_{ij}$, $[\hat b_i, \hat b_j] =[\hat b_i^\dagger, \hat b_j^\dagger] =0$ $\forall i,j$. The mapping derived from Jordan-Wigner transformations for spinless fermions is:
 ```math
@@ -49,7 +49,7 @@ We can represent the Hamiltonian $\hat H^\text{chain}$ as a MPOs bond dimension 
 ```
 where the matrices are defined as:
 ```math
-\begin{split}
+\begin{aligned}
 & W_{1N} = 
 \begin{bmatrix}
 \hat{\mathbb I} & J_{2,N} \hat b_{2,N}^\dagger & J_{2,N} \hat b_{2,N} & E_{2,N} \hat b_{2,N}^\dagger \hat b_{2,N} 
@@ -78,7 +78,7 @@ where the matrices are defined as:
 \begin{bmatrix}
  E_{2,N} \hat b_{2,N}^\dagger \hat b_{2,N} \\ J_{2,N} \hat b_{2,N} \\ J_{2,N} \hat b_{2,N}^\dagger \\ \hat{\mathbb I}
 \end{bmatrix}.
-\end{split}
+\end{aligned}
 ```
 
 ### Interleaved chain MPO
@@ -96,7 +96,7 @@ where the string operator $\hat F_i$ is defined as: $\hat F_i = (-1)^{\hat n_i} 
 where the matrices are defined as: 
 
 ```math
-\begin{split}
+\begin{aligned}
 & W_d = 
 \begin{bmatrix}
  \hat{\mathbb I} & \hat d & \hat d^\dagger & 0 & 0 & E_{d} \hat d^\dagger \hat d 
@@ -131,7 +131,7 @@ where the matrices are defined as:
 \begin{bmatrix}
  E_{1,N} \hat b_{1,N}^\dagger \hat b_{1,N} \\ 0 \\0 \\ J_{1,N} \hat b_{1,N}^\dagger \\ J_{1,N} \hat b_{1,N} \\ \hat{\mathbb I}
 \end{bmatrix} .
-\end{split}
+\end{aligned}
 ```
 
 ## Code implementation
