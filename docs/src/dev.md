@@ -2,7 +2,7 @@
 
 ## Simulation Workflow
 
-The flow chart will go here
+![Flowchart of the simulation workflow](assets/flowchart.png)
 
 ## How to Contribute
 
