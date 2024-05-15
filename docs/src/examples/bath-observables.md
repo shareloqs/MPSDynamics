@@ -112,8 +112,7 @@ correlations_cdag = [
 It is possible to invert the thermofield transformation (details in [^riva_thermal_2023]). The expression of the mean value of the number operator for the physical modes can be expressed as a function of mean values in the extended bath, which we denote $\langle \hat a_{2k}^\dagger \hat a_{2k} \rangle$:
 
 $$
-    \langle \hat b_k^\dagger \hat b_k \rangle = \cosh{\theta_k}\sinh{\theta_k} (\langle \hat a_{2k}\hat a_{1k}\rangle + \langle \hat a_{1k}^\dagger\hat a_{2k}^\dagger\rangle ) + \sinh^2{\theta_k} (1+ \langle \hat a_{2k}^\dagger \hat a_{2k} \rangle ) + \\ 
-    + \cosh^2{\theta_k} \langle \hat a_{1k}^\dagger \hat a_{1k} \rangle
+    \langle \hat b_k^\dagger \hat b_k \rangle = \cosh{\theta_k}\sinh{\theta_k} (\langle \hat a_{2k}\hat a_{1k}\rangle + \langle \hat a_{1k}^\dagger\hat a_{2k}^\dagger\rangle ) + \sinh^2{\theta_k} (1+ \langle \hat a_{2k}^\dagger \hat a_{2k} \rangle ) ++ \cosh^2{\theta_k} \langle \hat a_{1k}^\dagger \hat a_{1k} \rangle
 $$
 
 We remark that in the thermofield case, a negative frequency $\omega_{2k}$ is associated to each positive frequency $\omega_{1k}$. The sampling is therefore symmetric around zero. This marks a difference with T-TEDOPA, where the sampling of frequencies was obtained through the thermalized measure $d\mu(\beta) = \sqrt{J(\omega, \beta)}d\omega$, and was not symmetric. To recover the results for the physical bath of frequencies starting from the results of our simulations, that were conducted using the T-TEDOPA chain mapping, we need to do an extrapolation for all of the mean values appearing in Eq. \ref{eq:physical_occupations}, in order to have their values for each $\omega$ at $-\omega$ as well. This is done in the code with the `physical_occup` function:```julia
@@ -149,7 +148,34 @@ end
 
 bath_occup_analytical(ω, t) = abs(Jtherm(ω))/(ω^2)*2*(1-cos(ω*t)) 
 ```
+We conclude the example by plotting.
+```julia
+ρ12 = abs.(dat["data/Reduced ρ"][1,2,:])
 
+p1 = plot(time_analytical, t->Decoherence_ohmic(t), label="Analytics", title=L"Pure Dephasing, Ohmic $s=%$s$, $\beta = %$β ~\mathrm{K}$", linecolor=:black, xlabel="Time (arb. units)", ylabel=L"Coherence $|\rho_{12}(t)|$", linewidth=4, titlefontsize=16, legend=:best, legendfontsize=16, xguidefontsize=16, yguidefontsize=16, tickfontsize=10)
+p1 = plot!(dat["data/times"], ρ12, lw=4, ls=:dash, label="Numerics")
+
+cumul = [bath_occup_analytical(omeg[i], tfinal)*(omeg[i+1]-omeg[i]) for i in 1:(length(omeg)-1)]
+
+p2 = plot(omeg[1:length(omeg)-1], cumul, lw = 4, linecolor=:black,
+             xlabel=L"\omega", ylabel=L"\langle n^b_\omega \rangle", label="Analytics",
+             title="Mode occupation in the extended bath")
+p2 = plot!(omeg, bath_occup[:, :, T], lw=4, ls=:dash, label="Numerics")
+
+p3 = heatmap(omeg, omeg, abs.(real.(correlations_cdag[:,:,T]) .+ im*imag.(correlations_cdag[:,:,T])), 
+            xlabel=L"\omega",
+            ylabel=L"\omega", title="Environmental correlations")
+
+
+Mhalf = Int(length(omeg)*0.5)+1
+M = length(omeg)
+
+p4 = plot(omeg[Mhalf:M], bath_occup_phys, lw=4,
+            xlabel=L"\omega", ylabel=L"\langle n^b_\omega \rangle",
+            title="Mode occupation in the physical bath")
+
+plot(p1, p2, p3, p4, layout = (2, 2), size = (1400, 1200))
+```
 
 ___________________
 # References
