@@ -80,6 +80,7 @@ end
 ```
 
 During a numerical simulation we work with chain of finite length $N$. This truncation on chain modes, introduces a sampling on the modes in the original star-like environment. To recover the frequency modes that are implicitly sampled, one has to diagonalize the tri-diagonal $N\times N$ matrix $H^\text{chain}$, where the diagonal is formed by the $e_n$ coefficients, that is the chain's frequencies, and the upper and lower diagonals by the $N-1$ hopping coefficients $t_n$. The unitary matrix that defines the change of basis from the star-like to the chain-like environment is $U_n$, constituted by the eigenvectors of $H^\text{chain}$. In the code, we use the `eigenchain` function:
+
 ```julia
 omeg = eigenchain(cpars, nummodes=N).values
 ```
@@ -90,12 +91,15 @@ $$
 \hat n^b_{i} = \hat b_i^\dagger \hat b_i = \sum_{k,l} U_{ik}^* \hat c_k^\dagger \hat c_l U_{li}.  
 $$
 This is done in the code using the `measuremodes(X, cpars[1], cpars[2])` function, which outputs the vector of the diagonal elements of the operators, in the following way:
+
 ```julia
 bath_occup = mapslices(X -> measuremodes(X, cpars[1], cpars[2]), dat["data/cdagc"], dims = [1,2])
 cdag_average = mapslices(X -> measuremodes(X, cpars[1], cpars[2]), constr, dims = [1,2])
 c_average = mapslices(X -> measuremodes(X, cpars[1], cpars[2]), destr, dims = [1,2])
 ```
+
 To compute the correlators, we need the full matrix in the original basis. We therefore use the `measurecorrs` function:
+
 ```julia
 cc_average = mapslices(X -> measurecorrs(X, cpars[1], cpars[2]), dat["data/cc"], dims = [1,2])
 cdagcdag_average = mapslices(X -> measurecorrs(X, cpars[1], cpars[2]), dat["data/cdagcdag"], dims = [1,2])
@@ -109,13 +113,16 @@ correlations_cdag = [
     for i in 1:size(cdagcdag_average, 1), j in 1:size(cdagcdag_average, 2), t in 1:size(cdagcdag_average,3)
 ]
 ```
+
 It is possible to invert the thermofield transformation (details in [^riva_thermal_2023]). The expression of the mean value of the number operator for the physical modes can be expressed as a function of mean values in the extended bath, which we denote $\langle \hat a_{2k}^\dagger \hat a_{2k} \rangle$:
 
 $$
     \langle \hat b_k^\dagger \hat b_k \rangle = \cosh{\theta_k}\sinh{\theta_k} (\langle \hat a_{2k}\hat a_{1k}\rangle + \langle \hat a_{1k}^\dagger\hat a_{2k}^\dagger\rangle ) + \sinh^2{\theta_k} (1+ \langle \hat a_{2k}^\dagger \hat a_{2k} \rangle ) ++ \cosh^2{\theta_k} \langle \hat a_{1k}^\dagger \hat a_{1k} \rangle
 $$
 
-We remark that in the thermofield case, a negative frequency $\omega_{2k}$ is associated to each positive frequency $\omega_{1k}$. The sampling is therefore symmetric around zero. This marks a difference with T-TEDOPA, where the sampling of frequencies was obtained through the thermalized measure $d\mu(\beta) = \sqrt{J(\omega, \beta)}d\omega$, and was not symmetric. To recover the results for the physical bath of frequencies starting from the results of our simulations, that were conducted using the T-TEDOPA chain mapping, we need to do an extrapolation for all of the mean values appearing in Eq. \ref{eq:physical_occupations}, in order to have their values for each $\omega$ at $-\omega$ as well. This is done in the code with the `physical_occup` function:```julia
+We remark that in the thermofield case, a negative frequency $\omega_{2k}$ is associated to each positive frequency $\omega_{1k}$. The sampling is therefore symmetric around zero. This marks a difference with T-TEDOPA, where the sampling of frequencies was obtained through the thermalized measure $d\mu(\beta) = \sqrt{J(\omega, \beta)}d\omega$, and was not symmetric. To recover the results for the physical bath of frequencies starting from the results of our simulations, that were conducted using the T-TEDOPA chain mapping, we need to do an extrapolation for all of the mean values appearing in Eq. \ref{eq:physical_occupations}, in order to have their values for each $\omega$ at $-\omega$ as well. This is done in the code with the `physical_occup` function:
+
+```julia
 bath_occup_phys = physical_occup(correlations_cdag[:,:,T], correlations_c[:,:,T], omeg, bath_occup[:,:,T], β, N)
 ```
 
