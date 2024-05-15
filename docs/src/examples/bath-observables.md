@@ -88,9 +88,11 @@ omeg = eigenchain(cpars, nummodes=N).values
 At each time step of the simulation, a number of one-site and two-sites observables where evaluated on the chain. To obtain their value in the extended bath of T-tedopa, characterized by $J(\omega,\beta)$, the unitary transformation that maps the extended bath Hamiltonian into the chain representation has to be reversed. For instance, when measuring the single site $\hat n^c_i=\hat c_i^\dagger \hat c_i$ occupation number, we are not measuring the occupation number of the bosonic mode associated to the $\omega_i$ frequency, but the occupation number of the $i-$th chain mode.
 Therefore to calculate the number of modes of the environment associated to a specific frequency $\omega_i$, the mapping must be reversed, to obtain the diagonal representation of the bosonic number operator:
 
-$$
+```math
+\begin{aligned}
 \hat n^b_{i} = \hat b_i^\dagger \hat b_i = \sum_{k,l} U_{ik}^* \hat c_k^\dagger \hat c_l U_{li}.  
-$$
+\end{aligned}
+```
 
 This is done in the code using the `measuremodes(X, cpars[1], cpars[2])` function, which outputs the vector of the diagonal elements of the operators, in the following way:
 
@@ -118,9 +120,11 @@ correlations_cdag = [
 
 It is possible to invert the thermofield transformation (details in [^riva_thermal_2023]). The expression of the mean value of the number operator for the physical modes can be expressed as a function of mean values in the extended bath, which we denote $\langle \hat a_{2k}^\dagger \hat a_{2k} \rangle$:
 
-$$
+```math
+\begin{aligned}
     \langle \hat b_k^\dagger \hat b_k \rangle = \cosh{\theta_k}\sinh{\theta_k} (\langle \hat a_{2k}\hat a_{1k}\rangle + \langle \hat a_{1k}^\dagger\hat a_{2k}^\dagger\rangle ) + \sinh^2{\theta_k} (1+ \langle \hat a_{2k}^\dagger \hat a_{2k} \rangle ) ++ \cosh^2{\theta_k} \langle \hat a_{1k}^\dagger \hat a_{1k} \rangle
-$$
+\end{aligned}
+```
 
 We remark that in the thermofield case, a negative frequency $\omega_{2k}$ is associated to each positive frequency $\omega_{1k}$. The sampling is therefore symmetric around zero. This marks a difference with T-TEDOPA, where the sampling of frequencies was obtained through the thermalized measure $d\mu(\beta) = \sqrt{J(\omega, \beta)}d\omega$, and was not symmetric. To recover the results for the physical bath of frequencies starting from the results of our simulations, that were conducted using the T-TEDOPA chain mapping, we need to do an extrapolation for all of the mean values, in order to have their values for each $\omega$ at $-\omega$ as well. This is done in the code with the `physical_occup` function:
 
@@ -129,10 +133,13 @@ bath_occup_phys = physical_occup(correlations_cdag[:,:,T], correlations_c[:,:,T]
 ```
 
 Finally, in the pure dephasing case, it is also possible to obtain the analytical prediction of the time evolution of the occupations of the bath's modes, so that we can compare our numerical results with the analytical ones, exploiting the Heisenberg time evolution relation:
-$$
+```math
+\begin{aligned}
 \frac{d \langle \hat b_\omega \rangle}{dt} = -i \langle[ \hat b_\omega, \hat H] \rangle = - i \omega \langle\hat b_\omega \rangle - i \frac{\langle \hat \sigma_x \rangle}{2} \sqrt{J(\omega, \beta)},     \\
 \frac{d \langle \hat n_\omega \rangle}{dt} = -i \langle[\hat b_\omega^\dagger \hat b_\omega, \hat H] \rangle= 2 \frac{|J(\omega,\beta)|}{\omega} \sin(\omega t).
-$$
+\end{aligned}
+```
+
 To this end, it is convenient to choose one of the eigenstates of $\hat \sigma_z$ as the initial state, so that $\langle \hat \sigma_x \rangle = \pm 1$. By solving these differential equations, one obtains the time evolved theoretical behavior of the bath. We define the function for the comparison with analytical predictions:
 ```julia
 Johmic(ω,s) = (2*α*ω^s)/(ωc^(s-1))
