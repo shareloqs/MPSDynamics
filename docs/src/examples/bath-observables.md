@@ -25,7 +25,6 @@ method = :TDVP1         # time-evolution method
 conv = 3                # bond dimension for the TDVP1
 dt = 0.5                # time step
 tfinal = 60.0           # simulation time
-Tsteps = Int(tfinal / dt)
 ```
 And then compute the chain coefficients, i.e. on-site energies $\epsilon_i$, hopping energies $t_i$, and system-chain coupling $c_0$, that define the chain representation of the pure-dephasing model:
 ```julia
@@ -54,19 +53,102 @@ ob8 = TwoSiteObservable("cc", anih(d), anih(d), collect(2:N+1), collect(2:N+1))
 ```
 with this we run the simulation:
 ```julia
-
+A, dat = runsim(dt, tfinal, A, H, prec=1E-4;
+                name = "Bath observables in the pure dephasing model",
+                method = method,
+                obs = [ob1, ob2, ob3, ob4, ob5, ob6, ob7, ob8],
+                convobs = [ob1],
+                params = @LogParams(ω0, N, d, α, s, ψ),
+                convparams = conv,
+                reduceddensity = true,
+                verbose = false,
+                save = false,
+                plot = true,
+                );
 ```
 
-Furthermore, in the pure dephasing case, it is also possible to obtain the analytical prediction of the time evolution of the occupations of the bath's modes, so that we can compare our numerical results with the analytical ones, exploiting the Heisenberg time evolution relation:
+After the simulation, we need to post-process the data a bit, in order to map the correlations from the chain representation to the original environment. We start by defining the matrices associated to the mean values of $c$ and $c^\dagger$:
+```julia
+T = length(dat["data/times"])
+
+constr = Array{ComplexF64}(undef, N, N, T)
+destr = Array{ComplexF64}(undef, N, N, T)
+for t in 1:T
+    constr[:,:,t] = diagm(0 => dat["data/cdag"][:,t])
+    destr[:,:,t] = diagm(0 => dat["data/c"][:,t])
+end
+```
+
+During a numerical simulation we work with chain of finite length $N$. This truncation on chain modes, introduces a sampling on the modes in the original star-like environment. To recover the frequency modes that are implicitly sampled, one has to diagonalize the tri-diagonal $N\times N$ matrix $H^\text{chain}$, where the diagonal is formed by the $e_n$ coefficients, that is the chain's frequencies, and the upper and lower diagonals by the $N-1$ hopping coefficients $t_n$. The unitary matrix that defines the change of basis from the star-like to the chain-like environment is $U_n$, constituted by the eigenvectors of $H^\text{chain}$. In the code, we use the `eigenchain` function:
+```julia
+omeg = eigenchain(cpars, nummodes=N).values
+```
+
+At each time step of the simulation, a number of one-site and two-sites observables where evaluated on the chain. To obtain their value in the extended bath of T-tedopa, characterized by $J(\omega,\beta)$, the unitary transformation that maps the extended bath Hamiltonian into the chain representation has to be reversed. For instance, when measuring the single site $\hat n^c_i=\hat c_i^\dagger \hat c_i$ occupation number, we are not measuring the occupation number of the bosonic mode associated to the $\omega_i$ frequency, but the occupation number of the $i-$th chain mode.
+Therefore to calculate the number of modes of the environment associated to a specific frequency $\omega_i$, the mapping must be reversed, to obtain the diagonal representation of the bosonic number operator:
 $$
-\frac{d \langle \hat b_\omega \rangle}{dt} = -i \langle[ \hat b_\omega, \hat H] \rangle = - i \omega \langle\hat b_\omega \rangle - i \frac{\langle \hat \sigma_z \rangle}{2} \sqrt{J(\omega, \beta)},     \\
+\hat n^b_{i} = \hat b_i^\dagger \hat b_i = \sum_{k,l} U_{ik}^* \hat c_k^\dagger \hat c_l U_{li}.  
+$$
+This is done in the code using the `measuremodes(X, cpars[1], cpars[2])` function, which outputs the vector of the diagonal elements of the operators, in the following way:
+```julia
+bath_occup = mapslices(X -> measuremodes(X, cpars[1], cpars[2]), dat["data/cdagc"], dims = [1,2])
+cdag_average = mapslices(X -> measuremodes(X, cpars[1], cpars[2]), constr, dims = [1,2])
+c_average = mapslices(X -> measuremodes(X, cpars[1], cpars[2]), destr, dims = [1,2])
+```
+To compute the correlators, we need the full matrix in the original basis. We therefore use the `measurecorrs` function:
+```julia
+cc_average = mapslices(X -> measurecorrs(X, cpars[1], cpars[2]), dat["data/cc"], dims = [1,2])
+cdagcdag_average = mapslices(X -> measurecorrs(X, cpars[1], cpars[2]), dat["data/cdagcdag"], dims = [1,2])
+
+correlations_c = [
+    cc_average[i, j, t] - c_average[i, 1, t] .* c_average[j, 1, t]
+    for i in 1:size(cc_average, 1), j in 1:size(cc_average, 2), t in 1:size(cc_average, 3)
+]
+correlations_cdag = [
+    cdagcdag_average[i, j, t] - cdag_average[i, 1, t] .* cdag_average[j, 1, t]
+    for i in 1:size(cdagcdag_average, 1), j in 1:size(cdagcdag_average, 2), t in 1:size(cdagcdag_average,3)
+]
+```
+It is possible to invert the thermofield transformation (details in [^riva_thermal_2023]). The expression of the mean value of the number operator for the physical modes can be expressed as a function of mean values in the extended bath, which we denote $\langle \hat a_{2k}^\dagger \hat a_{2k} \rangle$:
+\begin{equation}\label{eq:physical_occupations}
+\begin{split}
+    \langle \hat b_k^\dagger \hat b_k \rangle = & \cosh{\theta_k}\sinh{\theta_k} \Big(\langle\hat a_{2k}\hat a_{1k}\rangle + \langle \hat a_{1k}^\dagger\hat a_{2k}^\dagger\rangle \Big) + \sinh^2{\theta_k} \Big(1+ \langle \hat a_{2k}^\dagger \hat a_{2k} \rangle \Big) + \\ &+ \cosh^2{\theta_k} \langle \hat a_{1k}^\dagger \hat a_{1k}, \rangle
+    \end{split}
+\end{equation}
+We remark that in the thermofield case, a negative frequency $\omega_{2k}$ is associated to each positive frequency $\omega_{1k}$. The sampling is therefore symmetric around zero. This marks a difference with T-TEDOPA, where the sampling of frequencies was obtained through the thermalized measure $d\mu(\beta) = \sqrt{J(\omega, \beta)}d\omega$, and was not symmetric. To recover the results for the physical bath of frequencies starting from the results of our simulations, that were conducted using the T-TEDOPA chain mapping, we need to do an extrapolation for all of the mean values appearing in Eq. \ref{eq:physical_occupations}, in order to have their values for each $\omega$ at $-\omega$ as well. This is done in the code with the `physical_occup` function:
+```julia
+bath_occup_phys = physical_occup(correlations_cdag[:,:,T], correlations_c[:,:,T], omeg, bath_occup[:,:,T], β, N)
+```
+
+Finally, in the pure dephasing case, it is also possible to obtain the analytical prediction of the time evolution of the occupations of the bath's modes, so that we can compare our numerical results with the analytical ones, exploiting the Heisenberg time evolution relation:
+$$
+\frac{d \langle \hat b_\omega \rangle}{dt} = -i \langle[ \hat b_\omega, \hat H] \rangle = - i \omega \langle\hat b_\omega \rangle - i \frac{\langle \hat \sigma_x \rangle}{2} \sqrt{J(\omega, \beta)},     \\
 \frac{d \langle \hat n_\omega \rangle}{dt} = -i \langle[\hat b_\omega^\dagger \hat b_\omega, \hat H] \rangle= 2 \frac{|J(\omega,\beta)|}{\omega} \sin(\omega t).
 $$
-To this end, it is convenient to choose one of the eigenstates of $\hat \sigma_z$ as the initial state, so that $\langle \hat \sigma_z \rangle = \pm 1$. By solving these differential equations, one obtains the time evolved theoretical behavior of the bath.
+To this end, it is convenient to choose one of the eigenstates of $\hat \sigma_z$ as the initial state, so that $\langle \hat \sigma_x \rangle = \pm 1$. By solving these differential equations, one obtains the time evolved theoretical behavior of the bath. We define the function for the comparison with analytical predictions:
+```julia
+Johmic(ω,s) = (2*α*ω^s)/(ωc^(s-1))
 
-During a numerical simulation we work with chain of finite length $N$. This truncation on chain modes, introduces a sampling on the modes in the original star-like environment. To recover the frequency modes that are implicitly sampled, one has to diagonalize the tri-diagonal $N\times N$ matrix $H^\text{chain}$, where the diagonal is formed by the $e_n$ coefficients, that is the chain's frequencies, and the upper and lower diagonals by the $N-1$ hopping coefficients $t_n$. The unitary matrix that defines the change of basis from the star-like to the chain-like environment is $U_n$, constituted by the eigenvectors of $H^\text{chain}$. The reverse path could also be taken: one can decide to sample the relevant frequencies in the star-like environment, and apply the inverse transformation to construct the tri-diagonal matrix defining the chain. Once the problem is mapped on the chain, the MPO representation of the new Hamiltonian follows straightforwardly.
+time_analytical = LinRange(0.0, tfinal, Int(tfinal))
+
+Γohmic(t) = - quadgk(x -> Johmic(x,s)*(1 - cos(x*t))*coth(β*x/2)/x^2, 0, ωc)[1]
+
+Decoherence_ohmic(t) = 0.5 * exp(Γohmic(t))
 
 
+α_theo = 0.25 * α
+function Jtherm(x)
+    if 1 >= x >= 0
+        return +α_theo * abs(x)^s * (1 + coth(β*0.5*x))
+    elseif -1 <= x <= 0
+        return -α_theo * abs(x)^s * (1 + coth(β*0.5*x))
+    else
+        return 0
+    end
+end
+
+bath_occup_analytical(ω, t) = abs(Jtherm(ω))/(ω^2)*2*(1-cos(ω*t)) 
+```
 
 
 ___________________
