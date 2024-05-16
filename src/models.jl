@@ -721,7 +721,6 @@ end
     * `tree::Bool`: if true, return a `TreeNetwork` object, otherwise return a vector of MPO tensors
 """
 
-"""
 function puredephasingmpo(ΔE, dchain, Nchain, chainparams; tree=false)
     u = unitmat(2)
 
@@ -745,17 +744,14 @@ end
     the Nth site corresponding to the impurity, and the rest of the sites corresponding to the second
     lead.
 
-    ### Arguments
-
     * `N::Int`: number of sites in the chain
     * `ϵd::Real`: energy of the impurity site at the center, as Ed - μ, where μ is the chemical potential
-    * chainparams1::Array{Real,1}: chain parameters for the first lead
-    * chainparams2::Array{Real,1}: chain parameters for the second lead
+    * `chainparams1::Array{Real,1}`: chain parameters for the first lead
+    * `chainparams2::Array{Real,1}`: chain parameters for the second lead
 
     The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
-
-
 """
+
 function tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
     e1 = chainparams1[1]
