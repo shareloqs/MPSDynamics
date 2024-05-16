@@ -99,36 +99,54 @@ We note that if one knows the coherences and populations of all the chain modes,
 
 ## Time-Evolution
 
-Explain that we do TDVP.
+Simulation are performed when calling the [`MPSDynamics.runsim`](@ref) function where the time-evolution method should be specified.
 
-A simulation is runned by the `MPSDynamics.runsim`(@ref) function.
+The time-evolution methods currently implemented belong to the familly of Time-Dependent Variational Principle (TDVP).
+The central point of this method, in the modern tensor networks formulation, is that instead of solving the Schrödinger equation and then truncating the MPS representation of the quantum state, one can solve the equations of motion projected into a space of restricted bond dimension. 
+The major advantage of this method is that it naturally preserves the unitarity of the time evolution and conserves the energy (except in its two-site implementation).
+Three variants of TDVP are implemented in the `MPSDynamics.jl` package:
+* one-site TDVP (TDVP1): fixed bond dimension, preserves unitarity, conserves energy, scales as ``\mathcal{O}(D^2 d^2 w^2 + D^3 dw + D^3 d^2 )`` where ``D`` is the MPS (or TTN) bond dimension, ``d`` the local dimension, ``w`` the MPO bond dimension.
+* two-site TDVP (TDVP2): adaptive bond dimension, breaks unitarity, scales as ``\mathcal{O}(D^2d^3 w^2 + D^3 d^2 w + D^3 d^3 )``.
+* adaptive one-site TDVP (DTDVP): adaptive bond dimension, preserves unitarity, conserves energy.
 
-Local one-site and two-site observables, as well as non-local two-site observables, can be efficiently computed for each time-step of the time-evolution.
-
+Local one-site and two-site observables, as well as non-local two-site observables, can be efficiently computed for each time-step of the time-evolution with the three methods.
 
 ### One-site TDVP
 
-Fixed bond dimension, complexity XXX, preserves unitarity.
+This implementation of the TDVP can be used for MPS and TTN.
+It performs one-site updates of the tensor network tensors while keeping the bond dimension fixed.
+Because no reduction of the dimensionality is performed (for instnce by throwing away some simgular values), it naturally preserves unitarity and hence conserves energy.
+The otherside of the coin is that simulation might be slower because the bond dimension is large at *all time*.
 
-The convergence parameter is the bond dimension.
+The convergence parameter of the simulation is thus the bond dimension `D`.
 
-Is set in `MPSDynamics.runsim`(@ref) usind the key word argument `method=:TDVP1`
+This method can be used with in [`MPSDynamics.runsim`](@ref) with the key word argument `method=:TDVP1`.
 
 ### Two-Site TDVP
 
-Varying bond dimension, complexity higher than 1TDVP, but breaks unitarity because of a SVD.
+This version of the TDVP evolves two-site tensors than can be split back into two individual site tensors by applying an SVD.
+The bond dimension between two neighbouring sites can then be truncated to any value ``≤ r`` by throwing away any singular values that fall below some threshold. 
+In this way, the MPS bond dimension will grow dynamically throughout the course of the evolution to capture entanglement, as and when it emerges.
+The truncation entails a loss of unitarity. 
+Indeed, for a nearest-neighbour Hamiltonian, applying the two-site projector will not entail a projection error, leading to a scheme that is almost identical to TEBD,wherein the error arises solely from the truncation.
+Furthermore, 2TDVP scales poorly with the local physical dimension, and is known to have issues with long-range interactions.
 
 The convergence parameter is the threshold of the SVD.
 
-Is set in `MPSDynamics.runsim`(@ref) usind the key word argument `method=:TDVP2`
+This method can be used with in [`MPSDynamics.runsim`](@ref) with the key word argument `method=:TDVP2`.
 
 ### Adaptive One-Site TDVP
 
-Keeps the good scaling of the 1TDVP, preserves unitarity but is able to increase the bond dimendion.
+Ahead of any time evolution, one computes new bond dimensions of the MPS if the relative rate of change of the TDVP projection error with respect to the bond dimension is larger than a chosen precision `p`.
+Then, TDVP1 is performed, using projectors with sub-spaces expanded accordingly, to produce an MPS evolved by one time step with the new,increased, bond dimensions.
+This version is faster than TDVP1 due to the acceleration gained from having more optimised bond dimensions; the bond update step is cheap and so its cost should not normally outweigh this advantage.
+However, two things need to be noticed:
+* DTDVP can get stuck into local minima from the initial time. If the bond dimension does not change during the time-evolution, consider embeding your MPS in a larger manifold with [`mpsembed!`](@ref) before time-evolving it.
+* For models with analytical solutions that are MPS of a given bond dimension (such as the independent boson model), DTDVP can overshoot the analytical bond dimension because the relative rate of change of the projection error becomes dominated by random numerical fluctuations.
 
-The convergence parameter is a threshold value for the rate of change of the projection error with respect to the bond dimension.
+The convergence parameter is a threshold value `p` for the rate of change of the projection error with respect to the bond dimension.
 
-Is set in `MPSDynamics.runsim`(@ref) usind the key word argument `method=:DTDVP`
+This method can be used with in [`MPSDynamics.runsim`](@ref) with the key word argument `method=:DTDVP`.
 
 ## Data Storage
 
