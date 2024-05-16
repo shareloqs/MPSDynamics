@@ -720,7 +720,6 @@ end
     * `chainparams::Array{Real,1}`: chain parameters for the bath chain. The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
     * `tree::Bool`: if true, return a `TreeNetwork` object, otherwise return a vector of MPO tensors
 """
-
 function puredephasingmpo(ΔE, dchain, Nchain, chainparams; tree=false)
     u = unitmat(2)
 
