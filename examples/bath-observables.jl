@@ -25,7 +25,7 @@ s = 1       # ohmicity
 method = :TDVP1         # time-evolution method
 conv = 3                # bond dimension for the TDVP1
 dt = 0.5                # time step
-tfinal = 60.0           # simulation time
+tfinal = 50.0           # simulation time
 
 #----------------------------
 # Ohmic spectral density
@@ -114,6 +114,7 @@ correlations_cdag = [
     for i in 1:size(cdagcdag_average, 1), j in 1:size(cdagcdag_average, 2), t in 1:size(cdagcdag_average,3)
 ]
 
+bath_occup_phys = physical_occup(correlations_cdag[:,:,T], correlations_c[:,:,T], omeg, bath_occup[:,:,T], β, N)
 
 #--------------------
 # Analytical results 

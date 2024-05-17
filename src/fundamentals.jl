@@ -227,7 +227,7 @@ function cosineh(omega, bet)
     return 1/sqrt(1 - exp(-omega * (bet)))
 end
 
-"
+"""
     sineh(omega, bet)
 
     Calculates the hyperbolic sine function function based on the input parameters, 
