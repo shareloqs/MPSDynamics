@@ -610,7 +610,7 @@ productstatemps(tree::Tree, physdims::Int, Dmax::Int; state=:Vacuum) =
 """
     mpsembed(A::TreeNetwork, Dmax::Int)
 
-Embed tree-MPS `A` in manifold of max bond-dimension `Dmax`
+Embed tree-MPS `A` in manifold of max bond-dimension `Dmax`.
 
 """
 
@@ -638,6 +638,13 @@ function mpsembed!(A::TreeNetwork, Dmax::Int)
     mpsrightnorm!(A)
     return A
 end
+
+"""
+    bonddims(A::TreeNetwork)
+
+Return the bon-dimension of a tree-MPS `A`.
+
+"""
 
 function bonddims(A::TreeNetwork)
     N = length(A)

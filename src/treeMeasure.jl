@@ -1,3 +1,10 @@
+"""
+    measure1siteoperator(net::TreeNetwork, O, id::Int)
+
+For a Tree, compute the local expectation value of a one-site operator O for site id.
+
+"""
+
 function measure1siteoperator(net::TreeNetwork, O, id::Int)
     ρ = ones(ComplexF64, 1, 1)
     T = ishermitian(O) ? Float64 : ComplexF64
@@ -8,6 +15,13 @@ function measure1siteoperator(net::TreeNetwork, O, id::Int)
     T<:Real && (v=real(v))
     return v
 end
+
+"""
+    measure1siteoperator(net::TreeNetwork, O, sites::Tuple{Int,Int})
+
+For a Tree, compute the local expectation value of a one-site operator O for the specified site range.
+
+"""
 
 function measure1siteoperator(net::TreeNetwork, O, sites::Tuple{Int,Int})
     ρ = ones(ComplexF64, 1, 1)
@@ -44,6 +58,13 @@ function measure1siteoperator(net::TreeNetwork, O, sites::Tuple{Int,Int})
         throw("missing method")
     end       
 end
+
+"""
+    measure2siteoperator(net::TreeNetwork, O1, O2, sites::Tuple{Int,Int})
+
+For a Tree, compute the local expectation value of two one-site operators O1 and O2 for the specified site range.
+
+"""
 
 function measure2siteoperator(net::TreeNetwork, O1, O2, sites::Tuple{Int,Int})
 

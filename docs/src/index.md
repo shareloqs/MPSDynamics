@@ -6,10 +6,8 @@ The package also provides strong support for the measurement of observables, as 
 The package has been developed with the aim of studying non-Markovian open system dynamics at finite temperature using the state-of-the-art numerically exact Thermalized-Time Evolving Density operator with Orthonormal Polynomials Algorithm (T-TEDOPA) based on environment chain mapping.
 However the methods implemented can equally be applied to other areas of physics.
 
-## Table of Contents
-
-```@contents
-```
+!!! warning
+	The documentation is currently undergoing massive restructurations/improvement. It's a work in progress until the next release scheduled for May, 2024.
 
 ## Installation
 
@@ -19,8 +17,26 @@ The package may be installed by typing the following into a Julia REPL
     ] add https://github.com/shareloqs/MPSDynamics.git
 ```
 
-## Functions
+## Table of Contents
 
-```@autodocs
-Modules = [MPSDynamics]
+```@contents
+Pages = ["index.md", "user-guide.md", "examples/sbm.md", "examples/puredephasing.md", "examples/timedep.md", "examples/anderson-model.md", "examples/bath-observables.md", "theory.md", "methods.md", "dev.md"]
+Depth = 3
+```
+
+## Citation
+If you use the package in your research, please consider citing it.
+You can add the Zenodo record to your BibTex file:
+
+```tex
+@misc{mpsdynamics_zenodo2021,
+	title = {shareloqs/{MPSDynamics}},
+	shorttitle = {{MPSDynamics.jl}},
+	url = {https://zenodo.org/record/5106435},
+	abstract = {Tensor network simulations for finite temperature, open quantum system dynamics},
+	publisher = {Zenodo},
+	author = {Dunnett, Angus and Lacroix, Thibaut and Le Dé, Brieuc and Riva, Angela},
+	year = {2021},
+	doi = {10.5281/zenodo.5106435},
+}
 ```

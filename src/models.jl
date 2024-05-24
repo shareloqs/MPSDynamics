@@ -130,7 +130,7 @@ longrange_isingmpo(N::Int, α::Float64=0.; J=1.0, h=1.0) = longrange_xyzmpo(N, �
 
 """
 function spinchainmpo(N::Int; J=1.0, hz=1.0, hx=0.0, i=div(N,2))
-    u = unitmat(2)
+u = unitmat(2)
         
     Mx = zeros(4,4,2,2)
     Mx[1,1,:,:] = u
@@ -743,14 +743,17 @@ end
     the Nth site corresponding to the impurity, and the rest of the sites corresponding to the second
     lead.
 
+    # Arguments
+
     * `N::Int`: number of sites in the chain
     * `ϵd::Real`: energy of the impurity site at the center, as Ed - μ, where μ is the chemical potential
-    * `chainparams1::Array{Real,1}`: chain parameters for the first lead
-    * `chainparams2::Array{Real,1}`: chain parameters for the second lead
+    * chainparams1::Array{Real,1}: chain parameters for the first lead
+    * chainparams2::Array{Real,1}: chain parameters for the second lead
 
     The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
-"""
 
+
+"""
 function tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
     e1 = chainparams1[1]
@@ -984,6 +987,7 @@ function interleaved_tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
     M1fin[D,1,:,:] = u
     push!(W, M1fin)
     return W
+
 end
 
 """
@@ -1389,4 +1393,3 @@ function protontransfermpo(ω0e,ω0k,x0e,x0k, Δ, dRC, d, N, chainparams, RCpara
 
     return Any[M,MRC,chain...]
 end
-
