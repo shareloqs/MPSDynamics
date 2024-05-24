@@ -1,20 +1,23 @@
+<img src="https://raw.githubusercontent.com/shareloqs/MPSDynamics/doc-writing/docs/src/assets/logo.png" alt="MPSDynamics.jl logo" width="250" height="auto">
+
 # MPSDynamics.jl
 *Tensor network simulations for finite temperature, open quantum system dynamics.*
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5106435.svg)](https://doi.org/10.5281/zenodo.5106435) [![license](https://img.shields.io/badge/License-GPL_3.0-orange.svg)](https://github.com/angusdunnett/MPSDynamics/blob/master/LICENSE) [![documentation workflow](https://github.com/angusdunnett/MPSDynamics/actions/workflows/docs.yml/badge.svg)](https://angusdunnett.github.io/MPSDynamics/)
+
 
 This package is intended to provide an easy to use interface for performing tensor network simulations on Matrix Product
 States (MPS). MPSDynamics.jl is a versatile package which supports both chain and (loop-free) tree MPS, as well as
 providing a choice of several time evolution algorithms. The package also provides strong support for the measurement
 of observables, as well as the storing and logging of data, which makes it a useful tool for the study of many-body
 physics. The package was originally developed with the aim of studying open system dynamics at finite temperature using
-the T-TEDOPA mapping [1], however the methods implemented can equally be applied to other areas of physics.
+the T-TEDOPA mapping [^1], however the methods implemented can equally be applied to other areas of physics.
 
 The methods currently implemented are
 
-* 1-site TDVP on tree and chain MPS [2]
-* 2-site TDVP on chain MPS [2]
-* a variant of 1-site TDVP with dynamic bond-dimensions on chain MPS [3]
+* 1-site TDVP on tree and chain MPS [^2]
+* 2-site TDVP on chain MPS [^2]
+* a variant of 1-site TDVP with dynamic bond-dimensions on chain MPS [^3]
 
 The elementary tensor operations are implemented in all cases using the [TensorOperations.jl](https://github.com/Jutho/TensorOperations.jl) package.
 
@@ -149,6 +152,8 @@ Import["~/MPSDynamics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
 
 # Publications
 Publications which make use of MPSDynamics:
+* Lacroix et al. From Non-Markovian Dissipation to Spatiotemporal Control of Quantum Nanodevices. *Quantum* 8, 1305, April 2024
+    * [https://doi.org/10.22331/q-2024-04-03-1305](https://doi.org/10.22331/q-2024-04-03-1305)
 * Riva et al. Thermal cycle and polaron formation in structured bosonic environments. *Phys. Rev. B*  108(19):195138, November 2023
     * [https://doi.org/10.1103/PhysRevB.108.195138](https://doi.org/10.1103/PhysRevB.108.195138)
 
@@ -186,9 +191,9 @@ Contributions are welcome! Don't hesitate to contact us if you
  
 # References
 
-* [[1]](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.123.090402) D. Tamascelli, A. Smirne, J. Lim, S. F. Huegla, and M. B. Plenio, Physical Review Letters 123, 090402 (2019) arXiv: 1811.12418
+[^1]: [D. Tamascelli, A. Smirne, J. Lim, S. F. Huegla, and M. B. Plenio, Physical Review Letters 123, 090402 (2019) arXiv: 1811.12418](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.123.090402)
 
-* [[2]](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.94.165116) J. Haegeman, C. Lubich, I. Oseledets, B. Vandereycken, and F. Verstraete, Physical Review B 94, 165116 (2016), arXiv: 1408.5056
+[^2]: [J. Haegeman, C. Lubich, I. Oseledets, B. Vandereycken, and F. Verstraete, Physical Review B 94, 165116 (2016), arXiv: 1408.5056](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.94.165116)
 
-* [[3]](https://doi.org/10.1103/PhysRevB.104.214302) A. J. Dunnett & A. W. Chin, Physical Review B, 104(21), 214302 (2021)
+[^3]: [A. J. Dunnett & A. W. Chin, Physical Review B, 104(21), 214302 (2021)](https://doi.org/10.1103/PhysRevB.104.214302)
 

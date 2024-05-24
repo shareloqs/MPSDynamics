@@ -129,7 +129,7 @@ function measurempo(A::Vector, M::Vector, sites::Tuple{Int, Int})
     for k=sites[1]:sites[2]
         F = updateleftenv(A[k], M[k], F)
     end
-    F = tensortrace(F, [1,2,1], [2])
+    F = tensortrace([2], F, [1,2,1])
     real(only(F))
 end
 
@@ -1027,3 +1027,57 @@ function leftcontractmps(A, O::Vector, N::Int=length(A))
     end
     return ρ
 end
+
+"""
+     rhoreduced_1site(A::Vector, site::Int=1)
+
+Caculate the reduced density matrix of the MPS A at the specified site.
+
+"""
+
+function rhoreduced_1site(A::Vector, site::Int=1)
+    N = length(A)
+    ρR = Vector{Any}(undef, N-site+1)
+    ρL = Vector{Any}(undef, site)
+    ρR[1] = ones(ComplexF64,1,1)
+    ρL[1] = ones(ComplexF64,1,1)
+    for i=N:-1:(site+1) # Build the right block, compressing the chain, from right ot left (indir=2)
+                ρR[N-i+2]= rhoAAstar(ρR[N-i+1], A[i], 2,0)
+    end
+    for i=1:(site-1)
+        ρL[i+1]= rhoAAstar(ρL[i], A[i], 1,0)
+    end
+    # Compress final virtual bondimension 
+    @tensoropt ρreduced[a,b,s,s'] := ρR[N-site+1][a0,b0] * conj(A[site][a,a0,s']) * A[site][b,b0,s]
+    @tensoropt ρreduced2[s,s'] := ρL[site][a0,b0] * ρreduced[a0,b0,s,s']
+    return ρreduced2
+end
+
+"""
+     rhoreduced_2sites(A::Vector, site::Tuple{Int, Int})
+
+Caculate the reduced density matrix of the MPS A of two neigbour sites. The resulting dimensions will be the four physical dimensions in total, 
+corresponding to the dimensions  of the two sites
+
+"""
+
+function rhoreduced_2sites(A::Vector, sites::Tuple{Int, Int})
+    N = length(A)
+    site1, site2=sites
+    ρR = Vector{Any}(undef, N-site2+1)
+    ρL = Vector{Any}(undef, site1)
+    ρR[1] = ones(ComplexF64,1,1)
+    ρL[1] = ones(ComplexF64,1,1)
+    for i=N:-1:(site2+1) # Build the right block, compressing the chain, from right ot left (indir=2)
+                ρR[N-i+2]= rhoAAstar(ρR[N-i+1], A[i], 2,0)
+    end
+    for i=1:(site1-1)
+        ρL[i+1]= rhoAAstar(ρL[i], A[i], 1,0)
+    end
+    # Compress final virtual bondimension 
+    @tensoropt ρreduced1[a,b,s,s'] := ρR[N-site2+1][a0,b0] * conj(A[site2][a,a0,s']) * A[site2][b,b0,s]
+    @tensoropt ρreduced2[a,b,s,s'] := ρL[site1][a0,b0] * conj(A[site1][a0,a,s']) * A[site1][b0,b,s]
+    @tensoropt ρreduced[s,d1,s',d2] := ρreduced2[a0,b0,d1,d2] * ρreduced1[a0,b0,s,s']
+    return ρreduced
+end
+

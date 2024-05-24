@@ -409,7 +409,7 @@ The spin is on site 1 of the MPS and the bath modes are to the right.
 This Hamiltonain is unitarily equivalent (before the truncation to `N` sites) to the spin-boson Hamiltonian defined by
 
 ``
-H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{\\frac{J(ω)}{π}}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω ωb_ω^\\dagger b_ω
+H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω ωb_ω^\\dagger b_ω
 ``.
 
 The chain parameters, supplied by `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature.
@@ -486,8 +486,8 @@ end
 Generate chain coefficients ``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`` for an Harmonic bath at zero temperature with a power
 law spectral density given by:
 
-soft cutoff: ``J(ω) = 2παω_c (\\frac{ω}{ω_c})^s \\exp(-ω/ω_c)`` \n
-hard cutoff: ``J(ω) = 2παω_c (\\frac{ω}{ω_c})^s θ(ω-ω_c)``
+soft cutoff: ``J(ω) = 2αω_c (\\frac{ω}{ω_c})^s \\exp(-ω/ω_c)`` \n
+hard cutoff: ``J(ω) = 2αω_c (\\frac{ω}{ω_c})^s θ(ω-ω_c)``
 
 The coefficients parameterise the chain Hamiltonian
 
@@ -498,8 +498,8 @@ H = H_S + c_0 A_S⊗B_0+\\sum_{i=0}^{N-1}t_i (b_{i+1}^\\dagger b_i +h.c.) + \\su
 which is unitarily equivalent (before the truncation to `N` sites) to
 
 ``
-H = H_S + A_S⊗\\int_0^∞dω\\sqrt{\\frac{J(ω)}{π}}B_ω + \\int_0^∞dωωb_ω^\\dagger b_ω 
-``
+H = H_S + A_S⊗\\int_0^∞dω\\sqrt{J(ω)}B_ω + \\int_0^∞dωωb_ω^\\dagger b_ω 
+``.
 
 """
 function chaincoeffs_ohmic(nummodes, α, s; ωc=1, soft=false)
@@ -508,10 +508,16 @@ function chaincoeffs_ohmic(nummodes, α, s; ωc=1, soft=false)
         e = [ωc*(2n + 1 + s) for n in 0:(nummodes-1)]
         t = [ωc*sqrt((n + 1)*(n + s + 1)) for n in 0:(nummodes-2)]
         return [e, t, c0]
-    else    
-        c0 = sqrt(2α/(s+1))*ωc
-        e = [(ωc/2)*(1 + (s^2)/((s+2n)*(2+s+2n))) for n in 0:(nummodes-1)]
-        t = [ωc*(1+n)*(1+s+n)/((s+2+2n)*(s+3+2n))*sqrt((3+s+2n)/(1+s+2n)) for n in 0:(nummodes-2)]
+    else
+        if s==0
+            c0 = sqrt(2α)*ωc
+            e = fill(0,nummodes)
+            t = [ωc*(n+1)/(2n+1) for n in 0:(nummodes-2)]
+        else
+            c0 = sqrt(2α/(s+1))*ωc
+            e = [(ωc/2)*(1 + (s^2)/((s+2n)*(2+s+2n))) for n in 0:(nummodes-1)]
+            t = [ωc*(1+n)*(1+s+n)/((s+2+2n)*(s+3+2n))*sqrt((3+s+2n)/(1+s+2n)) for n in 0:(nummodes-2)]
+        end
         return [e, t, c0]
     end
 end
@@ -699,7 +705,34 @@ function nearestneighbourmpo(tree_::Tree, h0, A, Ad = A')
     return TreeNetwork(tree, Ms)
 end
 
+"""
+    puredephasingmpo(ΔE, dchain, Nchain, chainparams; tree=false)
 
+    Generate MPO for a pure dephasing model, defined by the Hamiltonian
+    ``H = \\frac{ΔE}{2} σ_z +  \\frac{σ_z}{2} c_0 (b_0^\\dagger + b_0) + \\sum_{i=0}^{N-1} t_i (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_i b_i^\\dagger b_i  ``
+
+    The spin is on site 1 of the MPS and the bath modes are to the right.
+
+    ### Arguments
+    * `ΔE::Real`: energy splitting of the spin
+    * `dchain::Int`: physical dimension of the chain sites truncated Hilbert spaces
+    * `Nchain::Int`: number of sites in the chain
+    * `chainparams::Array{Real,1}`: chain parameters for the bath chain. The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
+    * `tree::Bool`: if true, return a `TreeNetwork` object, otherwise return a vector of MPO tensors
+"""
+function puredephasingmpo(ΔE, dchain, Nchain, chainparams; tree=false)
+    u = unitmat(2)
+
+    cparams = only(chainparams[3])
+
+    Hs = (ΔE/2)*sz
+
+    M=zeros(1,3,2,2)
+    M[1, :, :, :] = up(Hs, (cparams/2)*sz, u)
+
+    chain = hbathchain(Nchain, dchain, chainparams; tree=false, reverse=false, coupletox=true)
+    return Any[M, chain...]
+end
 
 """
     tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
@@ -954,4 +987,409 @@ function interleaved_tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
     M1fin[D,1,:,:] = u
     push!(W, M1fin)
     return W
+
+end
+
+"""
+    correlatedenvironmentmpo(R::Vector, Nm::Int, d::Int; chainparams, fnamecc::String, s=1, α=1, ωc=1, c_phonon=1, β="inf", issoft=false)
+
+Generate a MPO for a one-dimensional bosonic bath spatially correlated to a multi-component system 
+
+``
+H_B + H_int = \\int_{-∞}^{+∞} dk ω_k b_k^\\dagger b_k + ∑_j \\int_{-∞}^{+∞}dk \\sqrt{J(k)}(A_j b_k e^{i k R_j} + h.c.)
+``.
+
+The interactions between the system and the chain-mapped bath are long range, i.e. each site interacts with all the chain modes. The spectral density is assumed to be Ohmic ``J(ω) = 2αωc(ω/ωc)^s``.
+
+# Arguments
+
+* `R`: List of system's components positions
+* `Nm`: Number of chain modes. The actual number of mode will be doubled to account for the left and right moving excitations.
+* `d`: Local Hilbert space dimension of the bath modes
+* `chainparams`: chain parameters, of the form `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature.
+* `fnamecc`: Path to a file containing pre-computed long-range coupling coefficient. If not provided, the coupling coefficients will be computed and stored.
+* `s`: Ohmicity
+* `α`: Kondo parameter
+* `ωc`: Bath cut-off frequency
+* `c_phonon`: Speed of sound in the bath
+* `β`: Inverse temperature 
+* `issoft`: Is the cut-off of the Ohmic SD soft or hard?
+"""
+function correlatedenvironmentmpo(R::Vector, Nm::Int, d::Int; chainparams, fnamecc::String, s=1, α=1, ωc=1, c_phonon=1, β="inf", issoft=false)
+
+    function polybeta(t::Float64, n::Int, a::Array, b::Array, temp::Array)
+    """
+        polybeta recursively constructs the polynomials used to compute the coupling coefficients given the coefficients a and b
+        This function is useful when working at finite temperature (β != inf)
+    """
+        if n==-1
+            return 0
+        elseif n==0
+            if length(temp)>=2
+                temp[2] = 1
+            else
+                push!(temp,1)
+            end
+
+            return 1
+        elseif n==1
+            pn = (t - a[n])
+            if length(temp) == 2
+                push!(temp,pn)
+            elseif length(temp) == 1
+                push!(temp, 1)
+                push!(temp,pn)
+            end
+
+            return pn
+        else
+            if length(temp)<n+1 && temp[1] == t
+                pn = (t - a[n])*polybeta(t,n-1,a,b,temp) - b[n-1]*polybeta(t,n-2,a,b,temp) #P_{n}(t) = (t-a_{n-1})P_{n-1} - b_{n-1}P_{n-2}
+                push!(temp, pn)
+
+                return pn
+            elseif length(temp)<n+1 && temp[1] != t
+                temp = [t]
+                pn = (t - a[n])*polybeta(t,n-1,a,b,temp) - b[n-1]*polybeta(t,n-2,a,b,temp) #P_{n}(t) = (t-a_{n-1})P_{n-1} - b_{n-1}P_{n-2}
+                push!(temp, pn)
+
+                return pn
+            elseif length(temp) == n+1 && temp[1] == t
+                pn = (t - a[n])*temp[n+1] - b[n-1]*temp[n]
+                push!(temp,pn)
+
+                return pn
+            elseif length(temp) == n+1 && temp[1] != t
+                temp = [t]
+                pn = (t - a[n])*polybeta(t,n-1,a,b,temp) - b[n-1]*polybeta(t,n-2,a,b,temp) #P_{n}(t) = (t-a_{n-1})P_{n-1} - b_{n-1}P_{n-2}
+                push!(temp, pn)
+
+                return pn
+            elseif length(temp) > n+1 && temp[1] == t
+                pn = temp[n+2]
+
+                return pn
+            else
+                temp = [t]
+                pn = (t - a[n])*polybeta(t,n-1,a,b,temp) - b[n-1]*polybeta(t,n-2,a,b,temp) #P_{n}(t) = (t-a_{n-1})P_{n-1} - b_{n-1}P_{n-2}
+                push!(temp, pn)
+
+                return pn
+            end
+        end
+    end
+    
+    function SDOhmic(t)
+    """
+        Bath Ohmic Spectral Density for zero temperature chain mapping of the bath
+    """
+        if t==0
+            return 0
+        elseif t>-1 && t<1
+            return 2*α*abs(t)*ωc
+        elseif abs(t)==1
+            return 2*α*ωc
+        else
+            return 0
+        end
+    end
+    
+        
+    function SDTOhmic(t)
+    """
+        Bath Ohmic Spectral Density after the finite temperature chain mapping of the bath
+    """
+        if t==0
+            return 2*α/β
+        elseif t>-1 && t<1
+            return α*t*ωc*(1+coth(β*t*ωc*0.5))
+        elseif abs(t)==1
+            return α*t*ωc*(1+coth(β*t*ωc*0.5))
+        else
+            return 0
+        end
+    end
+
+    a_chain = chainparams[1]
+    b_chain = chainparams[2].^2
+
+    Norm = zeros(Nm)
+
+    function γ(x::Int, n::Int, issoft::Bool; β="inf", temp=[1.])
+    """
+        Definition of the coupling coefficient between the site x and the mode n for a Ohmic spectral density with a hard cut-off (Jacobi Polynomials) or a soft cut-off Laguerre Polynomials
+    """
+        if β=="inf"
+            if issoft==true
+                polynomial0(t) = sf_laguerre_n(n,s,t)*exp(-im*t*R[x]*ωc/c_phonon)*t^s*exp(-s)
+                return sqrt(2*α*gamma(n+s + 1)/gamma(n+1))*ωc*quadgk(polynomial0, 0, 1)[1]
+            else
+                polynomial(t) = jacobi(2*t-1,n-1, 0, s)*exp(-im*t*R[x]*ωc/c_phonon)*t^s
+		        return sqrt(2*α*(2*(n-1) + s + 1))*ωc*quadgk(polynomial, 0, 1)[1]
+            end
+        elseif β!="inf"
+           polynomial1(t) = polybeta(t,n-1,a_chain,b_chain,[t])
+           integrand(t) = polynomial1(t)*exp(im*t*R[x]*ωc/c_phonon)*SDTOhmic(t)
+           N2(t) = polynomial1(t)^2*SDTOhmic(t)
+           if Norm[n]==0
+               Norm[n] = sqrt(quadgk(N2,-1,1)[1])
+           end
+           return (ωc/Norm[n])*quadgk(integrand, -1, 1)[1]
+
+        end
+    end
+
+    # Construction of the MPO
+    W = Any[] # list of the MPO's tensors
+
+    ### Construction of the bosonic bath MPO ###
+    e = chainparams[1] # list of the energy of each modes
+    t = chainparams[2] # list of the hopping energy between modes
+    u = unitmat(d)
+    # modes creation, anihilation and number operators
+    bd = crea(d)
+    b = anih(d)
+    n = numb(d)
+
+    N = length(R) # Number of system's sites
+
+    coupling_stored = zeros(ComplexF64,N,Nm) # just need NxNm because the two chains have the same coupling coeff up to complex conjugation
+    arestored = 1 # are the coupling coefficient stored
+    Nstored, Nmstored = N, Nm # number of stored coeff.
+    couplinglist = []
+    try
+        couplinglist = readdlm(fnamecc,',',ComplexF64,'\n')
+    catch stored_error
+        if isa(stored_error, ArgumentError)
+            print("Coupling coefficient not found. They will be computed and stored.\n")
+            arestored = 0
+        end
+    end
+    if couplinglist != []
+        Nstored, Nmstored = size(couplinglist)
+        if Nmstored>=Nm && Nstored>=N
+            coupling_stored = couplinglist[1:N,1:Nm]
+        else
+            coupling_stored[1:min(N,Nstored),1:min(Nm,Nmstored)] = couplinglist[1:min(N,Nstored),1:min(Nm,Nmstored)]
+            print("Less coupling coefficient stored than needed. Available ones will be used and missing one will be computed and stored.\n")
+        end
+    end
+
+    ## First chain MPO
+    D = 2*(N + 2) #Bond dimension
+    M = zeros(ComplexF64,D-2, D, d, d)
+    M[1,1,:,:] = M[D-2,D,:,:] = u
+    M[1,D,:,:] = e[1]*n
+    i = 2
+    M[1,i,:,:] = t[1]*bd
+    M[1,i+1,:,:] = t[1]*b
+
+    a = 0 #site counter
+    while i<D-2
+        a+=1
+        if arestored==1
+            couplingcoeff = coupling_stored[a,1]
+        else
+            couplingcoeff = γ(a,1,issoft, β=β)
+            coupling_stored[a,1] = couplingcoeff
+        end
+        couplingcoeff = couplingcoeff
+        M[i,D,:,:] = couplingcoeff*b
+        M[i,i+2,:,:] = u
+        i+=1
+        M[i,D,:,:] = conj(couplingcoeff)*bd
+        M[i,i+2,:,:] = u
+        i+=1
+    end
+    M = reshape(M,D-2,D,d,d)
+    push!(W, M)
+
+    for m = 2:Nm-1
+        D = 2*(N + 2)
+        M = zeros(ComplexF64,D, D, d, d)
+        M[1,1,:,:] = M[D,D,:,:] = u
+        M[1,D,:,:] = e[m]*n
+        i = 2
+        M[1,i,:,:] = t[m]*bd
+        M[1,i+1,:,:] = t[m]*b
+        M[i,D,:,:] = b
+        M[i+1,D,:,:] = bd
+        i += 2
+
+        a = 0 #site counter
+        while i<D
+            a+=1
+            if arestored==1 && m<=Nmstored && a<=Nstored
+                couplingcoeff = coupling_stored[a,m]
+            else
+                couplingcoeff = γ(a, m, issoft,β=β)
+                coupling_stored[a,m] = couplingcoeff
+            end
+            M[i,D,:,:] = couplingcoeff*b
+            if i<D-1
+                M[i,i,:,:] = u
+            end
+            i+=1
+            M[i,D,:,:] = conj(couplingcoeff)*bd
+            if i<D
+                M[i,i,:,:] = u
+            end
+            i+=1
+        end
+
+        M = reshape(M,D,D,d,d)
+        push!(W, M)
+    end
+
+    # Last Mode of the First Chain
+    D = 2*(N + 2)
+    M = zeros(ComplexF64,D, D, d, d)
+    M[1,1,:,:] = M[D,D,:,:] = u
+    M[1,D,:,:] = e[Nm]*n
+    i = 2
+    M[i,D,:,:] = b
+    M[i+1,D,:,:] = bd
+    i += 2
+
+    a = 0 #site counter
+    while i<D
+        a+=1
+        if arestored==1 && Nm<=Nmstored && a<=Nstored
+            couplingcoeff = coupling_stored[a,Nm]
+        else
+            couplingcoeff = γ(a, Nm, issoft,β=β)
+            coupling_stored[a,Nm] = couplingcoeff
+        end
+        M[i,D,:,:] = couplingcoeff*b
+        if i<D-1
+            M[i,i,:,:] = u
+        end
+        i+=1
+        M[i,D,:,:] = conj(couplingcoeff)*bd
+        if i<D
+            M[i,i,:,:] = u
+        end
+        i+=1
+    end
+
+    M = reshape(M,D,D,d,d)
+    push!(W, M)
+
+    # Second chain
+    for m = 1:Nm-1
+        D = 2*(N + 2)
+        M = zeros(ComplexF64,D, D, d, d)
+        M[1,1,:,:] = M[D,D,:,:] = u
+        M[1,D,:,:] = e[m]*n
+        i = 2
+        M[1,i,:,:] = t[m]*bd
+        M[1,i+1,:,:] = t[m]*b
+        M[i,D,:,:] = b
+        M[i+1,D,:,:] = bd
+        i += 2
+
+        a = 0 #site counter
+        while i<D
+            a+=1
+            couplingcoeff = coupling_stored[a,m]
+            M[i,D,:,:] = couplingcoeff*bd
+            if i<D-1
+                M[i,i,:,:] = u
+            end
+            i+=1
+            M[i,D,:,:] = conj(couplingcoeff)*b
+            if i<D
+                M[i,i,:,:] = u
+            end
+            i+=1
+        end
+
+        M = reshape(M,D,D,d,d)
+        push!(W, M)
+    end
+
+    # Last mode
+    WNm = zeros(ComplexF64,D, 1, d, d)
+    WNm[1,1,:,:] = e[Nm]*n
+    WNm[2,1,:,:] = b
+    WNm[3,1,:,:] = bd
+    a = 0 #site counter
+    i = 4 #row index
+    while i<D
+        a+=1
+        couplingcoeff = coupling_stored[a, Nm]
+        WNm[i,1,:,:] = couplingcoeff*bd
+        i+=1
+        WNm[i,1,:,:] = conj(couplingcoeff)*b
+        i+=1
+    end
+    WNm[D,1,:,:] = u
+    WNm = reshape(WNm,D,1,d,d)
+
+    push!(W, WNm)
+
+    if arestored==0 || Nmstored<Nm || Nstored<N
+        writedlm(fnamecc, coupling_stored, ',')
+    end
+
+    return W
+end
+
+"""
+    protontransfermpo(ω0e,ω0k,x0e,x0k, Δ, dRC, d, N, chainparams, RCparams, λreorg)
+
+Generate a MPO for a system described in space with a reaction coordinate (RC) tensor. The RC tensor is coupled to a bosonic bath, taking into account the induced reorganization energy. 
+
+``
+H_S + H_RC + H_int^{S-RC} = \\omega^0_{e} |e\\rangle \\langle e| + \\omega^0_{k} |k\\rangle \\langle k| + \\Delta (|e\\rangle \\langle k| + |k\\rangle \\langle e|) + \\omega_{RC} (d^{\\dagger}d + \\frac{1}{2}) + g_{e} |e\\rangle \\langle e|( d + d^{\\dagger})+ g_{k} |k \\rangle \\langle k|( d + d^{\\dagger})
+``
+``
+H_B + H_int^{RC-B} = \\int_{-∞}^{+∞} dk ω_k b_k^\\dagger b_k - (d + d^{\\dagger})\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\lambda_{reorg}(d + d^{\\dagger})^2
+``.
+``
+\\lambda_{reorg} = \\int \\frac{J(\\omega)}{\\omega}d\\omega
+``.
+
+
+# Arguments
+
+* `ω0e`: enol energy at x=0 
+* `ω0k`: keto energy at x=0
+* `x0e`: enol equilibrium displacement
+* `x0k`: keto equilibrium displacement 
+* `Δ`: direct coupling between enol and keto
+* `dRC`: fock space of the RC tensor 
+* `d`: number of Fock states of the chain modes
+* `N`: length of the chain
+* `chainparams`: chain parameters, of the form `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature. 
+* `RCparams`: RC tensor parameter, of the form `RCparams`=``[ωRC,-g/x]`` 
+* `λreorg`: reorganization energy
+"""
+function protontransfermpo(ω0e,ω0k,x0e,x0k, Δ, dRC, d, N, chainparams, RCparams, λreorg)
+    u = unitmat(2)
+
+    b = anih(dRC)
+    bd = crea(dRC)
+    n = numb(dRC)
+    e = RCparams[1]
+    uRC = unitmat(dRC)
+
+    spos = [-x0e 0.; 0. -x0k]
+
+    c0 = only(chainparams[3])
+    cRC = only(RCparams[2])
+
+    Hs = (ω0e)*[1. 0.; 0. 0.] + (ω0k)*[0. 0.; 0. 1.] + Δ*sx
+
+    M=zeros(1,3,2,2)
+    M[1,:,:,:] = up(Hs, cRC*spos, u)
+
+    MRC = zeros(3,3,dRC,dRC)
+
+    MRC[:, 1, :, :] = dn(e[1]*(n.+diagm([1/2 for i=1:dRC]))+(λreorg)*(b+bd)^2,(b+bd), uRC)
+    MRC[3, :, :, :] = up(e[1]*(n.+diagm([1/2 for i=1:dRC]))+(λreorg)*(b+bd)^2, -c0*(b+bd), uRC)
+
+    chain = hbathchain(N, d, chainparams; coupletox=true)
+
+    return Any[M,MRC,chain...]
 end

@@ -50,8 +50,9 @@ function mpsrightnorm!(net::TreeNetwork, id::Int)
         IC=collect(1:nc+2)
         IA=collect(1:nc+2)
         IC[i+1]=-1
+        #net[id] = tensorcontract(net[id], IA, C, [i+1,-1], IC) #Old tensoroperation version
+        net[id] = tensorcontract(IC,net[id], IA, C, [i+1,-1])
 
-        net[id] = tensorcontract(net[id], IA, C, [i+1,-1], IC)
     end
 end
 
@@ -405,7 +406,8 @@ function tdvp1sweep_lc!(dt, A::TreeNetwork, M::TreeNetwork, lc::TreeLightCone, F
         IA = collect(1:ngc+2)
         IB = collect(1:ngc+2)
         IA[1] = -1
-        A[child] = tensorcontract(A[child], IA, C, [1,-1], IB)
+        #A[child] = tensorcontract(A[child], IA, C, [1,-1], IB) #old tensoroperations
+        A[child] = tensorcontract(IB, A[child], IA, C, [1,-1])
         #(OC is now on child)
         
         #evolve child forward one full time step
@@ -427,7 +429,8 @@ function tdvp1sweep_lc!(dt, A::TreeNetwork, M::TreeNetwork, lc::TreeLightCone, F
         IA = collect(1:nc+2)
         IB = collect(1:nc+2)
         IA[i+1] = -1
-        AC = tensorcontract(AL, IA, C, [i+1,-1], IB)
+        #AC = tensorcontract(AL, IA, C, [i+1,-1], IB) #old tensoroperations
+        AC = tensorcontract(IB, AL, IA, C, [i+1,-1])
         #(OC is now on headnode)
     end
 
@@ -496,7 +499,8 @@ function tdvp1sweep_lc!(dt, A::TreeNetwork, M::TreeNetwork, lc::TreeLightCone, F
         IA = collect(1:ngc+2)
         IB = collect(1:ngc+2)
         IA[1] = -1
-        A[child] = tensorcontract(A[child], IA, C, [1,-1], IB)
+        #A[child] = tensorcontract(A[child], IA, C, [1,-1], IB)
+        A[child] = tensorcontract(IB, A[child], IA, C, [1,-1])
         #(OC is now on child)
         
         #evolve child forward one full time step
@@ -518,7 +522,8 @@ function tdvp1sweep_lc!(dt, A::TreeNetwork, M::TreeNetwork, lc::TreeLightCone, F
         IA = collect(1:nc+2)
         IB = collect(1:nc+2)
         IA[i+1] = -1
-        AC = tensorcontract(AL, IA, C, [i+1,-1], IB)
+        #AC = tensorcontract(AL, IA, C, [i+1,-1], IB)
+        AC = tensorcontract(IB, AL, IA, C, [i+1,-1])
         #(OC is now on node)
     end
 

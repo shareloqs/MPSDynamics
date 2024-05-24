@@ -4,6 +4,7 @@ crea(d) = diagm(-1 => [sqrt(i) for i=1:d-1])
 anih(d) = Matrix(crea(d)')
 numb(d) = crea(d)*anih(d)
 disp(d) = (1/sqrt(2))*(crea(d)+anih(d))
+disp(d,ωvib,m) = (1/(2*sqrt(m*ωvib/2)))*(crea(d)+anih(d))
 mome(d) = (1/sqrt(2))*(im*(crea(d)-anih(d)))
 sx = [0. 1.; 1. 0.]
 sz = [1. 0.; 0. -1.]
@@ -174,6 +175,125 @@ function measuremodes(adaga, e::Vector, t::Vector)
     U = F.vectors
     return real.(diag(U' * adaga * U))
 end
+
+"""
+    measurecorrs(oper, , e::Vector, t::Vector)
+
+    ### Parameters
+
+    `oper``: Square matrix (Matrix{Float64}) representing the operator to be transformed.
+    `e``: Vector (Vector{Float64}) of diagonal (on-site energy) chain coefficients.
+    `t`: Vector (Vector{Float64}) of off-diagonal (hopping terms) chain coefficients.
+
+    ### Returns
+
+    Matrix{Float64}: This matrix is the operator `oper` transformed back from the chain 
+    representation to the representation corresponding to the extended bath. The resulting 
+    operator represents quantities like mode occupations or other properties in the basis 
+    of environmental modes associated with specific frequencies ``\\omega_i``.
+
+    ### Description
+    
+    This function performs a basis transformation of the operator `oper`. Specifically, 
+    this transformation reverses the unitary transformation that maps the extended bath
+    Hamiltonian into the chain representation. 
+
+"""
+
+function measurecorrs(oper, e::Vector, t::Vector)
+    N = size(oper)[1]
+    hmat = diagm(0=>e[1:N], 1=>t[1:N-1], -1=>t[1:N-1])
+    F = eigen(hmat)
+    U = F.vectors
+    return (U' * oper * U)
+end
+
+
+"""
+    cosineh(omega, bet)
+
+    Calculates the hyperbolic cosine function function based on the input parameters, 
+    for the Bogoliubov transformation necessary for the thermofield transformation.
+
+    # Arguments
+    - `omega::Float64`: The frequency parameter.
+    - `bet::Float64`: The beta parameter.
+
+    # Returns
+    - `Float64`: The result of the modified cosine function.
+"""
+
+function cosineh(omega, bet)
+    return 1/sqrt(1 - exp(-omega * (bet)))
+end
+
+"""
+    sineh(omega, bet)
+
+    Calculates the hyperbolic sine function function based on the input parameters, 
+    for the Bogoliubov transformation necessary for the thermofield transformation.
+
+    # Arguments
+    - `omega::Float64`: The frequency parameter.
+    - `bet::Float64`: The beta parameter.
+
+    # Returns
+    - `Float64`: The result of the modified cosine function.
+"""
+
+function sineh(omega, bet)
+    return 1/sqrt(-1 + exp(omega * float(bet)))
+end
+
+"""
+    physical_occup(corr_constr, corr_destr, omega, occup, b, M)
+
+    Calculates the physical occupation based on correlation matrices, omega values, 
+    and other parameters. The physical occupation in the original frequency environment
+    is computed by reverting the thermofield transformation.
+
+    # Arguments
+    - `corr_constr::Matrix{ComplexF64}`: The correlation construction matrix.
+    - `corr_destr::Matrix{ComplexF64}`: The correlation destruction matrix.
+    - `omega::Vector{Float64}`: The omega values.
+    - `occup::Matrix{Float64}`: The occupation matrix.
+    - `b::Float64`: The beta parameter.
+    - `M::Int`: The number of points for interpolation.
+
+    # Returns
+    - `Vector{Float64}`: The physical occupation values.
+"""
+
+function physical_occup(corr_constr, corr_destr, omega, occup, b, M)
+    x = range(-1, stop=1, length=M)
+
+    # Ensure occup is a vector
+    occup_vector = vec(occup)
+
+    occup_interp = LinearInterpolation(omega, occup_vector, extrapolation_bc=Line())
+    corr_constr_interp = interpolate((omega, omega), abs.(corr_constr), Gridded(Linear()))
+    corr_destr_interp = interpolate((omega, omega), abs.(corr_destr), Gridded(Linear()))
+
+    Mhalf = div(M, 2)
+    phys_occ = []
+
+    omega_min = minimum(omega)
+    omega_max = maximum(omega)
+    x_rescaled = (x .+ 1) .* (omega_max - omega_min) / 2 .+ omega_min
+
+    for el in 1:Mhalf
+        ipos = Mhalf + el
+        ineg = Mhalf - el + 1
+        occ = (cosineh(x_rescaled[ipos], b) * sineh(x_rescaled[ipos], b) *
+               (corr_destr_interp(x_rescaled[ineg], x_rescaled[ipos]) + corr_constr_interp(x_rescaled[ipos], x_rescaled[ineg])) +
+               cosineh(x_rescaled[ipos], b)^2 * occup_interp(x_rescaled[ipos]) +
+               sineh(x_rescaled[ipos], b)^2 * (1 + occup_interp(x_rescaled[ineg])))
+        push!(phys_occ, occ)
+    end
+
+    return phys_occ
+end
+
 
 """
     findchainlength(T, cparams...; eps=10^-6)

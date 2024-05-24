@@ -1,6 +1,6 @@
 module MPSDynamics
 
-using JLD, HDF5, Random, Dates, Plots, Printf, Distributed, LinearAlgebra, DelimitedFiles, KrylovKit, TensorOperations, GraphRecipes, SpecialFunctions, ITensors
+using JLD, HDF5, Random, Dates, Plots, Printf, Distributed, LinearAlgebra, DelimitedFiles, KrylovKit, TensorOperations, GraphRecipes, SpecialFunctions, ITensors, Interpolations
 
 include("fundamentals.jl")
 include("reshape.jl")
@@ -28,6 +28,7 @@ include("run_DTDVP.jl")
 include("run_A1TDVP.jl")
 include("chainA1TDVP.jl")
 include("switchmpo.jl")
+include("finitetemperature.jl")
 
 """
     runsim(dt, tmax, A, H; 
@@ -62,8 +63,6 @@ Propagate the MPS `A` with the MPO `H` up to time `tmax` in time steps of `dt`. 
 * `name`: Used to describe the calculation. This name will appear in the log.txt file
  
 """
-
-
 function runsim(dt, tmax, A, H;
                 method=:TDVP1,
                 machine=LocalMachine(),
@@ -153,7 +152,7 @@ end
 
 export sz, sx, sy, numb, crea, anih, unitcol, unitrow, unitmat, spinSX, spinSY, spinSZ, SZ, SX, SY
 
-export chaincoeffs_ohmic, spinbosonmpo, methylbluempo, methylbluempo_correlated, methylbluempo_correlated_nocoupling, methylbluempo_nocoupling, ibmmpo, methylblue_S1_mpo, methylbluempo2, twobathspinmpo, xyzmpo
+export chaincoeffs_ohmic, spinbosonmpo, methylbluempo, methylbluempo_correlated, methylbluempo_correlated_nocoupling, methylbluempo_nocoupling, ibmmpo, methylblue_S1_mpo, methylbluempo2, twobathspinmpo, xyzmpo, puredephasingmpo, tunnelingmpo
 
 export productstatemps, physdims, randmps, bonddims, elementmps
 
@@ -172,6 +171,10 @@ export println, print, show
 export @LogParams
 
 export MPOtoVector, MPStoVector
+
+export rhoreduced_2sites, rhoreduced_1site, protontransfermpo
+
+export chaincoeffs_finiteT, chaincoeffs_fermionic, fermionicspectraldensity_finiteT
 
 end
 

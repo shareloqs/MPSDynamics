@@ -524,7 +524,6 @@ end
 Apply an operator O on the MPS A. O is acting on several sites ::Vector{Int}. The resulting MPS A is the MPS modified by the operator O.
 
 """
-
 function apply1siteoperator!(A, O, sites::Vector{Int})
     for i in sites
         @tensor R[a,b,s] := O[s,s']*A[i][a,b,s']
@@ -538,7 +537,6 @@ end
 Apply an operator O on the MPS A. O is acting on only one site ::Int. The resulting MPS A is the MPS modified by the operator O.
 
 """
-
 apply1siteoperator!(A, O, site::Int) = apply1siteoperator!(A, O, [site])
 
 """
@@ -547,7 +545,6 @@ apply1siteoperator!(A, O, site::Int) = apply1siteoperator!(A, O, [site])
 Apply an MPO H on the MPS A. H must have the same number of site than A. The resulting MPS A is the MPS modified by the mpo H.
 
 """
-
 function applympo!(A, H)
     N = length(H)
     N == length(A) || throw(ArgumentError("MPO has $N site while MPS has $(length(A)) sites"))
@@ -729,3 +726,48 @@ function mpsembed!(A::Vector, Dmax::Int)
     return A
 end
 
+"""
+    displacedchainmps(A::Vector{Any}, N::Int, Nm::Int, γ::Any)
+
+    Given a mps A, return a mps B where the `Nm`-long chain is displaced by `γ` without displacing the `N`-long system.
+"""
+function displacedchainmps(A::Vector{Any}, N::Int, Nm::Int, γ::Any)
+
+    if length(A) != N+Nm
+        throw(ArgumentError("The MPS A should have N+Nm sites."))
+    end
+
+    if length(γ)==1
+        ι = γ[1]
+    elseif length(γ) != Nm 
+        throw(ArgumentError("γ should either be a single c-number or a list of length Nm."))
+    else
+        ι = γ
+    end
+
+    B = Any[] # displaced chain MPS
+
+    # The system part of the MPS should be unaffected by the displacement operator
+    for i=1:N
+        push!(B, A[i])
+    end
+
+    # Displacement operator for the chain
+    for n=1:Nm
+        d1, d2, dhilbert = size(A[N+n]) # left bond dim, right bond dim and system physical dim
+        χ = d1*d2
+
+        bd = crea(dhilbert) # chain creation operator
+        b = anih(dhilbert) # chain anihilation operator
+
+        W = ι[n]*bd - conj(ι[n])*b  # Argument of the displacement operator
+
+        Ap = permutedims(reshape(A[N+n], χ, dhilbert), [2,1]) # reshape the MPS tensor as a (d, χ)-matrix
+
+        As = permutedims(exp(W)*Ap, [2,1]) # matrix multiplication B_n = exp(W)*A_n
+
+        push!(B, reshape(As, d1, d2, dhilbert))
+    end
+
+    return B
+end
