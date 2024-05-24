@@ -1,16 +1,11 @@
 using LinearAlgebra
 
-""" GAUSS Gauss quadrature rule.
+""" 
+    gauss(N,ab)
 
-    Given a weight function w encoded by the nx2 array ab of the
-    first n recurrence coefficients for the associated orthogonal
-    polynomials, the first column of ab containing the n alpha-
-    coefficients and the second column the n beta-coefficients,
-    the call xw = GAUSS(n,ab) generates the nodes and weights xw of
-    the n-point Gauss quadrature rule for the weight function w.
-    The nodes, in increasing order, are stored in the first
-    column, the n corresponding weights in the second column, of
-    the nx2 array xw.
+Gauss quadrature rule for `N` sites on an interval `ab`. Given a weight function w encoded by the `N`x2 array `ab` of the first `N` recurrence coefficients for the associated orthogonal
+polynomials, the first column of `ab` containing the `N` alpha-coefficients and the second column the `N` beta-coefficients, the call xw = gauss(N,ab) generates the nodes and weights xw of the `N`-point Gauss quadrature rule for the weight function w.
+The nodes, in increasing order, are stored in the first column, the n corresponding weights in the second column, of the `N`x2 array xw.
 """
 function gauss(N,ab)
     N0 = size(ab,1)

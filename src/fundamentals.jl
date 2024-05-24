@@ -392,7 +392,7 @@ end
 """
     dynamap(ps1,ps2,ps3,ps4)
 
-Calulate complete dynamical map to time step at which ps1, ps2, ps3 and ps4 are specified.
+Calculate complete dynamical map to time step at which ps1, ps2, ps3 and ps4 are specified.
 
 """
 function dynamap(ps1,ps2,ps3,ps4)

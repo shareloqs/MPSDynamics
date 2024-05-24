@@ -542,7 +542,7 @@ apply1siteoperator!(A, O, site::Int) = apply1siteoperator!(A, O, [site])
 """
     applympo!(A, H)
 
-Apply an MPO H on the MPS A. H must have the same number of site than A. The resulting MPS A is the MPS modified by the mpo H.
+Apply an MPO H on the MPS A. H must have the same number of site than A. The resulting MPS A is the MPS modified by the MPO H.
 
 """
 function applympo!(A, H)
@@ -729,7 +729,7 @@ end
 """
     displacedchainmps(A::Vector{Any}, N::Int, Nm::Int, γ::Any)
 
-    Given a mps A, return a mps B where the `Nm`-long chain is displaced by `γ` without displacing the `N`-long system.
+Given a MPS A, return a MPS B where the `Nm`-long chain is displaced by `γ` without displacing the `N`-long system.
 """
 function displacedchainmps(A::Vector{Any}, N::Int, Nm::Int, γ::Any)
 

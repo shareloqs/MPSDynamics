@@ -457,7 +457,7 @@ The spin is on site ``N_l + 1`` of the MPS, surrounded by the left chain modes a
 This Hamiltonain is unitarily equivalent (before the truncation to `N` sites) to the spin-boson Hamiltonian defined by
 
 ``
-H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{\\frac{J(ω)}{π}}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω ωb_ω^\\dagger b_ωi + σ_x\\int_0^∞ dω\\sqrt{\\frac{J^l(ω)}{π}}(d_ω^\\dagger+d_ω) + \\int_0^∞ dω ωd_ω^\\dagger d_ω
+H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω ωb_ω^\\dagger b_ωi + σ_x\\int_0^∞ dω\\sqrt{J^l(ω)}(d_ω^\\dagger+d_ω) + \\int_0^∞ dω ωd_ω^\\dagger d_ω
 ``.
 
 The chain parameters, supplied by `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature. The two chains can have a different spectral density.
@@ -582,7 +582,7 @@ The spin is on site 1 of the MPS and the bath modes are to the right.
 This Hamiltonain is unitarily equivalent (before the truncation to `N` sites) to the spin-boson Hamiltonian defined by
 
 ``
-H =  \\frac{ω_0}{2}σ_z + σ_z\\int_0^∞ dω\\sqrt{\\frac{J(ω)}{π}}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω ωb_ω^\\dagger b_ω
+H =  \\frac{ω_0}{2}σ_z + σ_z\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω ωb_ω^\\dagger b_ω
 ``.
 
 The chain parameters, supplied by `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature.
@@ -708,12 +708,12 @@ end
 """
     puredephasingmpo(ΔE, dchain, Nchain, chainparams; tree=false)
 
-    Generate MPO for a pure dephasing model, defined by the Hamiltonian
-    ``H = \\frac{ΔE}{2} σ_z +  \\frac{σ_z}{2} c_0 (b_0^\\dagger + b_0) + \\sum_{i=0}^{N-1} t_i (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_i b_i^\\dagger b_i  ``
+Generate MPO for a pure dephasing model, defined by the Hamiltonian
+``H = \\frac{ΔE}{2} σ_z +  \\frac{σ_z}{2} c_0 (b_0^\\dagger + b_0) + \\sum_{i=0}^{N-1} t_i (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_i b_i^\\dagger b_i  ``
 
-    The spin is on site 1 of the MPS and the bath modes are to the right.
+The spin is on site 1 of the MPS and the bath modes are to the right.
 
-    ### Arguments
+### Arguments
     * `ΔE::Real`: energy splitting of the spin
     * `dchain::Int`: physical dimension of the chain sites truncated Hilbert spaces
     * `Nchain::Int`: number of sites in the chain
@@ -737,22 +737,18 @@ end
 """
     tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
-    Generate MPO for a tight-binding chain of N fermionic sites with a single impurity site (fermionic as well) 
-    of energy ϵd at the center. The impurity is coupled to two leads, each described by a set of chain parameters.
-    The interactions are nearest-neighbour, with the first N/2-1 sites corresponding to the first lead,
-    the Nth site corresponding to the impurity, and the rest of the sites corresponding to the second
-    lead.
+Generate MPO for a tight-binding chain of N fermionic sites with a single impurity site (fermionic as well) 
+of energy ϵd at the center. The impurity is coupled to two leads, each described by a set of chain parameters.
+The interactions are nearest-neighbour, with the first N/2-1 sites corresponding to the first lead, the Nth site corresponding to the impurity, and the rest of the sites corresponding to the second lead.
 
-    # Arguments
+# Arguments
 
     * `N::Int`: number of sites in the chain
     * `ϵd::Real`: energy of the impurity site at the center, as Ed - μ, where μ is the chemical potential
     * chainparams1::Array{Real,1}: chain parameters for the first lead
     * chainparams2::Array{Real,1}: chain parameters for the second lead
 
-    The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
-
-
+The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
 """
 function tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
@@ -996,7 +992,7 @@ end
 Generate a MPO for a one-dimensional bosonic bath spatially correlated to a multi-component system 
 
 ``
-H_B + H_int = \\int_{-∞}^{+∞} dk ω_k b_k^\\dagger b_k + ∑_j \\int_{-∞}^{+∞}dk \\sqrt{J(k)}(A_j b_k e^{i k R_j} + h.c.)
+H_B + H_{int} = \\int_{-∞}^{+∞} dk ω_k b_k^\\dagger b_k + ∑_j \\int_{-∞}^{+∞}dk \\sqrt{J(k)}(A_j b_k e^{i k R_j} + h.c.)
 ``.
 
 The interactions between the system and the chain-mapped bath are long range, i.e. each site interacts with all the chain modes. The spectral density is assumed to be Ohmic ``J(ω) = 2αωc(ω/ωc)^s``.
@@ -1341,10 +1337,10 @@ end
 Generate a MPO for a system described in space with a reaction coordinate (RC) tensor. The RC tensor is coupled to a bosonic bath, taking into account the induced reorganization energy. 
 
 ``
-H_S + H_RC + H_int^{S-RC} = \\omega^0_{e} |e\\rangle \\langle e| + \\omega^0_{k} |k\\rangle \\langle k| + \\Delta (|e\\rangle \\langle k| + |k\\rangle \\langle e|) + \\omega_{RC} (d^{\\dagger}d + \\frac{1}{2}) + g_{e} |e\\rangle \\langle e|( d + d^{\\dagger})+ g_{k} |k \\rangle \\langle k|( d + d^{\\dagger})
+H_S + H_{RC} + H_{int}^{S-RC} = \\omega^0_{e} |e\\rangle \\langle e| + \\omega^0_{k} |k\\rangle \\langle k| + \\Delta (|e\\rangle \\langle k| + |k\\rangle \\langle e|) + \\omega_{RC} (d^{\\dagger}d + \\frac{1}{2}) + g_{e} |e\\rangle \\langle e|( d + d^{\\dagger})+ g_{k} |k \\rangle \\langle k|( d + d^{\\dagger})
 ``
 ``
-H_B + H_int^{RC-B} = \\int_{-∞}^{+∞} dk ω_k b_k^\\dagger b_k - (d + d^{\\dagger})\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\lambda_{reorg}(d + d^{\\dagger})^2
+H_B + H_{int}^{RC-B} = \\int_{-∞}^{+∞} dk ω_k b_k^\\dagger b_k - (d + d^{\\dagger})\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\lambda_{reorg}(d + d^{\\dagger})^2
 ``.
 ``
 \\lambda_{reorg} = \\int \\frac{J(\\omega)}{\\omega}d\\omega
