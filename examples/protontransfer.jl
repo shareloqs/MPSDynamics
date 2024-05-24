@@ -5,7 +5,7 @@
 
     The RC tensor is initially displaced at the value γ corresponding to a space coordinate.
 
-    The intiial electronic system is initialized in the adiabatic LOW surface at the RC displacement. 
+    The initial electronic system is initialized in the adiabatic LOW surface at the RC displacement. 
 
     H_S + H_RC + H_int^{S-RC} = ω^0_{e} |e⟩ ⟨e| + ω^0_{k} |k⟩ ⟨k| + \\Delta (|e⟩ ⟨k| + |k⟩ ⟨ e|) + ω_{RC} (d^{\dagger}d + \\frac{1}{2}) + g_{e} |e⟩ ⟨e|( d + d^{\dagger})+ g_{k} |k⟩ ⟨k|( d + d^{\dagger})
 ``
