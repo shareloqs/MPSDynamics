@@ -48,7 +48,7 @@ H = spinbosonmpo(ω0, Δ, d, N, cpars) # MPO representation of the Hamiltonian
 
 ψ = unitcol(2,2) # Initial down-z system state 
 
-A = productstatemps(physdims(H), state=[ψ, fill(unitcol(1,d), N)...]) # MPS representation of |ψ&gt;|Vacuum&gt;</code></pre><p>We then choose the observables that will be stored in the data and the <a href="examples/@ref"><code>MPSDynamics.runsim</code></a> arguments.</p><pre><code class="language-julia">#---------------------------
+A = productstatemps(physdims(H), state=[ψ, fill(unitcol(1,d), N)...]) # MPS representation of |ψ&gt;|Vacuum&gt;</code></pre><p>We then choose the observables that will be stored in the data and the <a href="../../methods/#MPSDynamics.runsim-NTuple{4, Any}"><code>MPSDynamics.runsim</code></a> arguments.</p><pre><code class="language-julia">#---------------------------
 # Definition of observables
 #---------------------------
 
@@ -57,7 +57,7 @@ ob1 = OneSiteObservable(&quot;sz&quot;, sz, 1)
 ob2 = OneSiteObservable(&quot;chain mode occupation&quot;, numb(d), (2,N+1))
 
 ob3 = TwoSiteObservable(&quot;SXdisp&quot;, sx, disp(d), [1], collect(2:N+1))
-</code></pre><p><a href="examples/@ref"><code>MPSDynamics.runsim</code></a> is called to perform the dynamics. The argument <code>timedep</code> is set up to true and <code>Ndrive</code> and <code>Htime</code> are provided in the kwargs. </p><pre><code class="language-julia">#-------------
+</code></pre><p><a href="../../methods/#MPSDynamics.runsim-NTuple{4, Any}"><code>MPSDynamics.runsim</code></a> is called to perform the dynamics. The argument <code>timedep</code> is set up to true and <code>Ndrive</code> and <code>Htime</code> are provided in the kwargs. </p><pre><code class="language-julia">#-------------
 # Simulation
 #------------
 
@@ -79,4 +79,4 @@ A, dat = runsim(dt, tfinal, A, H;
 # Plots
 #----------
 
-plot(dat[&quot;data/times&quot;], dat[&quot;data/sz&quot;], label=&quot;Dmax = $(D...)&quot;, xlabel=L&quot;t&quot;,ylabel=L&quot;\sigma_z&quot;, title=&quot;&quot;)</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../puredephasing/">« Pure-Dephasing</a><a class="docs-footer-nextpage" href="../anderson-model/">The Anderson Impurity Model »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 17 May 2024 11:21">Friday 17 May 2024</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+plot(dat[&quot;data/times&quot;], dat[&quot;data/sz&quot;], label=&quot;Dmax = $(D...)&quot;, xlabel=L&quot;t&quot;,ylabel=L&quot;\sigma_z&quot;, title=&quot;&quot;)</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../puredephasing/">« Pure-Dephasing</a><a class="docs-footer-nextpage" href="../anderson-model/">The Anderson Impurity Model »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 24 May 2024 14:27">Friday 24 May 2024</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
