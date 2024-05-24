@@ -7,7 +7,7 @@ makedocs(
     modules = [MPSDynamics],
     highlightsig = true,
     sitename = "MPSDynamics.jl",
-    authors = "Angus Dunnett, Thibaut Lacroix, Brieuc Le Dé, Angela Riva",
+    authors = "Angus J. Dunnett, Thibaut Lacroix, Brieuc Le Dé, Angela Riva",
     pages = [
         "index.md",
         "user-guide.md",
@@ -24,5 +24,5 @@ makedocs(
 deploydocs(
     repo = "github.com/shareloqs/MPSDynamics.git",
     devurl = "docs",
-    devbranch = "doc-writing"
+    devbranch = "master"
 )
