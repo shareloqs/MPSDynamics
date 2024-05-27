@@ -12,7 +12,7 @@ makedocs(
         "index.md",
         "user-guide.md",
         "nutshell.md",
-        "Examples" => ["./examples/sbm.md", "./examples/puredephasing.md", "./examples/timedep.md", "./examples/anderson-model.md", "./examples/bath-observables.md"],
+        "Examples" => ["./examples/sbm.md", "./examples/puredephasing.md", "./examples/timedep.md", "./examples/anderson-model.md", "./examples/bath-observables.md", "./examples/protontransfer.md"],
         "theory.md",
         "Methods" => "methods.md",
         "dev.md"
