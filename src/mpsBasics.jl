@@ -562,7 +562,6 @@ end
 Reverse the left and right dimensions of the MPS A. The resulting MPS A is the reversed MPS.
 
 """
-
 function reversemps!(A)
     N = length(A)
     reverse!(A)
@@ -577,7 +576,6 @@ end
 Reverse the left and right bond-dimensions of the MPS A.
 
 """
-
 function reversemps(A)
     N = length(A)
     Ar = Vector{Any}(undef, N)
@@ -593,7 +591,6 @@ end
 Reverse the left and right dimensions of the MPO M. The resulting MPO M is the reversed MPO.
 
 """
-
 function reversempo!(M)
     N = length(M)
     reverse!(M)
@@ -608,7 +605,6 @@ end
 Reverse the left and right dimensions of the MPO M.
 
 """
-
 function reversempo(M)
     N = length(M)
     Mr = Vector{Any}(undef, N)
@@ -697,10 +693,9 @@ function multiply(M1::Vector, M2::Vector)
 end
 
 """
-    mpsembed(A::Vector, Dmax::Int)
+    mpsembed!(A::Vector, Dmax::Int)
 
 Embed MPS `A` in manifold of max bond-dimension `Dmax`
-
 """
 function mpsembed!(A::Vector, Dmax::Int)
 

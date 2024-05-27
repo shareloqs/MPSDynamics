@@ -871,7 +871,6 @@ end
 
     The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
 """
-
 function interleaved_tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
     e1 = chainparams1[1]

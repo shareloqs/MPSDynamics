@@ -2,7 +2,7 @@
 
 Here we explain the different steps to perform a simulation.
 
-Examples with detailed explanations can be found in [Examples](@ref).
+Examples with detailed explanations can be found in the `Examples` section.
 
 ## Initial State
 
@@ -49,7 +49,7 @@ In the context of Open Quantum Systems, custom chain coefficients for the enviro
 
 ### Build-in Hamiltonian
 
-MPSDynamics provides several topical Hamiltonians directly in the form of MPO or Tree Tensor Networks such as the Ising model [`MPSDynamics.isingmpo`](@ref), the XYZ Hamiltonian [`MPSDynamics.xyzmpo`](@ref), the Spin Boson Model [`MPSDynamics.spinbosonmpo`](@ref), a spin coupled to two bosonic baths `MPSDynamics.twobathspinmpo`, nearest neighbour interactions Hamiltonian `MPSDynamics.nearestneighbourmpo`, the independent boson model `MPSDynamics.ibmmpo`, (non-)uniform tight-binding chain Hamiltonian [`MPSDynamics.tightbindingmpo`](@ref).
+MPSDynamics provides several topical Hamiltonians directly in the form of MPO or Tree Tensor Networks such as the Ising model [`MPSDynamics.isingmpo`](@ref), the XYZ Hamiltonian [`MPSDynamics.xyzmpo`](@ref), the Spin Boson Model [`MPSDynamics.spinbosonmpo`](@ref), a spin coupled to two bosonic baths [`MPSDynamics.twobathspinmpo`](@ref), nearest neighbour interactions Hamiltonian [`MPSDynamics.nearestneighbourmpo`](@ref), the independent boson model [`MPSDynamics.ibmmpo`](@ref), (non-)uniform tight-binding chain Hamiltonian [`MPSDynamics.tightbindingmpo`](@ref).
 
 ### Convert a MPO from ITensor
 
@@ -64,14 +64,14 @@ MPOs are fundamentally a lists of rank-4 tensors such that the right bond dimens
 
 In the T-TEDOPA framework (see [Theoretical Background](@ref) for more details) finite temperature simulations are done with an effective pure state description of the system and the environment where the coupling coefficients (or the SD) is temperature-dependent.
 
-The corresponding chain coefficients for an Ohmic or a user provided spectral density (that can thus in pratice be either at zero or finite temperature) are computed with the `[`chaincoeffs_finiteT`](@ref)`.
+The corresponding chain coefficients for an Ohmic or a user provided spectral density (that can thus in pratice be either at zero or finite temperature) are computed with the [`chaincoeffs_finiteT`](@ref).
 This method is based on the `ORTHOPOL` routines[^Gautschi]
 
 ## Observables
 
 System and environment observables can be computed, as well as system-and-environment 'non-local' observables.
 
-Observables that will be passed to `MPSDynamics.runsim`(@ref) to have their expectation value computated at each time step are defined with the [`OneSiteObservable`](@ref) and `[`TwoSiteObservable`](@ref)`.
+Observables that will be passed to [`MPSDynamics.runsim`](@ref) to have their expectation value computated at each time step are defined with the [`OneSiteObservable`](@ref) and [`TwoSiteObservable`](@ref).
 
 One-site and two-site obsevables work similarly, they need to be given a name, an (pair of) operator(s) and the (list of) site(s) on which they are evaluated.
 
@@ -141,7 +141,7 @@ Ahead of any time evolution, one computes new bond dimensions of the MPS if the 
 Then, TDVP1 is performed, using projectors with sub-spaces expanded accordingly, to produce an MPS evolved by one time step with the new,increased, bond dimensions.
 This version is faster than TDVP1 due to the acceleration gained from having more optimised bond dimensions; the bond update step is cheap and so its cost should not normally outweigh this advantage.
 However, two things need to be noticed:
-* DTDVP can get stuck into local minima from the initial time. If the bond dimension does not change during the time-evolution, consider embeding your MPS in a larger manifold with [`mpsembed!`](@ref) before time-evolving it.
+* DTDVP can get stuck into local minima from the initial time. If the bond dimension does not change during the time-evolution, consider embeding your MPS in a larger manifold with [`MPSDynamics.mpsembed!`](@ref) before time-evolving it.
 * For models with analytical solutions that are MPS of a given bond dimension (such as the independent boson model), DTDVP can overshoot the analytical bond dimension because the relative rate of change of the projection error becomes dominated by random numerical fluctuations.
 
 The convergence parameter is a threshold value `p` for the rate of change of the projection error with respect to the bond dimension.

@@ -32,7 +32,7 @@ where $P_n(\omega)$ are orthonormal polynomials such that
 and the inverse transformation is
 
 ```math
-    \hat{b}_n = \int_0^{+\infty} U_n(\omega)\hat{a}_\omega\mathrm{d}\omega\ .
+    \hat{b}_n = \int_0^{+\infty} U^*_n(\omega)\hat{a}_\omega\mathrm{d}\omega\ .
 ```
 
 Note that the orthonormality of the polynomials ensures the unitarity of the transformation defined in Eq.(2).
@@ -41,12 +41,12 @@ The mapping from a continuous set of modes to a (still infinite) discrete set mi
 Under this transformation, the Hamiltonian in Eq.(1) becomes
 
 ```math
-    \hat{H}= \hat{H}_S + \sum_{n=0}^{+\infty}\varepsilon_n\hat{b}_n^\dagger\hat{b}_n + t_n(\hat{b}_{n+1}^\dagger\hat{b}_n + \mathrm{h.c.}) + \kappa\hat{A}_S(\hat{b}_0 + \hat{b}_0^\dagger)\ .
+    \hat{H}= \hat{H}_S + \sum_{n=0}^{+\infty}\varepsilon_n\hat{b}_n^\dagger\hat{b}_n + t_n(\hat{b}_{n+1}^\dagger\hat{b}_n + \mathrm{h.c.}) + c_0 \hat{A}_S(\hat{b}_0 + \hat{b}_0^\dagger)\ .
 ```
 
 Hence, this mapping transforms the normal bath Hamiltonian into a tight-binding Hamiltonian with on-site energies $\varepsilon_n$ and hopping energies $t_n$.
 Another important consequence of this mapping is that now the system only interacts with the first mode $n = 0$ of the chain-mapped environment.
-The chain coefficients $\varepsilon_n$, $t_n$, and the coupling $\kappa$ depend solely on the SD.
+The chain coefficients $\varepsilon_n$, $t_n$, and the coupling $c_0$ depend solely on the SD.
 
 This makes chain mapping a tool of choice for describing systems coupled to environment with highly structured SD (e.g. experimentally measured or calculated *ab initio*)[^chin_role_2013][^alvertis_nonequilibrium_2019][^dunnett_influence_2021][^caycedosoler_exact_2022].
 In this new representation, the Hamiltonian in Eq.(5) has naturally a 1D chain topology.
@@ -128,7 +128,7 @@ and it can be now used as pure an initial state for both of the environments. Mo
 Therefore, solving the dynamics given by the original Hamiltonian $\hat H$, starting from the initial condition $\hat \rho_S(0) \otimes \hat \rho_E(\beta)$, is equivalent to solving the dynamics given by the following Hamiltonian:
 ```math
        \hat H = \hat H_S +\hat H_E +\hat H_I  = \\
-       = \overbrace{\hat A_S}^{\hat H_S} + \overbrace{\sum_k \omega_k \big(\hat a_{1k}^\dagger \hat a_{1k} - \hat a_{2k}^\dagger \hat a_{2k} \big)}^{H_E} + \overbrace{\hat L_S \otimes \sum_k g_{1k}(\hat a_{1k}^\dagger + \hat a_{1k})+\hat L_S \otimes \sum_k g_{2k}(\hat a_{2k}^\dagger + \hat a_{2k})}^{H_I}.
+       = \overbrace{\hat A_S}^{\hat H_S} + \overbrace{\sum_k \omega_k \big(\hat a_{1k}^\dagger \hat a_{1k} - \hat a_{2k}^\dagger \hat a_{2k} \big)}^{\hat H_E} + \overbrace{\hat L_S \otimes \sum_k g_{1k}(\hat a_{1k}^\dagger + \hat a_{1k})+\hat L_S \otimes \sum_k g_{2k}(\hat a_{2k}^\dagger + \hat a_{2k})}^{\hat H_I}.
 ```
 where $\hat L_S = \hat L_S^\dagger$, considering $\hat \rho_S(0) \otimes \ket{\Omega}\bra{\Omega}$ as the initial state of system and environment. It is this Hamiltonian that is mapped on two chains with TEDOPA, to be able to perform the time evolution using tensor network techniques. 
 
@@ -145,7 +145,7 @@ This recurrence relation can be used to construct the polynomials with the condi
 
 The energy of the chain mode $n$ is given by $\varepsilon_n = A_n C_n^{-1}$ and $t_n=C_n^{-1}$ is the coupling between mode $n$ and $n+1$[^chin_exact_2010].
 
-The system couples _only_ to the first mode with the coupling strength $\kappa = ||p_0||$.
+The system couples _only_ to the first mode with the coupling strength $c_0 = ||p_0||$.
 
 Explain that for some weight function/SD they are known analytically and that for others we can use the build-in routines inspired by Gautschi or the PolyChaos.jl package.
 

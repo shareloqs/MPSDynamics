@@ -3,7 +3,15 @@ default(size = (800,600), reuse = true)
 crea(d) = diagm(-1 => [sqrt(i) for i=1:d-1])
 anih(d) = Matrix(crea(d)')
 numb(d) = crea(d)*anih(d)
+"""
+    function disp(d)
+
+"""
 disp(d) = (1/sqrt(2))*(crea(d)+anih(d))
+"""
+    function disp(d,ωvib,m)
+
+"""
 disp(d,ωvib,m) = (1/(2*sqrt(m*ωvib/2)))*(crea(d)+anih(d))
 mome(d) = (1/sqrt(2))*(im*(crea(d)-anih(d)))
 sx = [0. 1.; 1. 0.]
@@ -75,11 +83,10 @@ function choose(x, n)
 end
 
 """
-function therHam(psi, site1, site2)
+     function therHam(psi, site1, site2)
 
-calculates Hβ such that ρ = e^(-βH) for some density matrix ρ obatined from tracing out everything outside the range [site1,site2] in the mps psi
+Calculates Hβ such that ρ = e^(-βH) for some density matrix ρ obatined from tracing out everything outside the range [site1,site2] in the MPS psi
 """
-
 function therHam(psi, site1, site2)
     pmat = ptracemps(psi, site1, site2)
     pmat = 0.5 * (pmat + pmat')
@@ -199,7 +206,6 @@ end
     Hamiltonian into the chain representation. 
 
 """
-
 function measurecorrs(oper, e::Vector, t::Vector)
     N = size(oper)[1]
     hmat = diagm(0=>e[1:N], 1=>t[1:N-1], -1=>t[1:N-1])
@@ -222,7 +228,6 @@ end
     # Returns
     - `Float64`: The result of the modified cosine function.
 """
-
 function cosineh(omega, bet)
     return 1/sqrt(1 - exp(-omega * (bet)))
 end
@@ -240,7 +245,6 @@ end
     # Returns
     - `Float64`: The result of the modified cosine function.
 """
-
 function sineh(omega, bet)
     return 1/sqrt(-1 + exp(omega * float(bet)))
 end
@@ -263,7 +267,6 @@ end
     # Returns
     - `Vector{Float64}`: The physical occupation values.
 """
-
 function physical_occup(corr_constr, corr_destr, omega, occup, b, M)
     x = range(-1, stop=1, length=M)
 

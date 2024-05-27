@@ -24,7 +24,6 @@ Computes the local expectation value of the one-site operator `op` on the every 
 one-site observables that are obs and convobs parameters for the `runsim` function.
 
 """
-
 OneSiteObservable(name, op) = OneSiteObservable(name, op, nothing, ishermitian(op), true)
 
 struct TwoSiteObservable <: Observable
@@ -57,7 +56,6 @@ Computes the local expectation value of operators `op1` and `op2` where `op1` ac
 several-site observables that are obs and convobs parameters for the `runsim` function.
 
 """
-
 function TwoSiteObservable(name, op1, op2, sites1=nothing, sites2=nothing)
     return TwoSiteObservable(name, op1, op2, sites1, sites2, sites1==nothing && sites2==nothing)
 end
@@ -100,7 +98,6 @@ For a list of tensors `A` representing a right orthonormalized MPS, compute the 
 value of the MPO M on every site.
 
 """
-
 function measurempo(A::Vector, M::Vector)
     N = length(M)
     N == length(A) || throw(ArgumentError("MPO has $N site while MPS has $(length(A)) sites"))
@@ -117,7 +114,6 @@ For a list of tensors `A` representing a right orthonormalized MPS, compute the 
 value of the MPO M on specified sites.
 
 """
-
 function measurempo(A::Vector, M::Vector, sites::Tuple{Int, Int})
     N = sites[2] - sites[1] + 1
     F = fill!(similar(M[1], (1,1,1)), 1)
@@ -219,7 +215,6 @@ For a list of tensors `A` representing a right orthonormalized MPS, compute the 
 value of a one-site operator O for a chainsection.
 
 """
-
 function measure1siteoperator(A::Vector, O, chainsection::Tuple{Int64,Int64})
     ρ = ones(ComplexF64, 1, 1)
 
@@ -276,7 +271,6 @@ For a list of tensors `A` representing a right orthonormalized MPS, compute the 
 value of a one-site operator O for a single site.
 
 """
-
 function measure1siteoperator(A::Vector, O, site::Int)
     ρ = ones(ComplexF64, 1, 1)
     T = ishermitian(O) ? Float64 : ComplexF64
@@ -473,7 +467,6 @@ end
 Caculate expectation of M1*M2 where M1 acts on sites1 and M2 acts on sites2, assumes A is right normalised.
 
 """
-
 function measure2siteoperator(A::Vector, M1, M2, sites1::Vector{Int}, sites2::Vector{Int})
     if size(M1) == size(M2)
         herm_cis = ishermitian(M1*M2)
@@ -993,8 +986,6 @@ end
 Caculate expectation of Os on MPS A.
 
 """
-
-
 function measure(A::Vector, Os::Vector; kwargs...)
     numobs = length(Os)
     numobs==0 && return Any[]
@@ -1034,7 +1025,6 @@ end
 Caculate the reduced density matrix of the MPS A at the specified site.
 
 """
-
 function rhoreduced_1site(A::Vector, site::Int=1)
     N = length(A)
     ρR = Vector{Any}(undef, N-site+1)
@@ -1060,7 +1050,6 @@ Caculate the reduced density matrix of the MPS A of two neigbour sites. The resu
 corresponding to the dimensions  of the two sites
 
 """
-
 function rhoreduced_2sites(A::Vector, sites::Tuple{Int, Int})
     N = length(A)
     site1, site2=sites
