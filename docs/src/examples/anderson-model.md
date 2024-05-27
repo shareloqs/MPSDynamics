@@ -406,7 +406,7 @@ plot(p2, p3, p4, p5, p1, layout = (3, 2), size = (1400, 1200))
 ```
 
 ________________
-### References
+## Bibliography
 
 [^khon_efficient_2021]: 
     > Kohn, L.; Santoro, G. E. Efficient mapping for anderson impurity problems with matrix product states. Phys. Rev. B 2021, 104 (1), 014303. https://doi.org/10.1103/PhysRevB.104.014303.

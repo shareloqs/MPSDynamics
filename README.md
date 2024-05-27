@@ -181,9 +181,21 @@ Publications which make use of MPSDynamics:
      * [10.5281/zenodo.4352728](https://doi.org/10.5281/zenodo.4352728)
 
 # Citation
+If you use the package in your research, please consider citing it.
+You can add the Zenodo record to your BibTex file:
 
-If you use this package in your research, please cite it:
-* Dunnett, A. (2021). angusdunnett/MPSDynamics: (v1.0). Zenodo. https://doi.org/10.5281/zenodo.5106435
+```tex
+@misc{mpsdynamics_zenodo2021,
+        title = {shareloqs/{MPSDynamics}},
+        shorttitle = {{MPSDynamics.jl}},
+        url = {https://zenodo.org/record/5106435},
+        abstract = {Tensor network simulations for finite temperature, open quantum system dynamics},
+        publisher = {Zenodo},
+        author = {Dunnett, Angus and Lacroix, Thibaut and Le Dé, Brieuc and Riva, Angela},
+        year = {2021},
+        doi = {10.5281/zenodo.5106435},
+}
+```
 
 # How to Contribute
 Contributions are welcome! Don't hesitate to contact us if you

@@ -2,9 +2,9 @@
 
 ## Context
 
-The MPS formalism can also be used for physical chemistry problems [^chin_ESIPT_2024]. One development done with MPSDynamics is the introduction of a reaction coordinate tensor, allowing the system to be described in space. This description requires the tensor of the system to be linked to another tensor representing an harmonic oscillator. 
+The MPS formalism can also be used for physical chemistry problems [^chin_ESIPT_2024]. One development done with the `MPSDynamics.jl` package is the introduction of a reaction coordinate tensor, allowing the system to be described in space. This description requires the tensor of the system to be linked to another tensor representing an harmonic oscillator. 
 
-Here is an example of two electronic configurations : the enol named `|e\rangle` and the keto named `|k\rangle`. The reaction coordinate oscillator is expressed as RC.
+Here is an example of two electronic configurations undergoing a tautomerization : the enol named $|e\rangle$ and the keto named $|k\rangle$. The reaction coordinate oscillator is expressed as RC and represents the reaction path of the proton.
 ```math
 H_S + H_{RC} + H_{int}^{S-RC} = \omega^0_{e} |e\rangle \langle e| + \omega^0_{k} |k\rangle \langle k| + \Delta (|e\rangle \langle k| + |k\rangle \langle e|) + \omega_{RC} (d^{\dagger}d + \frac{1}{2}) + g_{e} |e\rangle \langle e|( d + d^{\dagger})+ g_{k} |k \rangle \langle k|( d + d^{\dagger})
 ```
@@ -17,7 +17,8 @@ H_B + H_{int}^{RC-B} = \int_{-∞}^{+∞} \mathrm{d}k \omega_k b_k^\dagger b_k -
 
 
 ## The code
-First we load the `MPSdynamics.jl` package to be able to perform the simulation, the `Plots.jl` one to plot the results, and the `LaTeXStrings.jl` one to be able to use ``\LaTeX`` in the plots. The function [`MPSDynamics.disp`](@ref) is also imported.
+
+First we load the `MPSdynamics.jl` package to be able to perform the simulation, the `Plots.jl` one to plot the results, and the `LaTeXStrings.jl` one to be able to use ``\LaTeX`` in the plots.
 
 ```julia
 using MPSDynamics, Plots, LaTeXStrings, ColorSchemes, PolyChaos, LinearAlgebra
@@ -320,7 +321,7 @@ end
 display(gif(anim, "gif_reducedrho.gif", fps = 2.5))
 ```
 ________________
-### References
+## Bibliography
 
 [^chin_ESIPT_2024]:
     > Le Dé, B.; Huppert, S.; Spezia, R.; Chin, A.W Extending Non-Perturbative Simulation Techniques for Open-Quantum Systems to Excited-State Proton Transfer and Ultrafast Non-Adiabatic Dynamics https://arxiv.org/abs/2405.08693

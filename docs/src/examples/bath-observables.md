@@ -194,7 +194,7 @@ plot(p1, p2, p3, p4, layout = (2, 2), size = (1400, 1200))
 ```
 
 ___________________
-## References
+## Bibliography
 
 [^chin_exact_2010]:
     > Chin, A. W.; Rivas, Á.; Huelga, S. F.; Plenio, M. B. Exact Mapping between System-Reservoir Quantum Models and Semi-Infinite Discrete Chains Using Orthogonal Polynomials. Journal of Mathematical Physics 2010, 51 (9), 092109. https://doi.org/10.1063/1.3490188.

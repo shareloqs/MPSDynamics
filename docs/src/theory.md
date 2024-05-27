@@ -2,11 +2,11 @@
 
 ## Chain-Mapping of bosonic environments
 
-We consider, in the Schrödinger picture, a general Hamiltonian where a non-specified system interacts linearly with a bosonic environments
+We consider, in the Schrödinger picture, a general Hamiltonian where a non-specified system interacts linearly with a bosonic environments ($\hbar = 1$)
 
 ```math
 \begin{aligned}
-    \hat{H} =& \hat{H}_S + \int_0^{+\infty} \hbar\omega\hat{a}^\dagger_\omega\hat{a}_\omega\ \mathrm{d}\omega + \hat{A}_S\int_0^{+\infty}\sqrt{J(\omega)}\left(\hat{a}_\omega + \hat{a}^\dagger_\omega\right)\mathrm{d}\omega
+    \hat{H} =& \hat{H}_S + \int_0^{+\infty} \omega\hat{a}^\dagger_\omega\hat{a}_\omega\ \mathrm{d}\omega + \hat{A}_S\int_0^{+\infty}\sqrt{J(\omega)}\left(\hat{a}_\omega + \hat{a}^\dagger_\omega\right)\mathrm{d}\omega
 \end{aligned}
 ```
 
@@ -89,7 +89,7 @@ This modified bath has the same correlation function $S(t)$ and thus allows us t
 The Hamiltonian of the system interacting with this extended bath now includes temperature-dependent interactions:
 
 ```math
-\hat{H} = \hat{H}_S + \int_{-\infty}^{+\infty} d\omega \omega \hat{a}_\omega^\dagger \hat{a}_\omega + \hat{A}_S \otimes \int_{-\infty}^{+\infty} d\omega \sqrt{J(\omega,\beta)}\left(\hat{a}_\omega^\dagger+\hat{a}_\omega\right),
+\hat{H} = \hat{H}_S + \int_{-\infty}^{+\infty} \mathrm{d}\omega \omega \hat{a}_\omega^\dagger \hat{a}_\omega + \hat{A}_S \otimes \int_{-\infty}^{+\infty} \mathrm{d}\omega \sqrt{J(\omega,\beta)}\left(\hat{a}_\omega^\dagger+\hat{a}_\omega\right),
 ```
 
 This method simplifies the simulation of finite temperature effects by treating them within an effective zero-temperature framework, thereby keeping the computational advantages of using pure states. In conclusion: the dynamics of the system resulting from the interaction with the original bath, starting in a thermal state at finite temperature, is exactly the same as the one resulting from the interaction with the extended environment, starting in the vacuum state at zero temperature. Once computed the chain coefficients at a given inverse temperature $\beta$, the time evolution of the vacuum state interacting with the extended environment can be efficiently simulated using MPS time evolution methods.
@@ -264,6 +264,7 @@ There exist different versions of the TDVP algorithm. In `MPSDynamics.jl` three 
 
 The main advantage of the one-site 1TDVP algorithm is that it preserves the unitarity of the MPS during the time evolution. Its main problem, conversely, is that the time evolution is constrained to happen on a manifold constituted by tensors of fixed bond dimension, a quantity closely related to the amount of entanglement in the MPS, and such a bond dimension has therefore to be fixed before the beginning of the time evolution. This strategy will necessarily be non optimal: the growth of the bond dimensions required to describe the quantum state should ideally mirror the entanglement growth induced by the time evolution. 2TDVP allows for such a dynamical growth of the bond dimensions, and therefore better describes the entanglement in the MPS. It suffers however of other drawbacks: first of all, a truncation error is introduced (by the means of an SVD decomposition), which entails a loss of unitarity of the time-evolved MPS. Moreover, 2TDVP has bad scaling properties with the size of the local dimensions of the MPS: this is a major issue when dealing with bosons. The DTDVP algorithm combines the best features of 1TDVP and 2TDVP: it preserves unitarity, it has the same scaling properties of 1TDVP, and it adapts the bond dimensions to the entanglement evolution at each site and at each time-step. DTDVP does not suffer from a truncation error, but introduces only a projection error.
 
+________________
 ## Bibliography
 [^chin_exact_2010]:
     > Chin, A. W.; Rivas, Á.; Huelga, S. F.; Plenio, M. B. Exact Mapping between System-Reservoir Quantum Models and Semi-Infinite Discrete Chains Using Orthogonal Polynomials. Journal of Mathematical Physics 2010, 51 (9), 092109. https://doi.org/10.1063/1.3490188.
