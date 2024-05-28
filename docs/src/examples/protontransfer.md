@@ -2,35 +2,34 @@
 
 ## Context
 
-The MPS formalism can also be used for physical chemistry problems [^chin_ESIPT_2024]. One development done with the `MPSDynamics.jl` package is the introduction of a reaction coordinate tensor, allowing the system to be described in space. This description requires the tensor of the system to be linked to another tensor representing an harmonic oscillator. 
+The MPS formalism can also be used for physical chemistry problems. One development done with the `MPSDynamics.jl` package is the introduction of a reaction coordinate tensor, allowing the system to be described in space [^chin_ESIPT_2024]. It can model an electronic system with discretized states being described along a reaction coordinate. The introduction of a reaction coordinate allows to recover the well-known doublewell viewpoint and wavepacket dynamics can be analyzed with the reduced density matrix. 
 
-Here is an example of two electronic configurations undergoing a tautomerization : the enol named $|e\rangle$ and the keto named $|k\rangle$. The reaction coordinate oscillator is expressed as RC and represents the reaction path of the proton.
+Here is an illustrative example of two electronic configurations undergoing a tautomerization : the enol named $|e\rangle$ and the keto named $|k\rangle$.
 ```math
-H_S + H_{RC} + H_{int}^{S-RC} = \omega^0_{e} |e\rangle \langle e| + \omega^0_{k} |k\rangle \langle k| + \Delta (|e\rangle \langle k| + |k\rangle \langle e|) + \omega_{RC} (d^{\dagger}d + \frac{1}{2}) + g_{e} |e\rangle \langle e|( d + d^{\dagger})+ g_{k} |k \rangle \langle k|( d + d^{\dagger})
+H_S = \omega^0_{e} |e\rangle \langle e| + \omega^0_{k} |k\rangle \langle k| + \Delta (|e\rangle \langle k| + |k\rangle \langle e|) 
 ```
+This description requires the tensor of the system to be linked to another tensor representing an harmonic oscillator. This reaction coordinate oscillator is expressed as RC and represents the reaction path of the proton.
+```math
+H_{RC} + H_{int}^{S-RC} = \omega_{RC} (d^{\dagger}d + \frac{1}{2}) + g_{e} |e\rangle \langle e|( d + d^{\dagger})+ g_{k} |k \rangle \langle k|( d + d^{\dagger})
+```
+The coefficients $g$ are set up in order to recover the doublewell formalism. A bath is introduced in the description and can represent intramolecular vibrations, damping the dynamics.
 ```math
 H_B + H_{int}^{RC-B} = \int_{-∞}^{+∞} \mathrm{d}k \omega_k b_k^\dagger b_k - (d + d^{\dagger})\int_0^∞ \mathrm{d}\omega \sqrt{J(\omega)}(b_\omega^\dagger+b_ω) + \lambda_\text{reorg}(d + d^{\dagger})^2
 ```
+with the reorganization energy taken into account that reads
 ```math
 \lambda_\text{reorg} = \int \frac{J(\omega)}{\omega}\mathrm{d}\omega
 ```.
 
-
 ## The code
 
-First we load the `MPSdynamics.jl` package to be able to perform the simulation, the `Plots.jl` one to plot the results, and the `LaTeXStrings.jl` one to be able to use ``\LaTeX`` in the plots.
+First we load the `MPSdynamics.jl` package to be able to perform the simulation, the `Plots.jl` one to plot the results, and the `LaTeXStrings.jl` one to be able to use ``\LaTeX`` in the plots. `ColorSchemes.jl` is uploaded for colors in plots, `PolyChaos.jl` is needed to calculate the Hermite Polynomials that are necessary for the translation of the reduced density matrix from the Fock space dimension to the $x$ space dimension. Eventually, LinearAlgebra is loaded for the `LinearAlgebra.diag` function for post-processing. 
 
 ```julia
 using MPSDynamics, Plots, LaTeXStrings, ColorSchemes, PolyChaos, LinearAlgebra
 ```
 
-We then define variables for the physical parameters of the simulation.
-Among these, three are convergence parameters:
-
-*  `d` is the number of states we retain for the truncated harmonic oscillators representation of environmental modes
-* `N` is the number of chain (environmental) modes we keep. This parameters determines the maximum simulation time of the simulation: indeed excitations that arrive at the end of the chain are reflected towards the system and can lead to unphysical results
-
-The variable `Ndrive` represents the site of the MPO where the operator of the time-dependent part acts. For this example, the two-level system is at the first site of the MPS. 
+We then define variables for the physical parameters of the simulation. The argument `isolated` can be set up to true to simulate only the electronic system with the RC oscillator. `isolated=false` adds an environment with the usual parameters `d` `N` and `α` that can be changed
 
 ```julia
 #----------------------------
@@ -73,11 +72,8 @@ s = 1 # ohmicity
 
 cpars = chaincoeffs_ohmic(N, α, s; ωc=ωc) # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
 ```
-We set the simulation parameters and choose a time evolution method.
-As always for simulations of dynamics, the time step must be chosen wisely. The error of the TDVP methods is ``\mathcal{O}(dt^3)``.
-In this example we present only one-site implementation of TDVP that preserves the unitarity of the evolution:
-
-* the regular one-site method with the keyword `:TDVP1` where all the virtual bonds of the MPS have the same bond dimension ``D``
+We set the simulation parameters and choose a time evolution method. As always for simulations of dynamics, the time step must be chosen wisely. The error of the TDVP methods is ``\mathcal{O}(dt^3)``.
+In this example we present only the regular one-site method with the keyword `:TDVP1` where all the virtual bonds of the MPS have the same bond dimension ``D``.
 
 Logically the constant bond dimension of the MPS for TDVP1 is the respective convergence parameter.
 
@@ -96,23 +92,9 @@ method = :TDVP1 # time-evolution method
 
 D = 5 # MPS bond dimension
 ```
-```julia
-#-----------------------
-# Plot parameters
-#-----------------------
+This initial state is a product state between the system, the RC oscillator and the chain. While the chain is initially in the vacuum, the RC oscillator is initialised coherently representing a displaced state. The electronic system is diagonalized at this chosen displacement value in order to mainly initialize it in the adiabatic LOW state
 
-xlist_rho =collect(-1.2:0.05:1.2) # x definition for the reduced density matrix expressed in space
-# other values of xlist_rho can be chosen to gain numerical time
-
-palette = ColorSchemes.okabe_ito # color palette for plots
-```
-
-Using `MPSDynamics.jl` built-in methods we define the SBM MPO and the MPS representing the initial state.
-This initial state is a product state between the system and the chain. It is constructed using a list of the 'local state' of each site of the MPS, and the dimensions of the physical legs of the MPS are set to be the same as the ones of the MPO.
-
-
-In this part, the time-dependent terms of the MPO are stored in a list. This enables to add these terms to the MPO elements at each timestep and avoid the calculation of an entire new MPO. This way is not cumbersome since it adds a matrix sum at each time step.
-
+The energy of the starting system is printed thanks to the function [`MPSDynamics.measurempo`](@ref).
 ```julia
 #---------------------------
 # MPO and initial state MPS
@@ -158,7 +140,7 @@ A = productstatemps(physdims(H), state=[ψ, coherent_RC..., fill(unitcol(1,d), N
 Eini = measurempo(A,H)
 print("\n Energy =",Eini)
 ```
-We then choose the observables that will be stored in the data and the [`MPSDynamics.runsim`](@ref) arguments.
+We then choose the observables that will be stored in the data and the [`MPSDynamics.runsim`](@ref) arguments. The main analyzed data will be here the reduced density matrix.
 ```julia
 #---------------------------
 # Definition of observables
@@ -168,7 +150,7 @@ ob1 = OneSiteObservable("sz", sz, 1)
 #-------------
 ob2 = OneSiteObservable("RC displacement", MPSDynamics.disp(dFockRC,ωRC,m), 2)
 ```
-[`MPSDynamics.runsim`](@ref) is called to perform the dynamics. The argument `timedep` is set up to true and `Ndrive` and `Htime` are provided in the kwargs. 
+[`MPSDynamics.runsim`](@ref) is called to perform the dynamics. The argument `Nrho` is set up to 2 to specifiy the MPS site of the reduced density matrix. 
 ```julia
 #-------------
 # Simulation
@@ -189,7 +171,19 @@ A, dat = runsim(dt, tfinal, A, H;
                 plot = false,
                 );
 ```
-Eventually, the stored observables can be represented
+Plot parameters are chosen. Among them, `xlist_rho` determines the resolution of the reduced density matrix in space. 
+```julia
+#-----------------------
+# Plot parameters
+#-----------------------
+
+xlist_rho =collect(-1.2:0.05:1.2) # x definition for the reduced density matrix expressed in space
+# other values of xlist_rho can be chosen to gain numerical time
+
+palette = ColorSchemes.okabe_ito # color palette for plots
+```
+
+We begin by representing the doublewell energy landscape described by the parameters.
 ```julia
 #-------------
 # Plots
@@ -231,13 +225,13 @@ plt=plot!(ɸwp,gaussian,linecolor=:black,linewidth=3,  label="", fillrange = (Ei
 
 display(plt)
 ```
-
+The stored observables can be showed as usual.
 ```julia
 ##### Results #####
 
 display(plot(dat["data/times"], dat["data/RC displacement"],label="<X> (arb. units)", linecolor =:black, xlabel="Time (arb. units)",ylabel="<X>", title="", linewidth=4, legend=:none, tickfontsize=10,xlims=(0,2000)))
 ```
-
+Eventually, the reduced density matrix is analyzed. Initially expressed in the Fock dimension, the eigenvectors of the RC oscillator that are constructed here allows us to translate it into the reaction coordinate space dimension.
 ```julia
 #### Reduced Density Matrix in space#####
 
@@ -296,7 +290,7 @@ for t=1:length(dat["data/times"])
     end
 end
 ```
-
+The reduced density matrixi in space can then be illustrated over time. The diagonal elements represent the population while off-diagonal elements are coherences.
 ```julia
 #Creates a GIF of the diagonal elements of the reduced density over time, ie the population dynamics. Here, the reduced density matrix is expressed in space.
 

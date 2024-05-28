@@ -6,10 +6,20 @@ numb(d) = crea(d)*anih(d)
 """
     function disp(d)
 
+Mass and frequency-weighted displacement operator 
+``
+X = \\frac{1}{2}(a + a^{\\dagger})  
+``
+
 """
 disp(d) = (1/sqrt(2))*(crea(d)+anih(d))
 """
     function disp(d,ωvib,m)
+
+Displacement operator 
+``
+X = \\frac{\\sqrt{2}}{2\\sqrt{m \\omega_{vib}}}(a + a^{\\dagger})  
+``
 
 """
 disp(d,ωvib,m) = (1/(2*sqrt(m*ωvib/2)))*(crea(d)+anih(d))

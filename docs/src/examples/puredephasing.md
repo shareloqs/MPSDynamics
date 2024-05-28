@@ -91,12 +91,9 @@ An option is provided if the coefficient are saved to be reused.
 
 We set the simulation parameters and choose a time evolution method.
 As always for simulations of dynamics, the time step must be chosen wisely. The error of the TDVP methods is ``\mathcal{O}(dt^3)``.
-In this example we present two one-site implementation of TDVP that both preserves the unitarity of the evolution:
+In this example we present the regular one-site method with the keyword `:TDVP1` where all the virtual bonds of the MPS have the same bond dimension ``D``. It is worh pointing out that DTDVP performs poorly in this specific example due to the exact solution of the system.
 
-* the regular one-site method with the keyword `:TDVP1` where all the virtual bonds of the MPS have the same bond dimension ``D``
-* the adaptive method with the keyword `:DTDVP` where the bond dimension is locally increased at each time step if the TDVP projection error crosses a threshold value
-
-Logically the constant bond dimension of the MPS for TDVP1 and the threshold of the projection error for DTDVP are their respective convergence parameter.
+Logically the constant bond dimension of the MPS for TDVP1 is the convergence parameter.
 ```julia
 #-----------------------
 # Simulation parameters
@@ -107,8 +104,6 @@ dt = 1.0 # time step
 tfinal = 300.0 # simulation time
 
 method = :TDVP1 # time-evolution method
-
-#method = :DTDVP # time-evolution method
 
 D = 2 # MPS bond dimension
 ```

@@ -71,14 +71,6 @@ method = :TDVP1 # time-evolution method
 
 D = 5 # MPS bond dimension
 
-#-----------------------
-# Plot parameters
-#-----------------------
-
-xlist_rho =collect(-1.2:0.05:1.2) # x definition for the reduced density matrix expressed in space
-# other values of xlist_rho can be chosen to gain numerical time
-
-palette = ColorSchemes.okabe_ito # color palette for plots
 
 #---------------------------
 # MPO and initial state MPS
@@ -151,6 +143,14 @@ A, dat = runsim(dt, tfinal, A, H;
                 plot = false,
                 );
 
+#-----------------------
+# Plot parameters
+#-----------------------
+
+xlist_rho =collect(-1.2:0.05:1.2) # x definition for the reduced density matrix expressed in space
+# other values of xlist_rho can be chosen to gain numerical time
+
+palette = ColorSchemes.okabe_ito # color palette for plots
 
 #-------------
 # Plots
