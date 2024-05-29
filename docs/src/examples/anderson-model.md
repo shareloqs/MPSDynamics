@@ -27,7 +27,7 @@ The following relations are used to define the functions equivalent to the spect
 \end{aligned}
 ```    
 where we choose the spectral function that characterizes the fermionic bath to be: $V_k= \sqrt{1-k^2}$, and we define the dispersion relation as: $e_k = k$, that is, a linear dispersion relation with propagation speed equal to $1$. This latter choice corresponds to a model of metals (gapless energy spectrum). We select a filled state as the initial state of the defect.
-Using the mapping proposed in [1], the chain Hamiltonian becomes:
+Using the mapping proposed, the chain Hamiltonian becomes:
 ```math
     \begin{aligned}
     \hat H^\text{chain}  = \hat H_\text{loc} &+ \sum_{i = \{1,2\}}\bigg[ J_{i,0} \Big(\hat d^\dagger \hat a_{i,0} + \hat d \hat a_{i,0}^\dagger \Big) + \\ &+ \sum_{n=1}^\infty  \Big( J_{i,n} \hat a_{i,n}^\dagger \hat a_{i,n-1} +  J_{i,n} \hat  a_{i,n-1}^\dagger \hat a_{i,n} \Big) + \sum_{n=0}^\infty E_{i,n} \hat  a_{i,n}^\dagger \hat a_{i,n} \bigg],
@@ -89,7 +89,7 @@ The drawback of the double chain representation is that the particle-hole pairs 
 ```math
     \hat a_{i}^\dagger \hat a_{i+2} + \hat a_{i+2}^\dagger \hat a_{i} = \hat b_{i}^\dagger \hat F_{i+1} \hat b_{i+2} + \hat b_{i} \hat F_{i+1} \hat b_{i+2}^\dagger,
 ```
-where the string operator $\hat F_i$ is defined as: $\hat F_i = (-1)^{\hat n_i} = \hat{\mathbb I} -2 \hat n_i = \hat{\mathbb I}-2 \hat b_i^\dagger \hat b_i$.  It is possible to find the analytical form also for MPOs with long range interaction \cite{mpo}. In the case of next-nearest neighbors interactions between spinless fermions, in the interleaved geometry of Fig. \ref{subfig:folded}, the MPO representation will require a bond dimension $\chi=6$. We explicitly write it as:
+where the string operator $\hat F_i$ is defined as: $\hat F_i = (-1)^{\hat n_i} = \hat{\mathbb I} -2 \hat n_i = \hat{\mathbb I}-2 \hat b_i^\dagger \hat b_i$.  It is possible to find the analytical form also for MPOs with long range interaction. In the case of next-nearest neighbors interactions between spinless fermions, in the interleaved geometry of the figure above, the MPO representation will require a bond dimension $\chi=6$. We explicitly write it as:
 ```math
     H = W_{d} \cdot W_{2 0} \cdot W_{1 0} \cdot...\cdot W_{2N} \cdot W_{1 N},  
 ```
@@ -149,7 +149,7 @@ N = 40      # number of chain sites
 Ed = 0.3    # energy of the impurity
 ϵd = Ed - μ # energy of the impurity minus the chemical potential
 ```
-The `chaincoeffs_fermionic` function is needed to compute the chain coefficients. It requires as inputs the number of modes of each chain `N`, the inverse temperature `\beta`, a label to specify if the chain modes are empty (label is `1.0`) or filled (label is `2.0`), and both the dispersion relation $\epsilon_k$ and the fermionic spectral density funciton $V_k$.
+The `chaincoeffs_fermionic` function is needed to compute the chain coefficients. It requires as inputs the number of modes of each chain `N`, the inverse temperature `β`, a label to specify if the chain modes are empty (label is `1.0`) or filled (label is `2.0`), and both the dispersion relation $\epsilon_k$ and the fermionic spectral density funciton $V_k$.
 ```julia
 function ϵ(x)
     return x
@@ -174,7 +174,7 @@ prec = 0.0001       # precision for the adaptive TDVP
 and with this we are ready to construct the Hamiltonian MPO and specify the initial state, which will obviously differ depending on the chosen geometry.
 
 #### Double chain geometry
-The Hamiltonian is defined using the `tightbinding_mpo` function, which takes as an input the number of modes of each chain `N`, the defect's energy `\epsilon_d`, and the chain coefficients of the first `chainparams1` and second `chainparams2` chain. The MPS for the initial state is a factorized state made of: N filled states, a filled impurity, and N empty states. 
+The Hamiltonian is defined using the `tightbinding_mpo` function, which takes as an input the number of modes of each chain `N`, the defect's energy `ϵd`, and the chain coefficients of the first `chainparams1` and second `chainparams2` chain. The MPS for the initial state is a factorized state made of: N filled states, a filled impurity, and N empty states. 
 ```julia
 H = tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
@@ -276,7 +276,7 @@ plot(p2, p3, p4, p5, p1, layout = (3, 2), size = (1400, 1200))
 
 
 #### Interleaved chain geometry
-The Hamiltonian is defined using the `interleaved_tightbinding_mpo` function, which takes as an input the number of modes of each chain `N`, the defect's energy `\epsilon_d`, and the chain coefficients of the first `chainparams1` and second `chainparams2` chain. The MPS for the initial state is a factorized state (bond dimension 1) made of: a filled impurity, and 2N alternate filled-empty states. 
+The Hamiltonian is defined using the `interleaved_tightbinding_mpo` function, which takes as an input the number of modes of each chain `N`, the defect's energy `ϵd`, and the chain coefficients of the first `chainparams1` and second `chainparams2` chain. The MPS for the initial state is a factorized state (bond dimension 1) made of: a filled impurity, and 2N alternate filled-empty states. 
 ```julia
 H = interleaved_tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
