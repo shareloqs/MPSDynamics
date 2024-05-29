@@ -2,7 +2,7 @@
 
 ## Context
 
-The MPS formalism can also be used for physical chemistry problems. One development done with the `MPSDynamics.jl` package is the introduction of a reaction coordinate tensor, allowing the system to be described in space [^chin_ESIPT_2024]. It can model an electronic system with discretized states being described along a reaction coordinate. The introduction of a reaction coordinate allows to recover the well-known doublewell viewpoint and wavepacket dynamics can be analyzed with the reduced density matrix. 
+The MPS formalism can also be used for physical chemistry problems. One development done with the `MPSDynamics.jl` package is the introduction of a reaction coordinate tensor, allowing the system to be described in space [^lede_ESIPT_2024]. It can model an electronic system with discretized states being described along a reaction coordinate. The introduction of a reaction coordinate allows to recover the well-known doublewell viewpoint and wavepacket dynamics can be analyzed with the reduced density matrix. 
 
 Here is an illustrative example of two electronic configurations undergoing a tautomerization : the enol named $|e\rangle$ and the keto named $|k\rangle$.
 ```math
@@ -317,6 +317,6 @@ display(gif(anim, "gif_reducedrho.gif", fps = 2.5))
 ________________
 ## Bibliography
 
-[^chin_ESIPT_2024]:
+[^lede_ESIPT_2024]:
     > Le Dé, B.; Huppert, S.; Spezia, R.; Chin, A.W Extending Non-Perturbative Simulation Techniques for Open-Quantum Systems to Excited-State Proton Transfer and Ultrafast Non-Adiabatic Dynamics https://arxiv.org/abs/2405.08693
 
