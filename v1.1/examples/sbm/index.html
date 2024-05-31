@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>The Spin-Boson Model · MPSDynamics.jl</title><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="MPSDynamics.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit">MPSDynamics.jl</span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">Introduction</a></li><li><a class="tocitem" href="../../user-guide/">User Guide</a></li><li><a class="tocitem" href="../../nutshell/">In a nutshell: MPSDynamics.jl for open quantum systems</a></li><li><span class="tocitem">Examples</span><ul><li class="is-active"><a class="tocitem" href>The Spin-Boson Model</a><ul class="internal"><li><a class="tocitem" href="#Context"><span>Context</span></a></li><li><a class="tocitem" href="#The-code"><span>The code</span></a></li></ul></li><li><a class="tocitem" href="../puredephasing/">Pure-Dephasing</a></li><li><a class="tocitem" href="../timedep/">Time-dependent Hamiltonian</a></li><li><a class="tocitem" href="../anderson-model/">The Anderson Impurity Model</a></li><li><a class="tocitem" href="../bath-observables/">Inspecting the bath by undoing the chain mapping</a></li><li><a class="tocitem" href="../protontransfer/">Proton Transfer Model</a></li></ul></li><li><a class="tocitem" href="../../theory/">Theoretical Background</a></li><li><a class="tocitem" href="../../methods/">Methods</a></li><li><a class="tocitem" href="../../dev/">Developers</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Examples</a></li><li class="is-active"><a href>The Spin-Boson Model</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>The Spin-Boson Model</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/shareloqs/MPSDynamics/blob/master/docs/src/examples/sbm.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="The-Spin-Boson-Model"><a class="docs-heading-anchor" href="#The-Spin-Boson-Model">The Spin-Boson Model</a><a id="The-Spin-Boson-Model-1"></a><a class="docs-heading-anchor-permalink" href="#The-Spin-Boson-Model" title="Permalink"></a></h1><h2 id="Context"><a class="docs-heading-anchor" href="#Context">Context</a><a id="Context-1"></a><a class="docs-heading-anchor-permalink" href="#Context" title="Permalink"></a></h2><p>The Spin-Boson Model (SBM) is a prototypical model in the theory of open quantum systems where a two level system interacts linearly with a bosonic bath</p><p class="math-container">\[	\hat{H} = \frac{\omega_0}{2}\hat{\sigma}_z + \Delta\hat{\sigma}_x + \int_0^{+\infty}\omega \hat{a}^\dagger_\omega\hat{a}_\omega \mathrm{d}\omega + \hat{\sigma}_x\int_0^{+\infty}\sqrt{J(\omega)}(\hat{a}_\omega + \hat{a}^\dagger_\omega)\mathrm{d}\omega\]</p><p>Even though this model is fairly simple it is physically very rich and it is not analytically solvable. For these reason it has become a test-bed for numerical methods simulating open quantum systems dynamics in the non-perturbative non-Markovian regime.</p><p>For instance when the SD is Ohmic, this model presents a phase transition between a so called localised and a delocalised phase for <span>$\alpha \approx 1.2$</span>.</p><p>Here we break out and comment the script in <code>MPSDynamics/examples/sbm_zero_temperature.jl</code> to show how to simulate this model with an Ohmic SD (hard cut-off) using the T-TEDOPA method as implemented in <code>MPSDynamics.jl</code>.</p><p>The T-TEDOPA method relies on a truncated chain mapping that transform the initial Hamiltonian into</p><p class="math-container">\[	\hat{H} = \frac{\omega_0}{2} \hat{\sigma}_z + \Delta \hat{\sigma}_x + c_0 \hat{\sigma}_x(\hat{b}_0^\dagger + \hat{b}_0) + \sum_{i=0}^{N-1} t_i (\hat{b}_{i+1}^\dagger \hat{b}_i + \mathrm{h.c.}) + \sum_{i=0}^{N-1} \epsilon_i \hat{b}_i^\dagger \hat{b}_i \]</p><h2 id="The-code"><a class="docs-heading-anchor" href="#The-code">The code</a><a id="The-code-1"></a><a class="docs-heading-anchor-permalink" href="#The-code" title="Permalink"></a></h2><p>First a multi-line comment introduces the model and the aim of the script.</p><pre><code class="language-julia">#=
+    Example of a zero-temperature Spin-Boson Model with an hard cut-off Ohmic spectral density J(ω) = 2αω when ω &lt; ωc and 0 otherwise
+
+    The dynamics is simulated using the T-TEDOPA method that maps the normal modes environment into a non-uniform tight-binding chain.
+
+    H = \\frac{ω_0}{2} σ_z + Δ σ_x + c_0 σ_x(b_0^\\dagger + b_0) + \\sum_{i=0}^{N-1} t_i (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_i b_i^\\dagger b_i 
+
+    Two variants of the one-site Time Dependent Variational Principal (TDVP) are presented for the time evolution of the quantum state.
+=#</code></pre><p>We load the <code>MPSdynamics.jl</code> package to be able to perform the simulation, the <code>Plots.jl</code> one to plot the results, and the <code>LaTeXStrings.jl</code> one to be able to use <span>$\LaTeX$</span> in the plots.</p><pre><code class="language-julia">using MPSDynamics, Plots, LaTeXStrings</code></pre><p>We then define variables for the physical parameters of the simulation. Among these, two are convergence parameters:</p><ul><li><code>d</code> is the number of states we retain for the truncated harmonic oscillators representation of environmental modes </li><li><code>N</code> is the number of chain (environmental) modes we keep. This parameters determines the maximum simulation time of the simulation: indeed excitations that arrive at the end of the chain are reflected towards the system and can lead to unphysical results</li></ul><pre><code class="language-julia">#----------------------------
+# Physical parameters
+#----------------------------
+
+d = 6 # number of Fock states of the chain modes
+
+N = 30 # length of the chain
+
+α = 0.1 # coupling strength
+
+Δ = 0.0 # tunneling 
+
+ω0 = 0.2 # TLS gap
+
+s = 1 # ohmicity
+
+cpars = chaincoeffs_ohmic(N, α, s) # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0</code></pre><p>We set the simulation parameters and choose a time evolution method. As always for simulations of dynamics, the time step must be chosen wisely. The error of the TDVP methods is <span>$\mathcal{O}(dt^3)$</span>. In this example we present two one-site implementation of TDVP that both preserves the unitarity of the evolution:</p><ul><li>the regular one-site method with the keyword <code>:TDVP1</code> where all the virtual bonds of the MPS have the same bond dimension <span>$D$</span></li><li>the adaptive method with the keyword <code>:DTDVP</code> where the bond dimension is locally increased at each time step if the TDVP projection error crosses a threshold value</li></ul><p>Logically the constant bond dimension of the MPS for TDVP1 and the threshold of the projection error for DTDVP are their respective convergence parameter. </p><pre><code class="language-julia">#-----------------------
+# Simulation parameters
+#-----------------------
+
+dt = 0.5 # time step
+
+tfinal = 30.0 # simulation time
+
+method = :TDVP1 # Regular one-site TDVP (fixed bond dimension)
+
+# method = :DTDVP # Adaptive one-site TDVP (dynamically updating bond dimension)
+
+convparams = [2,4,6] # MPS bond dimension (1TDVP)
+
+# convparams = [1e-2, 1e-3, 1e-4] # threshold value of the projection error (DTDVP)</code></pre><p>Using <code>MPSDynamics.jl</code> built-in methods we define the SBM MPO and the MPS representing the initial state. This initial state is a product state between the system and the chain. It is constructed using a list of the &#39;local state&#39; of each site of the MPS, and the dimensions of the physical legs of the MPS are set to be the same as the ones of the MPO.</p><pre><code class="language-julia">#---------------------------
+# MPO and initial state MPS
+#---------------------------
+
+H = spinbosonmpo(ω0, Δ, d, N, cpars) # MPO representation of the Hamiltonian
+
+ψ = unitcol(1,2) # Initial up-z system state 
+
+A = productstatemps(physdims(H), state=[ψ, fill(unitcol(1,d), N)...]) # MPS representation of |ψ&gt;|Vacuum&gt;</code></pre><p>We then chose the observables that will be measured during the time evolution after being passed as an argument of the <a href="../../methods/#MPSDynamics.runsim-NTuple{4, Any}"><code>MPSDynamics.runsim</code></a> method.</p><pre><code class="language-julia">#---------------------------
+# Definition of observables
+#---------------------------
+
+ob1 = OneSiteObservable(&quot;sz&quot;, sz, 1)
+
+ob2 = OneSiteObservable(&quot;chain mode occupation&quot;, numb(d), (2,N+1))
+
+ob3 = TwoSiteObservable(&quot;SXdisp&quot;, sx, disp(d), [1], collect(2:N+1))</code></pre><p>We run the simulation from <code>t = 0</code> to <code>tfinal</code> with time-steps of size <code>dt</code> using the <code>method</code> method. The <code>convobs</code> observables will be measured and stored for the convergence parameters <code>convparams</code>, whereas the <code>obs</code> observables will only be measured and stored for the most precise convergence parameter.</p><pre><code class="language-julia">#-------------
+# Simulation
+#------------
+
+A, dat = runsim(dt, tfinal, A, H;
+                name = &quot;ohmic spin boson model&quot;,
+                method = method,
+                obs = [ob2,ob3],
+                convobs = [ob1],
+                params = @LogParams(N, d, α, Δ, ω0, s),
+                convparams = convparams,
+                verbose = false,
+                savebonddims = true, # this keyword argument enables the bond dimension at each time step to be saved when using DTDVP
+                save = true,
+                plot = true,
+                );</code></pre><p>Finally, we plot the simulation results that are stored in the <code>dat</code> dictionnary.</p><pre><code class="language-julia">#----------
+# Plots
+#----------
+
+method == :TDVP1 &amp;&amp; plot(dat[&quot;data/times&quot;], dat[&quot;convdata/sz&quot;], label=[&quot;Dmax = 2&quot; &quot;Dmax = 4&quot; &quot;Dmax = 6&quot;], xlabel=L&quot;t&quot;,ylabel=L&quot;\sigma_z&quot;)
+
+method == :DTDVP &amp;&amp; plot(dat[&quot;data/times&quot;], dat[&quot;convdata/sz&quot;], label=[&quot;p = 1e-2&quot; &quot;p = 1e-3&quot; &quot;p = 1e-4&quot;], xlabel=L&quot;t&quot;,ylabel=L&quot;\sigma_z&quot;) 
+
+method == :DTDVP &amp;&amp; heatmap(dat[&quot;data/times&quot;], collect(0:N+1), dat[&quot;data/bonddims&quot;], xlabel=L&quot;t&quot;,ylabel=&quot;bond index&quot;)
+
+heatmap(dat[&quot;data/times&quot;], collect(1:N), abs.(dat[&quot;data/SXdisp&quot;][1,:,:]), xlabel=L&quot;t&quot;,ylabel=&quot;chain mode&quot;)</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../nutshell/">« In a nutshell: MPSDynamics.jl for open quantum systems</a><a class="docs-footer-nextpage" href="../puredephasing/">Pure-Dephasing »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Friday 31 May 2024 08:58">Friday 31 May 2024</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
