@@ -38,7 +38,21 @@ For the case of fermionic states (which need to be anti-symmetrized), the [`MPSD
 
 ### Tree Tensor Networks
 
-Write a quick explanation of the how trees are structured: parents, child, nodes; and that most methods to initialize a MPS are overloaded for `TreeNetwork`. 
+TTN are a generalization of MPS that allows more ramifications to the one dimensional shape of the MSP. This is useful when, for instance, a system is interacting with more than two environments. Tensors of `TreeNetwork` are usually referred as nodes, while the first node, represented as the leftmost node is called the head node. The Tree structure is built such that a node has always one parent leg pointing to the left and its child legs pointing to the right. Most of the methods for MPS states are overloaded for `TreeNetwork`. For example, the [`productstatemps`](@ref) method tolerates also TTN state and a simple `TreeNetwork` with only one branch can be initialized in the same way than with MPS.
+ 
+```julia
+julia> ψ = unitcol(1,2)
+
+julia> d = 6; N = 30; α = 0.1; Δ = 0.0; ω0 = 0.2; s = 1
+
+julia> cpars = chaincoeffs_ohmic(N, α, s)
+
+julia> H = spinbosonmpo(ω0, Δ, d, N, cpars, tree=true)
+
+julia> A = productstatemps(H.tree, physdims(H), state=[ψ, fill(unitcol(1,d), N)...]) # tree-MPS representation of |ψ>|Vacuum>
+```
+
+Building a specific tree-MPO such as [`MPSDynamics.nearestneighbourmpo`](@ref) adds no conceptual complexity and MPS methods have the option to built it as a `TreeNetwork`.
 
 ## Hamiltonian
 
