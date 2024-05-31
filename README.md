@@ -3,7 +3,9 @@
 # MPSDynamics.jl
 *Tensor network simulations for finite temperature, open quantum system dynamics.*
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5106435.svg)](https://doi.org/10.5281/zenodo.5106435) [![license](https://img.shields.io/badge/License-GPL_3.0-orange.svg)](https://github.com/angusdunnett/MPSDynamics/blob/master/LICENSE) [![documentation workflow](https://github.com/angusdunnett/MPSDynamics/actions/workflows/docs.yml/badge.svg)](https://angusdunnett.github.io/MPSDynamics/)
+
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11400776.svg)](https://doi.org/10.5281/zenodo.11400776) [![license](https://img.shields.io/badge/License-GPL_3.0-orange.svg)](https://github.com/angusdunnett/MPSDynamics/blob/master/LICENSE) [![documentation workflow](https://github.com/angusdunnett/MPSDynamics/actions/workflows/docs.yml/badge.svg)](https://angusdunnett.github.io/MPSDynamics/)
 
 
 This package is intended to provide an easy to use interface for performing tensor network simulations on Matrix Product
@@ -185,15 +187,16 @@ If you use the package in your research, please consider citing it.
 You can add the Zenodo record to your BibTex file:
 
 ```tex
-@misc{mpsdynamics_zenodo2021,
-        title = {shareloqs/{MPSDynamics}},
-        shorttitle = {{MPSDynamics.jl}},
-        url = {https://zenodo.org/record/5106435},
-        abstract = {Tensor network simulations for finite temperature, open quantum system dynamics},
-        publisher = {Zenodo},
-        author = {Dunnett, Angus and Lacroix, Thibaut and Le Dé, Brieuc and Riva, Angela},
-        year = {2021},
-        doi = {10.5281/zenodo.5106435},
+@misc{mpsdynamics_zenodo,
+	title = {shareloqs/{MPSDynamics}: v1.1},
+	shorttitle = {{MPSDynamics}.jl: v1.1},
+	url = {https://doi.org/10.5281/zenodo.11400776},
+	abstract = {Tensor network simulations for finite temperature, open quantum system dynamics},
+	publisher = {Zenodo},
+	author = {Dunnett, Angus J. and Lacroix, Thibaut and Riva, Angela and Le Dé, Brieuc},
+	month = may,
+	year = {2024},
+	doi = {10.5281/zenodo.11400776},
 }
 ```
 
