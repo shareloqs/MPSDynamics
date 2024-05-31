@@ -6,9 +6,6 @@ The package also provides strong support for the measurement of observables, as 
 The package has been developed with the aim of studying non-Markovian open system dynamics at finite temperature using the state-of-the-art numerically exact Thermalized-Time Evolving Density operator with Orthonormal Polynomials Algorithm (T-TEDOPA) based on environment chain mapping.
 However the methods implemented can equally be applied to other areas of physics.
 
-!!! warning
-	The documentation is currently undergoing massive restructurations/improvement. It's a work in progress until the next release scheduled for May, 2024.
-
 ## Installation
 
 The package may be installed by typing the following into a Julia REPL
