@@ -206,7 +206,7 @@ You can add the Zenodo record and the arXiv preprint to your BibTex file:
 	shorttitle = {{MPSDynamics}.jl},
 	url = {http://arxiv.org/abs/2406.07052},
 	publisher = {arXiv},
-	author = {Lacroix, Thibaut and Dé, Brieuc Le and Riva, Angela and Dunnett, Angus J. and Chin, Alex W.},
+	author = {Lacroix, Thibaut and Le Dé, Brieuc and Riva, Angela and Dunnett, Angus J. and Chin, Alex W.},
 	month = jun,
 	year = {2024},
 }
