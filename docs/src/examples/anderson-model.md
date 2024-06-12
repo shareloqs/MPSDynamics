@@ -1,6 +1,6 @@
 # The Anderson Impurity Model 
 
-Here we give some context on the examples provided in `MPSDynamics/examples/anderson_model_double.jl` and `MPSDynamics/examples/anderson_model_interleaved.jl`. In these two examples, we use the fermionic chain mapping proposed in [^khon_efficient_2021] to show how to perform tensor network simulations of the Single Impurity Anderson Model (SIAM) with the `MPSDynamics.jl` library. 
+Here we give some context on the examples provided in `MPSDynamics/examples/anderson_model_double.jl` and `MPSDynamics/examples/anderson_model_interleaved.jl`. In these two examples, we use the fermionic chain mapping proposed in [^khon_efficient_2021] to show how to perform tensor network simulations of the [Single Impurity Anderson Model](https://en.wikipedia.org/wiki/Anderson_impurity_model) (SIAM) with the `MPSDynamics.jl` library. 
 
 
 ## Basics of the fermionic chain mapping
@@ -8,9 +8,10 @@ Here we give some context on the examples provided in `MPSDynamics/examples/ande
 Before giving the code implementation, a short recap on the problem statement and on the fermionic mapping used to solved it. The SIAM Hamiltonian is defined as:
 
 ```math
-    \hat H^\text{SIAM}  = \hat H_\text{loc} + \hat H_\text{hyb} + \hat H_\text{cond} = \overbrace{\epsilon_d \hat d^\dagger \hat d}^{\hat H_\text{loc}} + \underbrace{\sum_{k} V_k \Big( \hat d^\dagger \hat c_k + \hat c_k^\dagger \hat d \Big)}_{H_\text{hyb}} + \underbrace{\sum_k \epsilon_k \hat c_k^\dagger \hat c_k}_{H_I^\text{chain}}.
+    \hat H^\text{SIAM}  = \hat H_\text{loc} + \hat H_\text{hyb} + \hat H_\text{cond} = \overbrace{\epsilon_d \hat d^\dagger \hat d}^{\hat H_\text{loc}} + \underbrace{\sum_{k} V_k \Big( \hat d^\dagger \hat c_k + \hat c_k^\dagger \hat d \Big)}_{\hat H_\text{hyb}} + \underbrace{\sum_k \epsilon_k \hat c_k^\dagger \hat c_k}_{\hat H_\text{cond}}.
 ```
-All of the operators obey to the usual fermionic anti-commutation relations: $\{\hat c_i, \hat c_j^\dagger \} = \delta_{ij}$, $\{\hat c_i, \hat c_j \} =\{\hat c_i^\dagger, \hat c_j^\dagger \} =0$ $\forall i,j$. The chain mapping is based on a thermofield-like transformation 
+
+This Hamiltonian represents a located impurity ($\hat H_\text{loc}$), conduction electrons ($\hat H_\text{cond}$) and a hybridization term between the impurity and the conduction electrons ($\hat H_\text{hyb}$). All of the operators obey to the usual fermionic anti-commutation relations: $\{\hat c_i, \hat c_j^\dagger \} = \delta_{ij}$, $\{\hat c_i, \hat c_j \} =\{\hat c_i^\dagger, \hat c_j^\dagger \} =0$ $\forall i,j$. The chain mapping is based on a thermofield-like transformation 
 [^devega_thermo_2015], performed with fermions: ancillary fermionic operators $\hat c_{2k}$ are defined, one for each of the original fermionic modes $\hat c_{1k}$. A Bogoliubov transformation is then applied, so that two new fermionic modes $\hat f_{1k}$ and $\hat f_{2k}$ are defined as a linear combination of $\hat c_{1k}$ and $\hat c_{2k}$. Two chains are defined: the chain labelled $1$ for the empty modes:
 ```math
 \hat f_{1k}=e^{-iG}  \hat c_k e^{iG}= \cosh(\theta_k) \hat c_{1k} -\sinh(\theta_k)  \hat c_{2k}^\dagger \\
@@ -136,7 +137,7 @@ where the matrices are defined as:
 
 ## Code implementation
 
-The fermionic mapping can be strightforwardly implemented with the methods of `MPSDyanmics.jl`. We provide two examples: 
+The fermionic mapping can be strightforwardly implemented with the methods of `MPSDynamics.jl`. We provide two examples: 
 - `examples/anderson_model_double`, simulating the SIAM with the double-chain geometry
 - `examples/anderson_model_interleaved`, simulating the SIAM with the interleaved-chain geometry
 They only differ on the way the Hamiltonian MPO is defined. We now briefly review the important bits of the code.
@@ -149,7 +150,7 @@ N = 40      # number of chain sites
 Ed = 0.3    # energy of the impurity
 ϵd = Ed - μ # energy of the impurity minus the chemical potential
 ```
-The `chaincoeffs_fermionic` function is needed to compute the chain coefficients. It requires as inputs the number of modes of each chain `N`, the inverse temperature `β`, a label to specify if the chain modes are empty (label is `1.0`) or filled (label is `2.0`), and both the dispersion relation $\epsilon_k$ and the fermionic spectral density funciton $V_k$.
+The [`MPSDynamics.chaincoeffs_fermionic`](@ref) function is needed to compute the chain coefficients. It requires as inputs the number of modes of each chain `N`, the inverse temperature `β`, a label to specify if the chain modes are empty (label is `1.0`) or filled (label is `2.0`), and both the dispersion relation $\epsilon_k$ and the fermionic spectral density funciton $V_k$.
 ```julia
 function ϵ(x)
     return x
@@ -174,7 +175,7 @@ prec = 0.0001       # precision for the adaptive TDVP
 and with this we are ready to construct the Hamiltonian MPO and specify the initial state, which will obviously differ depending on the chosen geometry.
 
 #### Double chain geometry
-The Hamiltonian is defined using the `tightbinding_mpo` function, which takes as an input the number of modes of each chain `N`, the defect's energy `ϵd`, and the chain coefficients of the first `chainparams1` and second `chainparams2` chain. The MPS for the initial state is a factorized state made of: N filled states, a filled impurity, and N empty states. 
+The Hamiltonian is defined using the [`MPSDynamics.tightbinding_mpo`](@ref) function, which takes as an input the number of modes of each chain `N`, the defect's energy `ϵd`, and the chain coefficients of the first `chainparams1` and second `chainparams2` chain. The MPS for the initial state is a factorized state made of: N filled states, a filled impurity, and N empty states. 
 ```julia
 H = tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
@@ -198,7 +199,7 @@ A, dat = runsim(dt, T, A, H;
                 method = method,
                 obs = [ob1, ob2, ob3], 
                 convobs = [ob1],
-                params = @LogParams(N, ϵd, β, c1, c2),
+                params = @LogParams(N, ϵd, β),
                 convparams = [prec],   
                 Dlim = Dmax,          
                 savebonddims = true,   # we want to save the bond dimension
@@ -276,7 +277,7 @@ plot(p2, p3, p4, p5, p1, layout = (3, 2), size = (1400, 1200))
 
 
 #### Interleaved chain geometry
-The Hamiltonian is defined using the `interleaved_tightbinding_mpo` function, which takes as an input the number of modes of each chain `N`, the defect's energy `ϵd`, and the chain coefficients of the first `chainparams1` and second `chainparams2` chain. The MPS for the initial state is a factorized state (bond dimension 1) made of: a filled impurity, and 2N alternate filled-empty states. 
+The Hamiltonian is defined using the [`MPSDynamics.interleaved_tightbinding_mpo`](@ref) function, which takes as an input the number of modes of each chain `N`, the defect's energy `ϵd`, and the chain coefficients of the first `chainparams1` and second `chainparams2` chain. The MPS for the initial state is a factorized state (bond dimension 1) made of: a filled impurity, and 2N alternate filled-empty states. 
 ```julia
 H = interleaved_tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
@@ -306,7 +307,7 @@ A, dat = runsim(dt, T, A, H;
                 method = method,
                 obs = [ob1, ob2], 
                 convobs = [ob1],
-                params = @LogParams(N, ϵd, β, c1, c2),
+                params = @LogParams(N, ϵd, β),
                 convparams = [prec],   
                 Dlim = Dmax,          
                 savebonddims = true,   # we want to save the bond dimension

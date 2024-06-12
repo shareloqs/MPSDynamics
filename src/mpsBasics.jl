@@ -1,10 +1,10 @@
 """
-    orthcentersmps(A)
+    orthcentersmps(A::Vector)
 
 Compute the orthoganality centres of MPS `A`.
 
 Return value is a list in which each element is the corresponding site tensor of `A` with the
-orthoganility centre on that site. Assumes `A` is right normalised.
+orthogonality centre on that site. Assumes `A` is right normalised.
 
 """
 function orthcentersmps(A::Vector)

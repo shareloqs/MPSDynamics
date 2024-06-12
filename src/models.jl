@@ -522,24 +522,6 @@ function chaincoeffs_ohmic(nummodes, α, s; ωc=1, soft=false)
     end
 end
 
-#Deprecated#
-function getchaincoeffs(nummodes, α, s, beta, ωc=1)
-    matlabdir = ENV["MATDIR"]
-    astr = paramstring(α, 2)
-    bstr = paramstring(beta, 3)
-    datfname = string("jacerg_","a",astr,"s$s","beta",bstr,".csv")
-    chaincoeffs = readdlm(string(matlabdir,datfname),',',Float64,'\n')
-    es = ωc .* chaincoeffs[:,1]
-    ts = ωc .* chaincoeffs[1:end-1,2]
-    c0 = ωc * sqrt(chaincoeffs[end,2]/pi)
-    Nmax = length(es)
-    if Nmax < nummodes
-        throw(ErrorException("no data for nummodes > $Nmax"))
-    end
-    return [es[1:nummodes], ts[1:nummodes-1], c0]
-end
-##
-
 """
     readchaincoeffs(fdir, params...)
 
@@ -714,11 +696,11 @@ Generate MPO for a pure dephasing model, defined by the Hamiltonian
 The spin is on site 1 of the MPS and the bath modes are to the right.
 
 ### Arguments
-    * `ΔE::Real`: energy splitting of the spin
-    * `dchain::Int`: physical dimension of the chain sites truncated Hilbert spaces
-    * `Nchain::Int`: number of sites in the chain
-    * `chainparams::Array{Real,1}`: chain parameters for the bath chain. The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
-    * `tree::Bool`: if true, return a `TreeNetwork` object, otherwise return a vector of MPO tensors
+* `ΔE::Real`: energy splitting of the spin
+* `dchain::Int`: physical dimension of the chain sites truncated Hilbert spaces
+* `Nchain::Int`: number of sites in the chain
+* `chainparams::Array{Real,1}`: chain parameters for the bath chain. The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
+* `tree::Bool`: if true, return a `TreeNetwork` object, otherwise return a vector of MPO tensors
 """
 function puredephasingmpo(ΔE, dchain, Nchain, chainparams; tree=false)
     u = unitmat(2)
@@ -743,10 +725,10 @@ The interactions are nearest-neighbour, with the first N/2-1 sites corresponding
 
 # Arguments
 
-    * `N::Int`: number of sites in the chain
-    * `ϵd::Real`: energy of the impurity site at the center, as Ed - μ, where μ is the chemical potential
-    * chainparams1::Array{Real,1}: chain parameters for the first lead
-    * chainparams2::Array{Real,1}: chain parameters for the second lead
+* `N::Int`: number of sites in the chain
+* `ϵd::Real`: energy of the impurity site at the center, as Ed - μ, where μ is the chemical potential
+* `chainparams1::Array{Real,1}`: chain parameters for the first lead
+* `chainparams2::Array{Real,1}`: chain parameters for the second lead
 
 The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
 """
@@ -857,19 +839,19 @@ end
 """
     interleaved_tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
-    Generate MPO for a tight-binding chain of N fermionic sites with a single impurity site (fermionic as well)
-    of energy ϵd. The impurity is coupled to two leads, each described by a set of chain parameters. 
-    The interactions are next-nearest-neighbour, with the first site corresponding to the impurity, and the
-    two chains organised in an interleaved fashion.
+Generate MPO for a tight-binding chain of N fermionic sites with a single impurity site (fermionic as well)
+of energy ϵd. The impurity is coupled to two leads, each described by a set of chain parameters. 
+The interactions are next-nearest-neighbour, with the first site corresponding to the impurity, and the
+two chains organised in an interleaved fashion.
 
-    # Arguments
+# Arguments
 
-    * `N::Int`: number of sites in the chain
-    * `ϵd::Real`: energy of the impurity site at the first site, as Ed - μ, where μ is the chemical potential
-    * chainparams1::Array{Real,1}: chain parameters for the first lead
-    * chainparams2::Array{Real,1}: chain parameters for the second lead
+* `N::Int`: number of sites in the chain
+* `ϵd::Real`: energy of the impurity site at the first site, as Ed - μ, where μ is the chemical potential
+* chainparams1::Array{Real,1}: chain parameters for the first lead
+* chainparams2::Array{Real,1}: chain parameters for the second lead
 
-    The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
+The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
 """
 function interleaved_tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
@@ -1333,31 +1315,32 @@ end
 """
     protontransfermpo(ω0e,ω0k,x0e,x0k, Δ, dRC, d, N, chainparams, RCparams, λreorg)
 
-Generate a MPO for a system described in space with a reaction coordinate (RC) tensor. The RC tensor is coupled to a bosonic bath, taking into account the induced reorganization energy. 
+Generate a MPO for a system described in space with a reaction coordinate (RC) tensor. The Hamiltonian of the two-level system and of the reaction coordinate tensor reads 
 
 ``
 H_S + H_{RC} + H_{int}^{S-RC} = \\omega^0_{e} |e\\rangle \\langle e| + \\omega^0_{k} |k\\rangle \\langle k| + \\Delta (|e\\rangle \\langle k| + |k\\rangle \\langle e|) + \\omega_{RC} (d^{\\dagger}d + \\frac{1}{2}) + g_{e} |e\\rangle \\langle e|( d + d^{\\dagger})+ g_{k} |k \\rangle \\langle k|( d + d^{\\dagger})
 ``
+The RC tensor is coupled to a bosonic bath, taking into account the induced reorganization energy
 ``
 H_B + H_{int}^{RC-B} = \\int_{-∞}^{+∞} dk ω_k b_k^\\dagger b_k - (d + d^{\\dagger})\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\lambda_{reorg}(d + d^{\\dagger})^2
-``.
 ``
-\\lambda_{reorg} = \\int \\frac{J(\\omega)}{\\omega}d\\omega
-``.
-
+with
+``
+\\lambda_{reorg} = \\int \\frac{J(\\omega)}{\\omega}d\\omega.
+``
 
 # Arguments
 
-* `ω0e`: enol energy at x=0 
-* `ω0k`: keto energy at x=0
+* `ω0e`: enol energy at reaction coordinate value x=0 
+* `ω0k`: keto energy at reaction coordinate value x=0
 * `x0e`: enol equilibrium displacement
 * `x0k`: keto equilibrium displacement 
 * `Δ`: direct coupling between enol and keto
 * `dRC`: fock space of the RC tensor 
 * `d`: number of Fock states of the chain modes
-* `N`: length of the chain
+* `N`: length of the bosonic chain
 * `chainparams`: chain parameters, of the form `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature. 
-* `RCparams`: RC tensor parameter, of the form `RCparams`=``[ωRC,-g/x]`` 
+* `RCparams`: RC tensor parameter, of the form `RCparams`=``[ω_RC,-g/x]`` 
 * `λreorg`: reorganization energy
 """
 function protontransfermpo(ω0e,ω0k,x0e,x0k, Δ, dRC, d, N, chainparams, RCparams, λreorg)
