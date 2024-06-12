@@ -6,12 +6,12 @@ We consider, in the Schrödinger picture, a general Hamiltonian where a non-spec
 
 ```math
 \begin{aligned}
-    \hat{H} =& \hat{H}_S + \int_0^{+\infty} \omega\hat{a}^\dagger_\omega\hat{a}_\omega\ \mathrm{d}\omega + \hat{A}_S\int_0^{+\infty}\sqrt{J(\omega)}\left(\hat{a}_\omega + \hat{a}^\dagger_\omega\right)\mathrm{d}\omega
+    \hat{H} =& \hat{H}_S + \int_0^{+\infty} \omega\hat{a}^\dagger_\omega\hat{a}_\omega\ \mathrm{d}\omega + \hat{A}_S \otimes \int_0^{+\infty}\sqrt{J(\omega)}\left(\hat{a}_\omega + \hat{a}^\dagger_\omega\right)\mathrm{d}\omega
 \end{aligned}
 ```
 
 
-where $\hat a_\omega$ ($\hat a^\dagger_\omega$) is a bosonic annihilation (creation) operator for a normal mode of the environment of energy $\hbar\omega$, $\hat{A}_S$ is a system operator, and $J(\omega) = \sum_k |g_k|^2\delta(\omega - \omega_k)$ is the bath spectral density (SD), defined with the microscopic system-environment coupling strength $g_k$.
+where $\hat a_\omega$ ($\hat a^\dagger_\omega$) is a bosonic annihilation (creation) operator for a normal mode of the environment of energy $\omega$, $\hat{A}_S$ is a system operator, and $J(\omega) = \sum_k |g_k|^2\delta(\omega - \omega_k)$ is the bath spectral density (SD), defined with the microscopic system-environment coupling strength $g_k$.
 The SD quantifies the coupling strengths of the different normal modes of the environment with the system.
 Any SD that is not flat corresponds to a non-Markovian environment.
 
@@ -89,7 +89,7 @@ This modified bath has the same correlation function $S(t)$ and thus allows us t
 The Hamiltonian of the system interacting with this extended bath now includes temperature-dependent interactions:
 
 ```math
-\hat{H} = \hat{H}_S + \int_{-\infty}^{+\infty} \mathrm{d}\omega \omega \hat{a}_\omega^\dagger \hat{a}_\omega + \hat{A}_S \otimes \int_{-\infty}^{+\infty} \mathrm{d}\omega \sqrt{J(\omega,\beta)}\left(\hat{a}_\omega^\dagger+\hat{a}_\omega\right),
+\hat{H} = \hat{H}_S + \int_{-\infty}^{+\infty} \omega \hat{a}_\omega^\dagger \hat{a}_\omega \mathrm{d}\omega + \hat{A}_S \otimes \int_{-\infty}^{+\infty} \sqrt{J(\omega,\beta)}\left(\hat{a}_\omega^\dagger+\hat{a}_\omega\right) \mathrm{d}\omega,
 ```
 
 This method simplifies the simulation of finite temperature effects by treating them within an effective zero-temperature framework, thereby keeping the computational advantages of using pure states. In conclusion: the dynamics of the system resulting from the interaction with the original bath, starting in a thermal state at finite temperature, is exactly the same as the one resulting from the interaction with the extended environment, starting in the vacuum state at zero temperature. Once computed the chain coefficients at a given inverse temperature $\beta$, the time evolution of the vacuum state interacting with the extended environment can be efficiently simulated using MPS time evolution methods.
@@ -113,7 +113,7 @@ where the exponent of the squeeze operator is $G = i \sum_k \theta_k(\hat b_k^\d
          \cosh(\theta_k) = \sqrt{1+n_k} = \sqrt{\frac{1}{1-e^{-\beta \omega_k}}} \\
          \sinh(\theta_k) =\quad\sqrt{n_k}\quad= \sqrt{\frac{1}{e^{\beta \omega_k}-1}}.
 ```
-The Bogoliubov transformation defines a new squeezed vacuum state, which we write in terms of the vacuum state $\ket{\Omega_0}$ of the operators $\hat b_k$, $\hat c_k$:
+The Bogoliubov transformation defines a new squeezed vacuum state, which we write in terms of the vacuum state $| \Omega_0 \rangle$ of the operators $\hat b_k$, $\hat c_k$:
 ```math
     |\Omega\rangle = e^{iG} |\Omega_0\rangle, \quad \text{such that: }\quad \hat a_{1k} |\Omega\rangle = 0,  \hat a_{2k} |\Omega\rangle = 0.
 ```
@@ -121,16 +121,16 @@ From the vacuum state, we can obtain the thermal state of the original environme
 ```math
     \hat \rho_E = \text{Tr}_{\text{aux}}\{ |\Omega\rangle\langle\Omega| \},
 ```
-and it can be now used as pure an initial state for both of the environments. Moreover, the expectation value on $\ket{\Omega}$ of the number of physical modes $\hat n_k$ does not vanish:
+and it can be now used as pure an initial state for both of the environments. Moreover, the expectation value on $| \Omega \rangle$ of the number of physical modes $\hat n_k$ does not vanish:
 ```math
     n_k= \langle\Omega| \hat b_k^\dagger \hat b_k |\Omega\rangle = \sinh^2(\theta_k).
 ```
 Therefore, solving the dynamics given by the original Hamiltonian $\hat H$, starting from the initial condition $\hat \rho_S(0) \otimes \hat \rho_E(\beta)$, is equivalent to solving the dynamics given by the following Hamiltonian:
 ```math
-       \hat H = \hat H_S +\hat H_E +\hat H_I  = \\
-       = \overbrace{\hat A_S}^{\hat H_S} + \overbrace{\sum_k \omega_k \big(\hat a_{1k}^\dagger \hat a_{1k} - \hat a_{2k}^\dagger \hat a_{2k} \big)}^{\hat H_E} + \overbrace{\hat L_S \otimes \sum_k g_{1k}(\hat a_{1k}^\dagger + \hat a_{1k})+\hat L_S \otimes \sum_k g_{2k}(\hat a_{2k}^\dagger + \hat a_{2k})}^{\hat H_I}.
+       \hat H = \hat H_S +\hat H_E +\hat H_I   \\
+     \hat H  = \overbrace{\hat A_S}^{\hat H_S} + \overbrace{\sum_k \omega_k \big(\hat a_{1k}^\dagger \hat a_{1k} - \hat a_{2k}^\dagger \hat a_{2k} \big)}^{\hat H_E} + \overbrace{\hat L_S \otimes \sum_k g_{1k}(\hat a_{1k}^\dagger + \hat a_{1k})+\hat L_S \otimes \sum_k g_{2k}(\hat a_{2k}^\dagger + \hat a_{2k})}^{\hat H_I}.
 ```
-where $\hat L_S = \hat L_S^\dagger$, considering $\hat \rho_S(0) \otimes \ket{\Omega}\bra{\Omega}$ as the initial state of system and environment. It is this Hamiltonian that is mapped on two chains with TEDOPA, to be able to perform the time evolution using tensor network techniques. 
+where $\hat L_S = \hat L_S^\dagger$, considering $\hat \rho_S(0) \otimes |\Omega \rangle \langle \Omega |$ as the initial state of system and environment. It is this Hamiltonian that is mapped on two chains with TEDOPA, to be able to perform the time evolution using tensor network techniques. 
 
 ## Computation of the chain coefficients
 

@@ -36,4 +36,15 @@ You can add the Zenodo record to your BibTex file:
 	year = {2021},
 	doi = {10.5281/zenodo.5106435},
 }
+
+@misc{mpsdynamicsjl_2024,
+        title = {{MPSDynamics}.jl: {Tensor} network simulations for finite-temperature (non-{Markovian}) open quantum system dynamics},
+        shorttitle = {{MPSDynamics}.jl},
+        url = {http://arxiv.org/abs/2406.07052},
+        publisher = {arXiv},
+        author = {Lacroix, Thibaut and Le Dé, Brieuc and Riva, Angela and Dunnett, Angus J. and Chin, Alex W.},
+        month = jun,
+        year = {2024},
+}
+
 ```

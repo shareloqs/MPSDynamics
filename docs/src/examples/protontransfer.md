@@ -4,7 +4,7 @@
 
 The MPS formalism can also be used for physical chemistry problems. One development done with the `MPSDynamics.jl` package is the introduction of a reaction coordinate tensor, allowing the system to be described in space [^lede_ESIPT_2024]. It can model an electronic system with discretized states being described along a reaction coordinate. The introduction of a reaction coordinate allows to recover the well-known doublewell viewpoint and wavepacket dynamics can be analyzed with the reduced density matrix. 
 
-Here is an illustrative example of two electronic configurations undergoing a tautomerization : the enol named $|e\rangle$ and the keto named $|k\rangle$.
+Here is an illustrative example of two electronic configurations undergoing a tautomerization : the enol named $|e\rangle$ and the keto named $|k\rangle$ ($\hbar = 1$) :
 ```math
 H_S = \omega^0_{e} |e\rangle \langle e| + \omega^0_{k} |k\rangle \langle k| + \Delta (|e\rangle \langle k| + |k\rangle \langle e|) 
 ```
