@@ -5,7 +5,7 @@
 
 
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11400776.svg)](https://doi.org/10.5281/zenodo.11400776) [![license](https://img.shields.io/badge/License-GPL_3.0-orange.svg)](https://github.com/angusdunnett/MPSDynamics/blob/master/LICENSE) [![documentation workflow](https://github.com/angusdunnett/MPSDynamics/actions/workflows/docs.yml/badge.svg)](https://angusdunnett.github.io/MPSDynamics/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11400776.svg)](https://doi.org/10.5281/zenodo.11400776) [![ArXiv](https://img.shields.io/badge/arXiv-2406.07052-B31B1B.svg)](https://arxiv.org/abs/2406.07052) [![license](https://img.shields.io/badge/License-GPL_3.0-orange.svg)](https://github.com/shareloqs/MPSDynamics/blob/master/LICENSE) [![documentation workflow](https://github.com/shareloqs/MPSDynamics/actions/workflows/docs.yml/badge.svg)](https://shareloqs.github.io/MPSDynamics/)
 
 
 This package is intended to provide an easy to use interface for performing tensor network simulations on Matrix Product
@@ -154,6 +154,8 @@ Import["~/MPSDynamics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
 
 # Publications
 Publications which make use of MPSDynamics:
+* Lacroix et al. MPSDynamics.jl: Tensor network simulations for finite-temperature (non-Markovian) open quantum system dynamics
+    * [https://arxiv.org/abs/2406.07052](https://arxiv.org/abs/2406.07052)
 * Le Dé et al. Extending Non-Perturbative Simulation Techniques for Open-Quantum Systems to Excited-State Proton Transfer and Ultrafast Non-Adiabatic Dynamics
     * [https://arxiv.org/abs/2405.08693](https://arxiv.org/abs/2405.08693)
 * Lacroix et al. From Non-Markovian Dissipation to Spatiotemporal Control of Quantum Nanodevices. *Quantum* 8, 1305, April 2024
@@ -184,7 +186,7 @@ Publications which make use of MPSDynamics:
 
 # Citation
 If you use the package in your research, please consider citing it.
-You can add the Zenodo record to your BibTex file:
+You can add the Zenodo record and the arXiv preprint to your BibTex file:
 
 ```tex
 @misc{mpsdynamics_zenodo,
@@ -197,6 +199,16 @@ You can add the Zenodo record to your BibTex file:
 	month = may,
 	year = {2024},
 	doi = {10.5281/zenodo.11400776},
+}
+
+@misc{mpsdynamicsjl_2024,
+	title = {{MPSDynamics}.jl: {Tensor} network simulations for finite-temperature (non-{Markovian}) open quantum system dynamics},
+	shorttitle = {{MPSDynamics}.jl},
+	url = {http://arxiv.org/abs/2406.07052},
+	publisher = {arXiv},
+	author = {Lacroix, Thibaut and Dé, Brieuc Le and Riva, Angela and Dunnett, Angus J. and Chin, Alex W.},
+	month = jun,
+	year = {2024},
 }
 ```
 
