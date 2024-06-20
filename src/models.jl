@@ -512,7 +512,7 @@ function chaincoeffs_ohmic(nummodes, α, s; ωc=1, soft=false)
         if s==0
             c0 = sqrt(2α)*ωc
             e = fill(0.5*ωc,nummodes)
-            t = [ωc*(n+1)/(4n+2) for n in 0:(nummodes-2)]
+            t = [ωc*(1+n)^2/((2+2n)*(3+2n))*sqrt((3+2n)/(1+2n)) for n in 0:(nummodes-2)]
         else
             c0 = sqrt(2α/(s+1))*ωc
             e = [(ωc/2)*(1 + (s^2)/((s+2n)*(2+s+2n))) for n in 0:(nummodes-1)]
