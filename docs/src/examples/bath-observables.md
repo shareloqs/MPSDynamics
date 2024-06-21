@@ -129,7 +129,7 @@ It is possible to invert the thermofield transformation (details in [^riva_therm
 We remark that in the thermofield case, a negative frequency $\omega_{2k}$ is associated to each positive frequency $\omega_{1k}$. The sampling is therefore symmetric around zero. This marks a difference with T-TEDOPA, where the sampling of frequencies was obtained through the thermalized measure $d\mu(\beta) = \sqrt{J(\omega, \beta)}d\omega$, and was not symmetric. To recover the results for the physical bath of frequencies starting from the results of our simulations, that were conducted using the T-TEDOPA chain mapping, we need to do an extrapolation for all of the mean values, in order to have their values for each $\omega$ at $-\omega$ as well. This is done in the code with the `physical_occup` function:
 
 ```julia
-bath_occup_phys = physical_occup(correlations_cdag[:,:,T], correlations_c[:,:,T], omeg, bath_occup[:,:,T], β, N)
+bath_occup_phys = physical_occup(cdagcdag_average[:,:,T], cc_average[:,:,T], omeg, bath_occup[:,:,T], β, N)
 ```
 
 Finally, in the pure dephasing case, it is also possible to obtain the analytical prediction of the time evolution of the occupations of the bath's modes, so that we can compare our numerical results with the analytical ones, exploiting the Heisenberg time evolution relation:
