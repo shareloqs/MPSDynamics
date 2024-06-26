@@ -154,10 +154,13 @@ Import["~/MPSDynamics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
 
 # Publications
 Publications which make use of MPSDynamics:
-* Lacroix et al. MPSDynamics.jl: Tensor network simulations for finite-temperature (non-Markovian) open quantum system dynamics
+* Le Dé et al. Managing Temperature in Open Quantum Systems Strongly Coupled with Structured Environments, *arXiv e-print*, June 2024
+    * [https://arxiv.org/abs/2406.13512](https://arxiv.org/abs/2406.13512)
+
+* Lacroix et al. MPSDynamics.jl: Tensor network simulations for finite-temperature (non-Markovian) open quantum system dynamics, *arXiv e-print*, June 2024
     * [https://arxiv.org/abs/2406.07052](https://arxiv.org/abs/2406.07052)
       
-* Le Dé et al. Extending Non-Perturbative Simulation Techniques for Open-Quantum Systems to Excited-State Proton Transfer and Ultrafast Non-Adiabatic Dynamics
+* Le Dé et al. Extending Non-Perturbative Simulation Techniques for Open-Quantum Systems to Excited-State Proton Transfer and Ultrafast Non-Adiabatic Dynamics, *arXiv e-print*, May 2024
     * [https://arxiv.org/abs/2405.08693](https://arxiv.org/abs/2405.08693)
       
 * Hunter et al. Environmentally Driven Symmetry Breaking Quenches Dual Fluorescence in Proflavine. *J.Phys. Chem. Lett.* 15, 4623−4632, April 2024
