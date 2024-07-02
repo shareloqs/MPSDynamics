@@ -154,6 +154,9 @@ Import["~/MPSDynamics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
 
 # Publications
 Publications which make use of MPSDynamics:
+* Lambertson et al. Computing Linear Optical Spectra of Molecules in Complex Environments on Graphics Processing Units Using Molecular Dynamics Simulations and Tensor-Network Approaches. *arXiv e-print*, June 2024
+    * [https://doi.org/10.48550/arXiv.2406.17994](https://doi.org/10.48550/arXiv.2406.17994)
+
 * Le Dé et al. Managing Temperature in Open Quantum Systems Strongly Coupled with Structured Environments, *arXiv e-print*, June 2024
     * [https://arxiv.org/abs/2406.13512](https://arxiv.org/abs/2406.13512)
 
