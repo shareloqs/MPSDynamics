@@ -339,14 +339,14 @@ end
 
 
 """
-    findchainlength(T, cparams; eps=10^-6, verbose=false)
+    findchainlength(T, cparams::Vector; eps=10^-6, verbose=false)
 
 Estimate length of chain required for a particular set of chain parameters by calculating how long an excitation on the
 first site takes to reach the end. The chain length is given as the length required for the excitation to have just
 reached the last site after time T. The initial number of sites in cparams has to be larger than the findchainlength result.
 
 """
-function findchainlength(T, cparams; eps=10^-4, verbose=false)
+function findchainlength(T, cparams::Vector; eps=10^-4, verbose=false)
     Nmax = length(cparams[1])
     occprev = endsiteocc(T, [cparams[1][1:Nmax], cparams[2][1:Nmax-1]])
     occ = endsiteocc(T, [cparams[1][1:Nmax-1], cparams[2][1:Nmax-2]])
@@ -366,6 +366,20 @@ function findchainlength(T, cparams; eps=10^-4, verbose=false)
         end
         occprev=occ
     end
+end
+
+"""
+    findchainlength(T, ωc::Float64, β=Inf)
+
+Estimate length of chain using universal asymptotic properties of chain mapped environments given the simulation time T, the bath cut-off frequency ωc, and the inverse temperature β.
+"""
+function findchainlength(T, ωc::Float64, β=Inf)
+    if β==Inf
+        N = ceil(0.25*ωc*T + 0.5)
+    else
+        N = ceil(0.5*ωc*T + 0.5)
+    end
+    return N
 end
 
 """
