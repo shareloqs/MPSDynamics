@@ -163,7 +163,7 @@ export Machine, RemoteMachine, LocalMachine, init_machines, update_machines, lau
 
 export randtree
 
-export readchaincoeffs, h5read, load
+export readchaincoeffs, h5read, load, findchainlength
 
 export println, print, show
 
