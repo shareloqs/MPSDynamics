@@ -158,7 +158,7 @@ Publications which make use of MPSDynamics:
     * [https://doi.org/10.48550/arXiv.2406.17994](https://doi.org/10.48550/arXiv.2406.17994)
 
 * Le Dé et al. Managing Temperature in Open Quantum Systems Strongly Coupled with Structured Environments, *J. Chem. Phys.* 160, 244102, June 2024
-    * [https://arxiv.org/abs/2406.13512](https://doi.org/10.1063/5.0214051)
+    * [https://doi.org/10.1063/5.0214051](https://doi.org/10.1063/5.0214051)
 
 * Lacroix et al. MPSDynamics.jl: Tensor network simulations for finite-temperature (non-Markovian) open quantum system dynamics, *arXiv e-print*, June 2024
     * [https://arxiv.org/abs/2406.07052](https://arxiv.org/abs/2406.07052)
