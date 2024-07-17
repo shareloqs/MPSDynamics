@@ -19,12 +19,12 @@ function ϵ(x)
     return x
 end
 
-function J(x)
+function V(x)
     return sqrt(1 - x^2) # semi-circular density of states
 end
 
-chainparams1 = chaincoeffs_fermionic(N, β, 1.0; ϵ, J, save=false) # empty
-chainparams2 = chaincoeffs_fermionic(N, β, 2.0; ϵ, J, save=false) # filled
+chainparams1 = chaincoeffs_fermionic(N, β, 1.0; ϵ, V, save=false) # empty
+chainparams2 = chaincoeffs_fermionic(N, β, 2.0; ϵ, V, save=false) # filled
 
 #=
 curdir = @__DIR__
