@@ -154,14 +154,14 @@ Import["~/MPSDynamics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
 
 # Publications
 Publications which make use of MPSDynamics:
+* Lacroix et al. MPSDynamics.jl: Tensor network simulations for finite-temperature (non-Markovian) open quantum system dynamics, *J. Chem. Phys.*, 161, 084116, August 2024
+    * [https://doi.org/10.1063/5.0223107](https://doi.org/10.1063/5.0223107)
+
 * Lambertson et al. Computing Linear Optical Spectra of Molecules in Complex Environments on Graphics Processing Units Using Molecular Dynamics Simulations and Tensor-Network Approaches. *arXiv e-print*, June 2024
     * [https://doi.org/10.48550/arXiv.2406.17994](https://doi.org/10.48550/arXiv.2406.17994)
 
 * Le Dé et al. Managing Temperature in Open Quantum Systems Strongly Coupled with Structured Environments, *J. Chem. Phys.* 160, 244102, June 2024
     * [https://doi.org/10.1063/5.0214051](https://doi.org/10.1063/5.0214051)
-
-* Lacroix et al. MPSDynamics.jl: Tensor network simulations for finite-temperature (non-Markovian) open quantum system dynamics, *arXiv e-print*, June 2024
-    * [https://arxiv.org/abs/2406.07052](https://arxiv.org/abs/2406.07052)
       
 * Le Dé et al. Extending Non-Perturbative Simulation Techniques for Open-Quantum Systems to Excited-State Proton Transfer and Ultrafast Non-Adiabatic Dynamics, *arXiv e-print*, May 2024
     * [https://arxiv.org/abs/2405.08693](https://arxiv.org/abs/2405.08693)
