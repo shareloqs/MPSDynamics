@@ -23,7 +23,7 @@ Depth = 3
 
 ## Citation
 If you use the package in your research, please consider citing it.
-You can add the Zenodo record to your BibTex file:
+You can add the Zenodo record and the software paper to your BibTex file:
 
 ```tex
 @misc{mpsdynamics_zenodo2021,
@@ -37,14 +37,19 @@ You can add the Zenodo record to your BibTex file:
 	doi = {10.5281/zenodo.5106435},
 }
 
-@misc{mpsdynamicsjl_2024,
-        title = {{MPSDynamics}.jl: {Tensor} network simulations for finite-temperature (non-{Markovian}) open quantum system dynamics},
-        shorttitle = {{MPSDynamics}.jl},
-        url = {http://arxiv.org/abs/2406.07052},
-        publisher = {arXiv},
-        author = {Lacroix, Thibaut and Le Dé, Brieuc and Riva, Angela and Dunnett, Angus J. and Chin, Alex W.},
-        month = jun,
-        year = {2024},
+@article{mpsdynamicsjl_2024,
+	title = {{MPSDynamics}.jl: {Tensor} network simulations for finite-temperature (non-{Markovian}) open quantum system dynamics},
+	volume = {161},
+	issn = {0021-9606},
+	shorttitle = {{MPSDynamics}.jl},
+	url = {https://doi.org/10.1063/5.0223107},
+	doi = {10.1063/5.0223107},
+	number = {8},
+	journal = {The Journal of Chemical Physics},
+	author = {Lacroix, Thibaut and Le Dé, Brieuc and Riva, Angela and Dunnett, Angus J. and Chin, Alex W.},
+	month = aug,
+	year = {2024},
+	pages = {084116},
 }
 
 ```
