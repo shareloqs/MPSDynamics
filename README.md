@@ -5,7 +5,7 @@
 
 
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11400776.svg)](https://doi.org/10.5281/zenodo.11400776) [![ArXiv](https://img.shields.io/badge/arXiv-2406.07052-B31B1B.svg)](https://arxiv.org/abs/2406.07052) [![license](https://img.shields.io/badge/License-GPL_3.0-orange.svg)](https://github.com/shareloqs/MPSDynamics/blob/master/LICENSE) [![documentation workflow](https://github.com/shareloqs/MPSDynamics/actions/workflows/docs.yml/badge.svg)](https://shareloqs.github.io/MPSDynamics/)
+[![J. Chem. Phys.](https://img.shields.io/badge/J.%20Chem.%20Phys.%20-%2010.1063%2F5.0223107%20-%20navy)](https://doi.org/10.1063/5.0223107) [![ArXiv](https://img.shields.io/badge/arXiv-2406.07052-B31B1B.svg)](https://arxiv.org/abs/2406.07052) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11400776.svg)](https://doi.org/10.5281/zenodo.11400776) [![license](https://img.shields.io/badge/License-GPL_3.0-orange.svg)](https://github.com/shareloqs/MPSDynamics/blob/master/LICENSE) [![documentation workflow](https://github.com/shareloqs/MPSDynamics/actions/workflows/docs.yml/badge.svg)](https://shareloqs.github.io/MPSDynamics/)
 
 
 This package is intended to provide an easy to use interface for performing tensor network simulations on Matrix Product
@@ -212,14 +212,19 @@ You can add the Zenodo record and the arXiv preprint to your BibTex file:
 	doi = {10.5281/zenodo.11400776},
 }
 
-@misc{mpsdynamicsjl_2024,
+@article{mpsdynamicsjl_2024,
 	title = {{MPSDynamics}.jl: {Tensor} network simulations for finite-temperature (non-{Markovian}) open quantum system dynamics},
+	volume = {161},
+	issn = {0021-9606},
 	shorttitle = {{MPSDynamics}.jl},
-	url = {http://arxiv.org/abs/2406.07052},
-	publisher = {arXiv},
+	url = {https://doi.org/10.1063/5.0223107},
+	doi = {10.1063/5.0223107},
+	number = {8},
+	journal = {The Journal of Chemical Physics},
 	author = {Lacroix, Thibaut and Le Dé, Brieuc and Riva, Angela and Dunnett, Angus J. and Chin, Alex W.},
-	month = jun,
+	month = aug,
 	year = {2024},
+	pages = {084116},
 }
 ```
 
