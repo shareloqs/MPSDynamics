@@ -197,7 +197,7 @@ Publications which make use of MPSDynamics:
 
 # Citation
 If you use the package in your research, please consider citing it.
-You can add the Zenodo record and the arXiv preprint to your BibTex file:
+You can add the Zenodo record and the software paper to your BibTex file:
 
 ```tex
 @misc{mpsdynamics_zenodo,
