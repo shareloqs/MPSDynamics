@@ -566,7 +566,7 @@ Convert an ITensors chain MPO into a form compatible with MPSDynamics
 """
 function MPOtoVector(mpo::MPO)
     N = length(mpo)
-    H = [Array(mpo[i], mpo[i].inds...) for i=1:N]
+    H = [Array(mpo[i], inds(mpo[i])...) for i=1:N]
     dims=size(H[1])
     H[1] = reshape(H[1], 1, dims...)
     dims=size(H[N])
