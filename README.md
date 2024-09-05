@@ -233,6 +233,8 @@ Contributions are welcome! Don't hesitate to contact us if you
 * found a bug;
 * have a suggestion on how to improve the code and/or documentation;
 * would like to get involved in writing code and/or documentation.
+
+Feel free to open an [issue](https://github.com/shareloqs/MPSDynamics/issues) on Github :)
  
 # References
 
