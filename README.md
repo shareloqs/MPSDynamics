@@ -154,6 +154,9 @@ Import["~/MPSDynamics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
 
 # Publications
 Publications which make use of MPSDynamics:
+* Lacroix et al. Connectivity Matters: Impact of Bath Modes Ordering and Geometry in Open Quantum System Simulation with Matrix Product States, *arXiv e-print*, September, 2024.
+    * [https://doi.org/10.48550/arXiv.2409.04145](https://doi.org/10.48550/arXiv.2409.04145)
+
 * Lacroix et al. MPSDynamics.jl: Tensor network simulations for finite-temperature (non-Markovian) open quantum system dynamics, *J. Chem. Phys.*, 161, 084116, August 2024
     * [https://doi.org/10.1063/5.0223107](https://doi.org/10.1063/5.0223107)
 
