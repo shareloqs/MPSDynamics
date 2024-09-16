@@ -1313,6 +1313,95 @@ function correlatedenvironmentmpo(R::Vector, Nm::Int, d::Int; chainparams, fname
 end
 
 """
+	multisitempo(N::Int, E=[]::Vector, J=[]::Vector, As=[]::Vector)
+
+Generate a MPO for a N-site multi-component system to be coupled with a correlated environment.
+
+# Arguments:
+* `N`: number of sites
+* `E`: list of on-site energies
+* `J`: list of sites tunnelling energies
+* `As`: list of system operators coupling to the environment
+
+"""
+function multisitempo(N::Int, E=[]::Vector, J=[]::Vector, As=[]::Vector)
+
+    if length(E)<N
+        print("The on-site energies of the system sites where not all specified: zero energy will be assumed. \n")
+        E = vcat(E,zeros(N-length(E)))
+    end
+
+    if length(J)<N-1
+        print("The tunnelling energies of the system sites where not all specified: zero tunnelling will be assumed. \n")
+        J = vcat(J,zeros(N-length(J)))
+    end
+
+    if length(As)<N
+        print("The system operators of the interaction Hamiltonian where not all specified: absence of interaction be assumed. \n")
+        As = [As..., fill(zeros(ComplexF64, size(As[1])...))...]
+    end
+
+    # Construction of the MPO
+    W = Any[] # list of the MPO's tensors
+    d = 2 # Hilbert Space dimension of the sites operators
+    u = unitmat(d)
+    # Definition of the single excitation creation, anihilation operators
+    cd = crea(d)
+    c = anih(d)
+
+
+    if N==1
+        error("The number of sites N is too small.")
+    else
+        for x = 1:N-1
+            D = 2*(x+2) # Bond dimension
+            M = zeros(ComplexF64,D-2,D,d,d)
+            M[1,1,:,:] = M[D-2,D,:,:] = u
+
+            i = 2 # index counter
+            M[1,i,:,:] = J[x]*c # tunnelling terms
+            M[1,i+1,:,:] = J[x]*cd
+            M[1,i+2*x,:,:] = M[1,i+1+2*x,:,:] = As[x] # system operator coupled to the environment 
+            M[1,D,:,:] = 0.5*E[x]*sz # onsite energy
+
+            M[i,D,:,:] = cd
+            M[i+1,D,:,:] = c
+            i += 2
+
+            while i<D-2
+                M[i,i,:,:] = u
+                i += 1
+            end
+            if x==1
+                push!(W, reshape(M[1,:,:,:], 1,D,d,d))
+            else
+                push!(W, M)
+            end
+        end
+
+        ### Last site before the bath chain doesn't have any coupling with the rest of the sites, so is size is Dx(D-2)xNxN
+
+        D = 2*(N+1)
+        M = zeros(ComplexF64,D, D, d, d)
+        M[1,1,:,:] = M[D,D,:,:] = u
+        i = 2 # index counter
+        M[1,D-2,:,:] = M[1,D-1,:,:] = As[N]
+        M[1,D,:,:] = 0.5*E[N]*sz
+
+        M[i,D,:,:] = cd
+        M[i+1,D,:,:] = c
+
+        while i<D-2
+            M[i+2,i,:,:] = u
+            i += 1
+        end
+        push!(W, M)
+    end
+
+    return W
+end
+
+"""
     protontransfermpo(ω0e,ω0k,x0e,x0k, Δ, dRC, d, N, chainparams, RCparams, λreorg)
 
 Generate a MPO for a system described in space with a reaction coordinate (RC) tensor. The Hamiltonian of the two-level system and of the reaction coordinate tensor reads 
