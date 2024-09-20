@@ -1,0 +1,63 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: MPSDynamics.jl
+message: >-
+  If you use this software, please cite it
+type: software
+authors:
+  - given-names: Angus J.
+    family-names: Dunnett
+    orcid: 'https://orcid.org/0000-0002-8579-7826'
+  - given-names: Thibaut
+    family-names: Lacroix
+    orcid: 'https://orcid.org/0000-0002-5190-040X'
+  - given-names: Angela
+    family-names: Riva
+    orcid: 'https://orcid.org/0009-0005-8509-9162'
+  - given-names: Brieuc
+    family-names: Le Dé
+    orcid: 'https://orcid.org/0000-0001-6004-0758'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.5106434
+    description: Zenodo Repository
+  - type: doi
+    value: 10.1063/5.0223107
+    description: J. Chem. Phys. Paper
+url: 'https://github.com/shareloqs/MPSDynamics'
+abstract: >-
+  Tensor network simulations for finite temperature, open
+  quantum system dynamics
+license: GPL-3.0
+preferred-citation:
+  type: article
+  authors:
+  - given-names: Thibaut
+    family-names: Lacroix
+    orcid: 'https://orcid.org/0000-0002-5190-040X'
+    affiliation: Institute of Theoretical Physics, Ulm University
+  - given-names: Brieuc
+    family-names: Le Dé
+    orcid: 'https://orcid.org/0000-0001-6004-0758'
+    affiliation: Sorbonne Université, CNRS, Institut des NanoSciences de Paris
+  - given-names: Angela
+    family-names: Riva
+    orcid: 'https://orcid.org/0009-0005-8509-9162'
+    affiliation: LPENS, Département de Physique, École Normale Supérieure, Centre Automatique et Systèmes (CAS), MINES ParisTech, Université PSL, Sorbonne Université, CNRS, Inria
+  - given-names: Angus J.
+    family-names: Dunnett
+    orcid: 'https://orcid.org/0000-0002-8579-7826'
+    affiliation: Multiverse Computing
+  - given-names: Alex W.
+    family-names: Chin
+    orcid: 'https://orcid.org/0000-0001-7741-5915'
+    affiliation: Sorbonne Université, CNRS, Institut des NanoSciences de Paris
+  doi: "10.1063/5.0223107"
+  journal: "The Journal of Chemical Physics"
+  month: 8
+  title: "MPSDynamics.jl: Tensor network simulations for finite-temperature (non-Markovian) open quantum system dynamics"
+  issue: 8
+  volume: 161
+  year: 2024
