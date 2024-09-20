@@ -154,14 +154,14 @@ Import["~/MPSDynamics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
 
 # Publications
 Publications which make use of MPSDynamics:
+* Lambertson et al. Computing Linear Optical Spectra in the Presence of Nonadiabatic Effects on Graphics Processing Units Using Molecular Dynamics and Tensor-Network Approaches, *The Journal of Chemical Physics*, September 2024.
+    * [https://doi.org/10.1063/5.0224316](https://doi.org/10.1063/5.0224316)
+
 * Lacroix et al. Connectivity Matters: Impact of Bath Modes Ordering and Geometry in Open Quantum System Simulation with Matrix Product States, *arXiv e-print*, September, 2024.
     * [https://doi.org/10.48550/arXiv.2409.04145](https://doi.org/10.48550/arXiv.2409.04145)
 
 * Lacroix et al. MPSDynamics.jl: Tensor network simulations for finite-temperature (non-Markovian) open quantum system dynamics, *J. Chem. Phys.*, 161, 084116, August 2024
     * [https://doi.org/10.1063/5.0223107](https://doi.org/10.1063/5.0223107)
-
-* Lambertson et al. Computing Linear Optical Spectra of Molecules in Complex Environments on Graphics Processing Units Using Molecular Dynamics Simulations and Tensor-Network Approaches. *arXiv e-print*, June 2024
-    * [https://doi.org/10.48550/arXiv.2406.17994](https://doi.org/10.48550/arXiv.2406.17994)
 
 * Le Dé et al. Managing Temperature in Open Quantum Systems Strongly Coupled with Structured Environments, *J. Chem. Phys.* 160, 244102, June 2024
     * [https://doi.org/10.1063/5.0214051](https://doi.org/10.1063/5.0214051)
