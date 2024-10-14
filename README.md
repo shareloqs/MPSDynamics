@@ -154,6 +154,9 @@ Import["~/MPSDynamics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
 
 # Publications
 Publications which make use of MPSDynamics:
+* Le Dé et al. Extending Non-Perturbative Simulation Techniques for Open-Quantum Systems to Excited-State Proton Transfer and Ultrafast Non-Adiabatic Dynamics, *J. Chem. Theory Comput.*, October 2024.
+    * [https://doi.org/10.1021/acs.jctc.4c00666](https://doi.org/10.1021/acs.jctc.4c00666)
+  
 * Lambertson et al. Computing Linear Optical Spectra in the Presence of Nonadiabatic Effects on Graphics Processing Units Using Molecular Dynamics and Tensor-Network Approaches, *J. Chem. Phys.*, 161, 114101, September 2024.
     * [https://doi.org/10.1063/5.0224316](https://doi.org/10.1063/5.0224316)
 
@@ -165,9 +168,6 @@ Publications which make use of MPSDynamics:
 
 * Le Dé et al. Managing Temperature in Open Quantum Systems Strongly Coupled with Structured Environments, *J. Chem. Phys.* 160, 244102, June 2024
     * [https://doi.org/10.1063/5.0214051](https://doi.org/10.1063/5.0214051)
-      
-* Le Dé et al. Extending Non-Perturbative Simulation Techniques for Open-Quantum Systems to Excited-State Proton Transfer and Ultrafast Non-Adiabatic Dynamics, *arXiv e-print*, May 2024
-    * [https://arxiv.org/abs/2405.08693](https://arxiv.org/abs/2405.08693)
       
 * Hunter et al. Environmentally Driven Symmetry Breaking Quenches Dual Fluorescence in Proflavine. *J.Phys. Chem. Lett.* 15, 4623−4632, April 2024
   * [https://doi.org/10.1021/acs.jpclett.4c00677](https://doi.org/10.1021/acs.jpclett.4c00677)
