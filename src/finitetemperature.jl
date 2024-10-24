@@ -38,7 +38,7 @@ function chaincoeffs_finiteT(nummodes, β, ohmic=true; α=1, s=1, J=nothing, ωc
         else
             throw(ArgumentError("An interval AB with mc = $mc components should have been provided."))
         end
-    elseif length(AB) != mc
+    elseif length(AB) != 2*mc
         throw(ArgumentError("AB has a different number of intervals than mc = $mc."))             
     end
 
@@ -148,7 +148,7 @@ function chaincoeffs_fermionic(nummodes, β, chain; ϵ=nothing, J=nothing, ωc=1
         else
             throw(ArgumentError("An interval AB with mc = $mc components should have been provided."))
         end
-    elseif length(AB) != mc
+    elseif length(AB) != 2*    mc
         throw(ArgumentError("AB has a different number of intervals than mc = $mc."))             
     end
 
