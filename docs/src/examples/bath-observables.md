@@ -195,7 +195,7 @@ p4 = plot(omeg[Mhalf:M], bath_occup_phys, lw=4,
 plot(p1, p2, p3, p4, layout = (2, 2), size = (1400, 1200))
 ```
 
-![Output of this program](examples/bath_obs_svg.png)
+![Output of this program](examples/bath_obs_output.svg)
 
 ___________________
 ## Bibliography
