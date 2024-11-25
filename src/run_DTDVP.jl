@@ -34,8 +34,18 @@ function run_DTDVP(dt, tmax, A, H, prec; obs=[], effects=false, error=false, tim
         if timedep
            Ndrive = kwargs[:Ndrive]
            Htime = kwargs[:Htime]
-           H0[Ndrive][1,1,:,:] = H[Ndrive][1,1,:,:] + Htime[tstep][:,:]
+           if length(Ndrive)==1
+              size(H0[Ndrive][1,1,:,:])==size(Htime[tstep][:,:]) ? nothing : throw(error("The size of Htime does not match the size of the non-interacting part of H at Ndrive"))
+              H0[Ndrive][1,1,:,:] = H[Ndrive][1,1,:,:] + Htime[tstep][:,:]
+           else
+              for i=1:length(Ndrive)
+                 site=Ndrive[i]
+                 size(H0[site][end,1,:,:])==size(Htime[site][tstep][:,:]) ? nothing : throw(error("The size of Htime does not match the size of the non-interacting part of H at Ndrive=$site"))
+                 H0[site][end,1,:,:] = H[site][end,1,:,:] + Htime[site][tstep][:,:]
+              end
+            end
         end
+
         A0, Afull, F, info = tdvp1sweep_dynamic!(dt, A0, H0, Afull, F;
                                                  obs=obs,
                                                  prec=prec,
