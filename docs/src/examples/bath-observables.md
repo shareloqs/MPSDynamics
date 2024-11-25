@@ -21,8 +21,8 @@ s = 1       # ohmicity
 ```
 We set the specifics of the simulation:
 ```julia
-method = :TDVP1         # time-evolution method
-conv = 3                # bond dimension for the TDVP1
+method = :TDVP2         # time-evolution method
+conv = 0.001            # Allowed SVD singular value truncation
 dt = 0.5                # time step
 tfinal = 60.0           # simulation time
 ```
@@ -62,6 +62,8 @@ A, dat = runsim(dt, tfinal, A, H, prec=1E-4;
                 convparams = conv,
                 reduceddensity = true,
                 verbose = false,
+                savebonddims = true,
+                Dlim = 100,
                 save = false,
                 plot = true,
                 );
