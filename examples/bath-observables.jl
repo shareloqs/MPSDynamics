@@ -114,7 +114,7 @@ correlations_cdag = [
     for i in 1:size(cdagcdag_average, 1), j in 1:size(cdagcdag_average, 2), t in 1:size(cdagcdag_average,3)
 ]
 
-bath_occup_phys = physical_occup(correlations_cdag[:,:,T], correlations_c[:,:,T], omeg, bath_occup[:,:,T], β, N)
+bath_occup_phys = physical_occup(cdagcdag_average[:,:,T], cc_average[:,:,T], omeg, bath_occup[:,:,T], β, N)
 
 #--------------------
 # Analytical results 

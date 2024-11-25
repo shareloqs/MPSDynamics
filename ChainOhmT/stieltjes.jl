@@ -1,12 +1,7 @@
-""" STIELTJES Discretized Stieltjes procedure.
+""" 
+    stieltjes(N,xw)
 
-    Given the discrete inner product whose nodes are contained
-    in the first column, and whose weights are contained in the
-    second column, of the nx2 array xw, the call ab=STIELTJES(n,xw)
-    generates the first n recurrence coefficients ab of the
-    corresponding discrete orthogonal polynomials. The n alpha-
-    coefficients are stored in the first column, the n beta-
-    coefficients in the second column, of the nx2 array ab.
+Discretized Stieltjes procedure. Given the discrete inner product whose nodes are contained in the first column, and whose weights are contained in the second column, of the `N`x2 array `xw`, the call ab=stieltjes(N,xw) generates the first `N` recurrence coefficients ab of the corresponding discrete orthogonal polynomials. The `N` alpha- coefficients are stored in the first column, the `N` beta-coefficients in the second column, of the `N`x2 array ab.
 """
 function stieltjes(N,xw) #return ab
     #tiny = 10*realmin

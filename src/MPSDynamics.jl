@@ -25,7 +25,6 @@ include("run_all.jl")
 include("run_1TDVP.jl")
 include("run_2TDVP.jl")
 include("run_DTDVP.jl")
-include("run_A1TDVP.jl")
 include("chainA1TDVP.jl")
 include("switchmpo.jl")
 include("finitetemperature.jl")
@@ -164,7 +163,7 @@ export Machine, RemoteMachine, LocalMachine, init_machines, update_machines, lau
 
 export randtree
 
-export readchaincoeffs, h5read, load
+export readchaincoeffs, h5read, load, findchainlength
 
 export println, print, show
 

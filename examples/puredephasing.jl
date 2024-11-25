@@ -57,8 +57,6 @@ tfinal = 10.0 # simulation time
 
 method = :TDVP1 # time-evolution method
 
-#method = :DTDVP # time-evolution method
-
 D = 2 # MPS bond dimension
 
 #---------------------------
@@ -86,7 +84,7 @@ ob1 = OneSiteObservable("sz", sz, 1)
 # Simulation
 #------------
 
-A, dat = runsim(dt, tfinal, A, H, prec=1E-4;
+A, dat = runsim(dt, tfinal, A, H;
                 name = "pure dephasing model with temperature",
                 method = method,
                 obs = [ob1],

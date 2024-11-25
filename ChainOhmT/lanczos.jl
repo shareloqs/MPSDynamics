@@ -1,17 +1,9 @@
-""" LANCZOS Lanczos algorithm.
+""" 
+    lanczos(N,xw)
 
-    Given the discrete inner product whose nodes are contained
-    in the first column, and whose weights are contained in the
-    second column, of the nx2 array xw, the call ab=LANCZOS(n,xw)
-    generates the first n recurrence coefficients ab of the
-    corresponding discrete orthogonal polynomials. The n alpha-
-    coefficients are stored in the first column, the n beta-
-    coefficients in the second column, of the nx2 array ab.
+Given the discrete inner product whose nodes are contained in the first column, and whose weights are contained in the second column, of the `N`x2 array `xw`, the call ab=lanczos(N,xw) generates the first `N` recurrence coefficients ab of the corresponding discrete orthogonal polynomials. The `N` alpha-coefficients are stored in the first column, the `N` beta-coefficients in the second column, of the `N`x2 array ab.
 
-    The script is adapted from the routine RKPW in
-    W.B. Gragg and W.J. Harrod, ``The numerically stable
-    reconstruction of Jacobi matrices from spectral data'',
-    Numer. Math. 44 (1984), 317-335.
+The script is adapted from the routine RKPW in W.B. Gragg and W.J. Harrod, ``The numerically stable reconstruction of Jacobi matrices from spectral data'', Numer. Math. 44 (1984), 317-335.
 """
 function lanczos(N,xw) #return ab
     Ncap = size(xw,1)
