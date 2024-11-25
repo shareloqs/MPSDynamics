@@ -29,7 +29,7 @@ For a bath that initially contains only a finite number of particles, i.e. any b
 A practical guideline for choosing $d$ can be derived by considering the physical states being simulated. For example, for coherent states, the occupation number follows a Poisson distribution. In such cases, the average occupation number is given by the mean $\langle n \rangle$, and the probability of observing a state with occupation number $n$ decreases exponentially for $n \gg \langle n \rangle$. Thus, the truncation $d$ should be chosen such that the cumulative probability of truncation error is negligible.
 
 ### Bond dimensions and time evolution
-Different time-evolution algorithms are implemented in MPSDynamics, and can be selected as options in the function `runsim`. Detailed descriptions of these algorithms are provided in the *Theoretical Background* section of the documentation. The key parameter for ensuring convergence in these methods is controlled via the `convparams` option, which accepts arrays of multiple parameter values to test until convergence is achieved.
+Different time-evolution algorithms are implemented in MPSDynamics, and can be selected as options in the function `runsim`. Detailed descriptions of these algorithms are provided in the *Theoretical Background* section of this documentation. The key parameter for ensuring convergence in these methods is controlled via the `convparams` option, which accepts arrays of multiple parameter values to test until convergence is achieved.
 
 Below are the main time-evolution algorithms and their corresponding convergence parameters:
 - One-Site Time-Dependent Variational Principle (1TDVP):
@@ -50,11 +50,14 @@ The time step used in simulations must be small enough to accurately capture the
 
 ## Common pitfalls
 
-### Hard cut-off for in the spectral density function
+### Hard cut-off in the spectral density function
+The cutoff frequency $\omega_c$ in the spectral density function has to be selected in order to incorporate all of the relevant frequencies. It is to be noted that, for spectral densities belonging to the Szego class[^chin_exact_2010], the cutoff frenquency $\omega_c$ also determines the asymptotic values to which the chain coefficients converge [^woods_mappings_2014]
+
 
 ### MPS gauge choice 
-
 
 # References
 [^woods_simulating_2015]: Woods, M. P.; Cramer, M.; Plenio, M. B. Simulating Bosonic Baths with Error Bars. Phys. Rev. Lett. 2015, 115 (13), 130401. https://doi.org/10.1103/PhysRevLett.115.130401.
 [^DeVega_howto_2015]: De Vega, I.; Schollwöck, U.; Wolf, F. A. How to Discretize a Quantum Bath for Real-Time Evolution. Phys. Rev. B 2015, 92 (15), 155126. https://doi.org/10.1103/PhysRevB.92.155126.
+[^woods_mappings_2014]: Woods,  M. P. et al. “Mappings of open quantum systems onto chain representations and Markovian embeddings”. In: Journal of Mathematical Physics 55.3 (Mar. 2014), p. 032101. issn: 0022-2488, 1089-7658. doi: 10.1063/1.4866769
+[^chin_exact_2010]: Chin, A. W.  et al. “Exact mapping between system-reservoir quantum models and semi-infinite discrete chains using orthogonal polynomials”. In: Journal of Mathematical Physics 51.9 (Sept. 2010), p. 092109. issn: 0022-2488, 1089-7658. doi: 10.1063/1.3490188. arXiv: 1006.4507
