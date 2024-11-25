@@ -37,11 +37,11 @@ function open_log(dt, tmax, convparams, method, machine, savedir, unid, name, pa
                 writeprintln([f,f0])
             end
             writeprintln([f,f0], "\t convparams : $convparams")
-            writeprint([f,f0], "\t options : ")
-            for (key, value) in kwargs
-                writeprint([f,f0], String(key), " = ", value, ", ")
-            end
-            writeprintln([f,f0])
+            #writeprint([f,f0], "\t options : ")
+            #for (key, value) in kwargs
+            #    writeprint([f,f0], String(key), " = ", value, ", ")
+            #end
+            #writeprintln([f,f0])
             writeprintln(f)
         end
     end

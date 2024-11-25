@@ -31,8 +31,18 @@ function run_2TDVP(dt, tmax, A, H, truncerr; obs=[], Dlim=50, savebonddims=false
         if timedep
            Ndrive = kwargs[:Ndrive]
            Htime = kwargs[:Htime]
-           H0[Ndrive][1,1,:,:] = H[Ndrive][1,1,:,:] + Htime[tstep][:,:]
+           if length(Ndrive)==1
+              size(H0[Ndrive][1,1,:,:])==size(Htime[tstep][:,:]) ? nothing : throw(error("The size of Htime does not match the size of the non-interacting part of H at Ndrive"))
+              H0[Ndrive][1,1,:,:] = H[Ndrive][1,1,:,:] + Htime[tstep][:,:]
+           else
+              for i=1:length(Ndrive)
+                 site=Ndrive[i]
+                 size(H0[site][end,1,:,:])==size(Htime[site][tstep][:,:]) ? nothing : throw(error("The size of Htime does not match the size of the non-interacting part of H at Ndrive=$site"))
+                 H0[site][end,1,:,:] = H[site][end,1,:,:] + Htime[site][tstep][:,:]
+              end
+            end
         end
+
         if timed
             val, t, bytes, gctime, memallocs = @timed tdvp2sweep!(dt, A0, H0, F; truncerr=truncerr, truncdim=Dlim, kwargs...)
             println("\t","ΔT = ", t)
