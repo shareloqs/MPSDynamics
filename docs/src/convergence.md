@@ -42,13 +42,19 @@ Below are the main time-evolution algorithms and their corresponding convergence
 - Adaptive Time-Dependent Variational Principle (DTDVP):
   - Selected using: `method = :DTDVP`.
   - The convergence parameter is the target precision for the adaptive algorithm. Multiple precision values can be provided to test convergence: `convparams = [prec1, prec2, prec3]`.
-  - The bond dimensions at each chain-site and at each time-step can be saved by specifying `savebonddims = true`. The maximum allowed value of bond dimension can be chosen by setting the `Dlim` option.
+  - The bond dimensions at each chain-site and at each time-step can be saved by specifying `savebonddims = true`. The maximum allowed value of bond dimension can be chosen with the `Dlim` option.
+  - In some cases, it might be better to embed the initial time MPS in a manifold of higher bond-dimension, which can be done with the function `mpsembed!`, to avoid for the dynamics to get stuck.
  
 ### Time-step 
 The time step used in simulations must be small enough to accurately capture the dynamics of the system. To ensure convergence, gradually reduce the time step until key observables (e.g., energy, population dynamics, or correlation functions) stabilize. It is often practical to test a range of time steps and assess their impact on results to determine an optimal balance between accuracy and computational cost.
 
+## Common pitfalls
 
-=======
+### Hard cut-off for in the spectral density function
+
+### MPS gauge choice 
+
+
 # References
 [^woods_simulating_2015]: Woods, M. P.; Cramer, M.; Plenio, M. B. Simulating Bosonic Baths with Error Bars. Phys. Rev. Lett. 2015, 115 (13), 130401. https://doi.org/10.1103/PhysRevLett.115.130401.
 [^DeVega_howto_2015]: De Vega, I.; Schollwöck, U.; Wolf, F. A. How to Discretize a Quantum Bath for Real-Time Evolution. Phys. Rev. B 2015, 92 (15), 155126. https://doi.org/10.1103/PhysRevB.92.155126.
