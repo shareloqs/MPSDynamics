@@ -17,7 +17,7 @@ The package may be installed by typing the following into a Julia REPL
 ## Table of Contents
 
 ```@contents
-Pages = ["index.md", "user-guide.md", "examples/sbm.md", "examples/puredephasing.md", "examples/timedep.md", "examples/anderson-model.md", "examples/bath-observables.md", "examples/protontransfer.md", "theory.md", "methods.md", "dev.md"]
+Pages = ["index.md", "user-guide.md", "examples/sbm.md", "examples/puredephasing.md", "examples/timedep.md", "examples/anderson-model.md", "examples/bath-observables.md", "examples/protontransfer.md", "convergence.md", "theory.md", "methods.md", "dev.md"]
 Depth = 3
 ```
 
