@@ -37,13 +37,15 @@ Below are the main time-evolution algorithms and their corresponding convergence
   - The convergence parameter is the bond dimension of the MPS, which defines the manifold on which the time evolution is constrained. To ensure convergence, multiple bond dimensions can be tested: `convparams = [bond1, bond2, bond3]`.
 - Two-Sites Time-Dependent Variational Principle (2TDVP):
   - Selected using: `method = :2TDVP`.
-  - The convergence parameter is the SVD singular value truncation threshold, which determines the precision of the truncation during simulations. Multiple truncation thresholds can be tested: `convparams = [trunc1, trunc2, trunc3]`. The bond dimensions at each chain-site and at each time-step can be saved by specifying `savebonddims = true`. The maximum allowed value of bond dimension can be chosen by setting the `Dlim` option.
+  - The convergence parameter is the SVD singular value truncation threshold, which determines the precision of the truncation during simulations. Multiple truncation thresholds can be tested: `convparams = [trunc1, trunc2, trunc3]`.
+  - The bond dimensions at each chain-site and at each time-step can be saved by specifying `savebonddims = true`. The maximum allowed value of bond dimension can be chosen by setting the `Dlim` option.
 - Adaptive Time-Dependent Variational Principle (DTDVP):
   - Selected using: `method = :DTDVP`.
-  - The convergence parameter is the target precision for the adaptive algorithm. Multiple precision values can be provided to test convergence: `convparams = [prec1, prec2, prec3]`. The bond dimensions at each chain-site and at each time-step can be saved by specifying `savebonddims = true`. The maximum allowed value of bond dimension can be chosen by setting the `Dlim` option.
+  - The convergence parameter is the target precision for the adaptive algorithm. Multiple precision values can be provided to test convergence: `convparams = [prec1, prec2, prec3]`.
+  - The bond dimensions at each chain-site and at each time-step can be saved by specifying `savebonddims = true`. The maximum allowed value of bond dimension can be chosen by setting the `Dlim` option.
  
 ### Time-step 
-The simulation time-step has to be set small enough as to capture energy fluctuations ??? say something
+The time step used in simulations must be small enough to accurately capture the dynamics of the system. To ensure convergence, gradually reduce the time step until key observables (e.g., energy, population dynamics, or correlation functions) stabilize. It is often practical to test a range of time steps and assess their impact on results to determine an optimal balance between accuracy and computational cost.
 
 
 =======
