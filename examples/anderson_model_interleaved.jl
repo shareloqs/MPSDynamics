@@ -19,12 +19,15 @@ function ϵ(x)
     return x
 end
 
-function V(x)
+function J(x)
     return sqrt(1 - x^2) # semi-circular density of states
 end
 
-chainparams1 = chaincoeffs_fermionic(N, β, 1.0; ϵ, V, save=false) # empty
-chainparams2 = chaincoeffs_fermionic(N, β, 2.0; ϵ, V, save=false) # filled
+chainparams1 = chaincoeffs_fermionic(N, β, 1.0; ϵ, J, save=false) # empty
+chainparams2 = chaincoeffs_fermionic(N, β, 2.0; ϵ, J, save=false) # filled
+
+c1 = chainparams1[3]
+c2 = chainparams2[3]  
 
 #=
 curdir = @__DIR__
@@ -77,7 +80,7 @@ A, dat = runsim(dt, T, A, H;
                 method = method,
                 obs = [ob1, ob2], 
                 convobs = [ob1],
-                params = @LogParams(N, ϵd, β),
+                params = @LogParams(N, ϵd, β, c1, c2),
                 convparams = [prec],   
                 Dlim = Dmax,          
                 savebonddims = true,   # we want to save the bond dimension
