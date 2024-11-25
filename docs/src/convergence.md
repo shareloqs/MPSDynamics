@@ -51,10 +51,8 @@ The time step used in simulations must be small enough to accurately capture the
 ## Common pitfalls
 
 ### Hard cut-off in the spectral density function
-The cutoff frequency $\omega_c$ in the spectral density function has to be selected in order to incorporate all of the relevant frequencies. It is to be noted that, for spectral densities belonging to the Szego class[^chin_exact_2010], the cutoff frenquency $\omega_c$ also determines the asymptotic values to which the chain coefficients converge [^woods_mappings_2014]
+The cutoff frequency $\omega_c$ in the spectral density function has to be selected in order to incorporate all of the relevant frequencies. It is to be noted that, for spectral densities belonging to the Szegö class[^chin_exact_2010], the cutoff frenquency $\omega_c$ also determines the asymptotic values to which the chain coefficients converge [^woods_mappings_2014]. Therefore, if we want to reach translational invariance (converged values) in the chain coefficients, then we need to specify a cutoff. To avoid ringing effects, it is a good choice to select a spectral density function that approaches zero before the cutoff frequency.
 
-
-### MPS gauge choice 
 
 # References
 [^woods_simulating_2015]: Woods, M. P.; Cramer, M.; Plenio, M. B. Simulating Bosonic Baths with Error Bars. Phys. Rev. Lett. 2015, 115 (13), 130401. https://doi.org/10.1103/PhysRevLett.115.130401.
