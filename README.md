@@ -3,7 +3,9 @@
 # MPSDynamics.jl
 *Tensor network simulations for finite temperature, open quantum system dynamics.*
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5106435.svg)](https://doi.org/10.5281/zenodo.5106435) [![license](https://img.shields.io/badge/License-GPL_3.0-orange.svg)](https://github.com/angusdunnett/MPSDynamics/blob/master/LICENSE) [![documentation workflow](https://github.com/angusdunnett/MPSDynamics/actions/workflows/docs.yml/badge.svg)](https://angusdunnett.github.io/MPSDynamics/)
+
+
+[![J. Chem. Phys.](https://img.shields.io/badge/J.%20Chem.%20Phys.%20-%2010.1063%2F5.0223107%20-%20navy)](https://doi.org/10.1063/5.0223107) [![ArXiv](https://img.shields.io/badge/arXiv-2406.07052-B31B1B.svg)](https://arxiv.org/abs/2406.07052) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.11400776.svg)](https://doi.org/10.5281/zenodo.11400776) [![license](https://img.shields.io/badge/License-GPL_3.0-orange.svg)](https://github.com/shareloqs/MPSDynamics/blob/master/LICENSE) [![documentation workflow](https://github.com/shareloqs/MPSDynamics/actions/workflows/docs.yml/badge.svg)](https://shareloqs.github.io/MPSDynamics/)
 
 
 This package is intended to provide an easy to use interface for performing tensor network simulations on Matrix Product
@@ -152,8 +154,30 @@ Import["~/MPSDynamics/XXXXX/dat_XXXXX.jld",{"HDF5","Datasets","/data/sz"}]
 
 # Publications
 Publications which make use of MPSDynamics:
+* Lacroix et al. Making Quantum Collision Models Exact, *arXiv e-print*, November 2024
+    * [https://doi.org/10.48550/arXiv.2411.13166](https://doi.org/10.48550/arXiv.2411.13166)
+
+* Le Dé et al. Extending Non-Perturbative Simulation Techniques for Open-Quantum Systems to Excited-State Proton Transfer and Ultrafast Non-Adiabatic Dynamics, *J. Chem. Theory Comput.*, October 2024
+    * [https://doi.org/10.1021/acs.jctc.4c00666](https://doi.org/10.1021/acs.jctc.4c00666)
+  
+* Lambertson et al. Computing Linear Optical Spectra in the Presence of Nonadiabatic Effects on Graphics Processing Units Using Molecular Dynamics and Tensor-Network Approaches, *J. Chem. Phys.*, 161, 114101, September 2024
+    * [https://doi.org/10.1063/5.0224316](https://doi.org/10.1063/5.0224316)
+
+* Lacroix et al. Connectivity Matters: Impact of Bath Modes Ordering and Geometry in Open Quantum System Simulation with Matrix Product States, *arXiv e-print*, September 2024
+    * [https://doi.org/10.48550/arXiv.2409.04145](https://doi.org/10.48550/arXiv.2409.04145)
+
+* Lacroix et al. MPSDynamics.jl: Tensor network simulations for finite-temperature (non-Markovian) open quantum system dynamics, *J. Chem. Phys.*, 161, 084116, August 2024
+    * [https://doi.org/10.1063/5.0223107](https://doi.org/10.1063/5.0223107)
+
+* Le Dé et al. Managing Temperature in Open Quantum Systems Strongly Coupled with Structured Environments, *J. Chem. Phys.* 160, 244102, June 2024
+    * [https://doi.org/10.1063/5.0214051](https://doi.org/10.1063/5.0214051)
+      
+* Hunter et al. Environmentally Driven Symmetry Breaking Quenches Dual Fluorescence in Proflavine. *J.Phys. Chem. Lett.* 15, 4623−4632, April 2024
+  * [https://doi.org/10.1021/acs.jpclett.4c00677](https://doi.org/10.1021/acs.jpclett.4c00677)
+  	  
 * Lacroix et al. From Non-Markovian Dissipation to Spatiotemporal Control of Quantum Nanodevices. *Quantum* 8, 1305, April 2024
     * [https://doi.org/10.22331/q-2024-04-03-1305](https://doi.org/10.22331/q-2024-04-03-1305)
+      
 * Riva et al. Thermal cycle and polaron formation in structured bosonic environments. *Phys. Rev. B*  108(19):195138, November 2023
     * [https://doi.org/10.1103/PhysRevB.108.195138](https://doi.org/10.1103/PhysRevB.108.195138)
 
@@ -161,7 +185,6 @@ Publications which make use of MPSDynamics:
      * [https://link.aps.org/doi/10.1103/PhysRevA.104.052204](https://link.aps.org/doi/10.1103/PhysRevA.104.052204)
 
 * Dunnett et al. Influence of non-adiabatic effects on linear absorption spectra in the condensed phase: Methylene blue. *J. Chem. Phys.* 155(14):144112, October 2021
-
      * [http://aip.scitation.org/doi/10.1063/5.0062950](http://aip.scitation.org/doi/10.1063/5.0062950)
 
 * Dunnett and Chin. Simulating quantum vibronic dynamics at finite temperatures with many body wave functions at 0K. *Front. Chem.* 8, January 2021
@@ -179,15 +202,45 @@ Publications which make use of MPSDynamics:
      * [10.5281/zenodo.4352728](https://doi.org/10.5281/zenodo.4352728)
 
 # Citation
+If you use the package in your research, please consider citing it.
+You can add the Zenodo record and the software paper to your BibTex file:
 
-If you use this package in your research, please cite it:
-* Dunnett, A. (2021). angusdunnett/MPSDynamics: (v1.0). Zenodo. https://doi.org/10.5281/zenodo.5106435
+```tex
+@misc{mpsdynamics_zenodo,
+	title = {shareloqs/{MPSDynamics}: v1.1},
+	shorttitle = {{MPSDynamics}.jl: v1.1},
+	url = {https://doi.org/10.5281/zenodo.11400776},
+	abstract = {Tensor network simulations for finite temperature, open quantum system dynamics},
+	publisher = {Zenodo},
+	author = {Dunnett, Angus J. and Lacroix, Thibaut and Riva, Angela and Le Dé, Brieuc},
+	month = may,
+	year = {2024},
+	doi = {10.5281/zenodo.11400776},
+}
+
+@article{mpsdynamicsjl_2024,
+	title = {{MPSDynamics}.jl: {Tensor} network simulations for finite-temperature (non-{Markovian}) open quantum system dynamics},
+	volume = {161},
+	issn = {0021-9606},
+	shorttitle = {{MPSDynamics}.jl},
+	url = {https://doi.org/10.1063/5.0223107},
+	doi = {10.1063/5.0223107},
+	number = {8},
+	journal = {The Journal of Chemical Physics},
+	author = {Lacroix, Thibaut and Le Dé, Brieuc and Riva, Angela and Dunnett, Angus J. and Chin, Alex W.},
+	month = aug,
+	year = {2024},
+	pages = {084116},
+}
+```
 
 # How to Contribute
 Contributions are welcome! Don't hesitate to contact us if you
 * found a bug;
 * have a suggestion on how to improve the code and/or documentation;
 * would like to get involved in writing code and/or documentation.
+
+Feel free to open an [issue](https://github.com/shareloqs/MPSDynamics/issues) on Github :)
  
 # References
 

@@ -18,7 +18,7 @@ This enables efficient representation of the full {System + Environment} state a
 
 To go further, you will find in this documentation:
 * a [User Guide](@ref) explaining how to use the package
-* several examples illustrating different features of the package: adaptive time-evolution methods, [Time-dependent Hamiltonian](@ref), or fermionic environments with [The Anderson Impurity Model](@ref)
+* several examples illustrating different features of the package: adaptive time-evolution methods in [The Spin-Boson Model](@ref), [Time-dependent Hamiltonian](@ref), or fermionic environments with [The Anderson Impurity Model](@ref)
 * a [Theoretical Background](@ref) covering the chain mapping procedure, flying over the basics of tensor networks, and summarizing the TDVP methods
 
 If this package was useful in your work, do not forget [Citation](@ref).

@@ -2,7 +2,7 @@
 
 ## Context
 
-The Spin-Boson Model (SBM) is a prototypical model in the theory of open quantum systems where a two level system interacts linearly with a bosonic bath
+The Spin-Boson Model (SBM) is a prototypical model in the theory of open quantum systems where a two level system interacts linearly with a bosonic bath ($\hbar = 1$)
 
 ```math
 	\hat{H} = \frac{\omega_0}{2}\hat{\sigma}_z + \Delta\hat{\sigma}_x + \int_0^{+\infty}\omega \hat{a}^\dagger_\omega\hat{a}_\omega \mathrm{d}\omega + \hat{\sigma}_x\int_0^{+\infty}\sqrt{J(\omega)}(\hat{a}_\omega + \hat{a}^\dagger_\omega)\mathrm{d}\omega

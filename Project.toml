@@ -1,7 +1,7 @@
 name = "MPSDynamics"
 uuid = "8fc8f346-e1eb-498f-94db-02ffe92d8134"
 authors = ["angus-dunnett <angus.dunnett@gmail.com>", "Thibaut Lacroix <thibaut.lacroix@proton.me>"]
-version = "1.0.0"
+version = "1.1.0"
 
 [deps]
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
@@ -25,5 +25,6 @@ SpecialFunctions = "276daf66-3868-5448-9aa4-cd146d93841b"
 TensorOperations = "6aa20fa7-93e2-5fca-9bc0-fbd0db3c71a2"
 
 [compat]
+ITensors = "0.6"
 TensorOperations = "4.0.7"
 julia = "1.7"

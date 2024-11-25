@@ -2,16 +2,16 @@
 
 ## Chain-Mapping of bosonic environments
 
-We consider, in the Schrödinger picture, a general Hamiltonian where a non-specified system interacts linearly with a bosonic environments
+We consider, in the Schrödinger picture, a general Hamiltonian where a non-specified system interacts linearly with a bosonic environments ($\hbar = 1$)
 
 ```math
 \begin{aligned}
-    \hat{H} =& \hat{H}_S + \int_0^{+\infty} \hbar\omega\hat{a}^\dagger_\omega\hat{a}_\omega\ \mathrm{d}\omega + \hat{A}_S\int_0^{+\infty}\sqrt{J(\omega)}\left(\hat{a}_\omega + \hat{a}^\dagger_\omega\right)\mathrm{d}\omega
+    \hat{H} =& \hat{H}_S + \int_0^{+\infty} \omega\hat{a}^\dagger_\omega\hat{a}_\omega\ \mathrm{d}\omega + \hat{A}_S \otimes \int_0^{+\infty}\sqrt{J(\omega)}\left(\hat{a}_\omega + \hat{a}^\dagger_\omega\right)\mathrm{d}\omega
 \end{aligned}
 ```
 
 
-where $\hat a_\omega$ ($\hat a^\dagger_\omega$) is a bosonic annihilation (creation) operator for a normal mode of the environment of energy $\hbar\omega$, $\hat{A}_S$ is a system operator, and $J(\omega) = \sum_k |g_k|^2\delta(\omega - \omega_k)$ is the bath spectral density (SD), defined with the microscopic system-environment coupling strength $g_k$.
+where $\hat a_\omega$ ($\hat a^\dagger_\omega$) is a bosonic annihilation (creation) operator for a normal mode of the environment of energy $\omega$, $\hat{A}_S$ is a system operator, and $J(\omega) = \sum_k |g_k|^2\delta(\omega - \omega_k)$ is the bath spectral density (SD), defined with the microscopic system-environment coupling strength $g_k$.
 The SD quantifies the coupling strengths of the different normal modes of the environment with the system.
 Any SD that is not flat corresponds to a non-Markovian environment.
 
@@ -32,7 +32,7 @@ where $P_n(\omega)$ are orthonormal polynomials such that
 and the inverse transformation is
 
 ```math
-    \hat{b}_n = \int_0^{+\infty} U_n(\omega)\hat{a}_\omega\mathrm{d}\omega\ .
+    \hat{b}_n = \int_0^{+\infty} U^*_n(\omega)\hat{a}_\omega\mathrm{d}\omega\ .
 ```
 
 Note that the orthonormality of the polynomials ensures the unitarity of the transformation defined in Eq.(2).
@@ -41,12 +41,12 @@ The mapping from a continuous set of modes to a (still infinite) discrete set mi
 Under this transformation, the Hamiltonian in Eq.(1) becomes
 
 ```math
-    \hat{H}= \hat{H}_S + \sum_{n=0}^{+\infty}\varepsilon_n\hat{b}_n^\dagger\hat{b}_n + t_n(\hat{b}_{n+1}^\dagger\hat{b}_n + \mathrm{h.c.}) + \kappa\hat{A}_S(\hat{b}_0 + \hat{b}_0^\dagger)\ .
+    \hat{H}= \hat{H}_S + \sum_{n=0}^{+\infty}\varepsilon_n\hat{b}_n^\dagger\hat{b}_n + t_n(\hat{b}_{n+1}^\dagger\hat{b}_n + \mathrm{h.c.}) + c_0 \hat{A}_S(\hat{b}_0 + \hat{b}_0^\dagger)\ .
 ```
 
 Hence, this mapping transforms the normal bath Hamiltonian into a tight-binding Hamiltonian with on-site energies $\varepsilon_n$ and hopping energies $t_n$.
 Another important consequence of this mapping is that now the system only interacts with the first mode $n = 0$ of the chain-mapped environment.
-The chain coefficients $\varepsilon_n$, $t_n$, and the coupling $\kappa$ depend solely on the SD.
+The chain coefficients $\varepsilon_n$, $t_n$, and the coupling $c_0$ depend solely on the SD.
 
 This makes chain mapping a tool of choice for describing systems coupled to environment with highly structured SD (e.g. experimentally measured or calculated *ab initio*)[^chin_role_2013][^alvertis_nonequilibrium_2019][^dunnett_influence_2021][^caycedosoler_exact_2022].
 In this new representation, the Hamiltonian in Eq.(5) has naturally a 1D chain topology.
@@ -89,7 +89,7 @@ This modified bath has the same correlation function $S(t)$ and thus allows us t
 The Hamiltonian of the system interacting with this extended bath now includes temperature-dependent interactions:
 
 ```math
-\hat{H} = \hat{H}_S + \int_{-\infty}^{+\infty} d\omega \omega \hat{a}_\omega^\dagger \hat{a}_\omega + \hat{A}_S \otimes \int_{-\infty}^{+\infty} d\omega \sqrt{J(\omega,\beta)}\left(\hat{a}_\omega^\dagger+\hat{a}_\omega\right),
+\hat{H} = \hat{H}_S + \int_{-\infty}^{+\infty} \omega \hat{a}_\omega^\dagger \hat{a}_\omega \mathrm{d}\omega + \hat{A}_S \otimes \int_{-\infty}^{+\infty} \sqrt{J(\omega,\beta)}\left(\hat{a}_\omega^\dagger+\hat{a}_\omega\right) \mathrm{d}\omega,
 ```
 
 This method simplifies the simulation of finite temperature effects by treating them within an effective zero-temperature framework, thereby keeping the computational advantages of using pure states. In conclusion: the dynamics of the system resulting from the interaction with the original bath, starting in a thermal state at finite temperature, is exactly the same as the one resulting from the interaction with the extended environment, starting in the vacuum state at zero temperature. Once computed the chain coefficients at a given inverse temperature $\beta$, the time evolution of the vacuum state interacting with the extended environment can be efficiently simulated using MPS time evolution methods.
@@ -113,7 +113,7 @@ where the exponent of the squeeze operator is $G = i \sum_k \theta_k(\hat b_k^\d
          \cosh(\theta_k) = \sqrt{1+n_k} = \sqrt{\frac{1}{1-e^{-\beta \omega_k}}} \\
          \sinh(\theta_k) =\quad\sqrt{n_k}\quad= \sqrt{\frac{1}{e^{\beta \omega_k}-1}}.
 ```
-The Bogoliubov transformation defines a new squeezed vacuum state, which we write in terms of the vacuum state $\ket{\Omega_0}$ of the operators $\hat b_k$, $\hat c_k$:
+The Bogoliubov transformation defines a new squeezed vacuum state, which we write in terms of the vacuum state $| \Omega_0 \rangle$ of the operators $\hat b_k$, $\hat c_k$:
 ```math
     |\Omega\rangle = e^{iG} |\Omega_0\rangle, \quad \text{such that: }\quad \hat a_{1k} |\Omega\rangle = 0,  \hat a_{2k} |\Omega\rangle = 0.
 ```
@@ -121,16 +121,16 @@ From the vacuum state, we can obtain the thermal state of the original environme
 ```math
     \hat \rho_E = \text{Tr}_{\text{aux}}\{ |\Omega\rangle\langle\Omega| \},
 ```
-and it can be now used as pure an initial state for both of the environments. Moreover, the expectation value on $\ket{\Omega}$ of the number of physical modes $\hat n_k$ does not vanish:
+and it can be now used as pure an initial state for both of the environments. Moreover, the expectation value on $| \Omega \rangle$ of the number of physical modes $\hat n_k$ does not vanish:
 ```math
     n_k= \langle\Omega| \hat b_k^\dagger \hat b_k |\Omega\rangle = \sinh^2(\theta_k).
 ```
 Therefore, solving the dynamics given by the original Hamiltonian $\hat H$, starting from the initial condition $\hat \rho_S(0) \otimes \hat \rho_E(\beta)$, is equivalent to solving the dynamics given by the following Hamiltonian:
 ```math
-       \hat H = \hat H_S +\hat H_E +\hat H_I  = \\
-       = \overbrace{\hat A_S}^{\hat H_S} + \overbrace{\sum_k \omega_k \big(\hat a_{1k}^\dagger \hat a_{1k} - \hat a_{2k}^\dagger \hat a_{2k} \big)}^{H_E} + \overbrace{\hat L_S \otimes \sum_k g_{1k}(\hat a_{1k}^\dagger + \hat a_{1k})+\hat L_S \otimes \sum_k g_{2k}(\hat a_{2k}^\dagger + \hat a_{2k})}^{H_I}.
+       \hat H = \hat H_S +\hat H_E +\hat H_I   \\
+     \hat H  = \overbrace{\hat A_S}^{\hat H_S} + \overbrace{\sum_k \omega_k \big(\hat a_{1k}^\dagger \hat a_{1k} - \hat a_{2k}^\dagger \hat a_{2k} \big)}^{\hat H_E} + \overbrace{\hat L_S \otimes \sum_k g_{1k}(\hat a_{1k}^\dagger + \hat a_{1k})+\hat L_S \otimes \sum_k g_{2k}(\hat a_{2k}^\dagger + \hat a_{2k})}^{\hat H_I}.
 ```
-where $\hat L_S = \hat L_S^\dagger$, considering $\hat \rho_S(0) \otimes \ket{\Omega}\bra{\Omega}$ as the initial state of system and environment. It is this Hamiltonian that is mapped on two chains with TEDOPA, to be able to perform the time evolution using tensor network techniques. 
+where $\hat L_S = \hat L_S^\dagger$, considering $\hat \rho_S(0) \otimes |\Omega \rangle \langle \Omega |$ as the initial state of system and environment. It is this Hamiltonian that is mapped on two chains with TEDOPA, to be able to perform the time evolution using tensor network techniques. 
 
 ## Computation of the chain coefficients
 
@@ -145,7 +145,7 @@ This recurrence relation can be used to construct the polynomials with the condi
 
 The energy of the chain mode $n$ is given by $\varepsilon_n = A_n C_n^{-1}$ and $t_n=C_n^{-1}$ is the coupling between mode $n$ and $n+1$[^chin_exact_2010].
 
-The system couples _only_ to the first mode with the coupling strength $\kappa = ||p_0||$.
+The system couples _only_ to the first mode with the coupling strength $c_0 = ||p_0||$.
 
 Explain that for some weight function/SD they are known analytically and that for others we can use the build-in routines inspired by Gautschi or the PolyChaos.jl package.
 
@@ -264,6 +264,7 @@ There exist different versions of the TDVP algorithm. In `MPSDynamics.jl` three 
 
 The main advantage of the one-site 1TDVP algorithm is that it preserves the unitarity of the MPS during the time evolution. Its main problem, conversely, is that the time evolution is constrained to happen on a manifold constituted by tensors of fixed bond dimension, a quantity closely related to the amount of entanglement in the MPS, and such a bond dimension has therefore to be fixed before the beginning of the time evolution. This strategy will necessarily be non optimal: the growth of the bond dimensions required to describe the quantum state should ideally mirror the entanglement growth induced by the time evolution. 2TDVP allows for such a dynamical growth of the bond dimensions, and therefore better describes the entanglement in the MPS. It suffers however of other drawbacks: first of all, a truncation error is introduced (by the means of an SVD decomposition), which entails a loss of unitarity of the time-evolved MPS. Moreover, 2TDVP has bad scaling properties with the size of the local dimensions of the MPS: this is a major issue when dealing with bosons. The DTDVP algorithm combines the best features of 1TDVP and 2TDVP: it preserves unitarity, it has the same scaling properties of 1TDVP, and it adapts the bond dimensions to the entanglement evolution at each site and at each time-step. DTDVP does not suffer from a truncation error, but introduces only a projection error.
 
+________________
 ## Bibliography
 [^chin_exact_2010]:
     > Chin, A. W.; Rivas, Á.; Huelga, S. F.; Plenio, M. B. Exact Mapping between System-Reservoir Quantum Models and Semi-Infinite Discrete Chains Using Orthogonal Polynomials. Journal of Mathematical Physics 2010, 51 (9), 092109. https://doi.org/10.1063/1.3490188.

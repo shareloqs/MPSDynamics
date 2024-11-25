@@ -79,7 +79,7 @@ for t in 1:T
 end
 ```
 
-During a numerical simulation we work with chain of finite length $N$. This truncation on chain modes, introduces a sampling on the modes in the original star-like environment. To recover the frequency modes that are implicitly sampled, one has to diagonalize the tri-diagonal $N\times N$ matrix $H^\text{chain}$, where the diagonal is formed by the $e_n$ coefficients, that is the chain's frequencies, and the upper and lower diagonals by the $N-1$ hopping coefficients $t_n$. The unitary matrix that defines the change of basis from the star-like to the chain-like environment is $U_n$, constituted by the eigenvectors of $H^\text{chain}$. In the code, we use the `eigenchain` function:
+During a numerical simulation we work with chain of finite length $N$. This truncation on chain modes, introduces a sampling on the modes in the original star-like environment. To recover the frequency modes that are implicitly sampled, one has to diagonalize the tri-diagonal $N\times N$ matrix $H^\text{chain}$, where the diagonal is formed by the $e_n$ coefficients, that is the chain's frequencies, and the upper and lower diagonals by the $N-1$ hopping coefficients $t_n$. The unitary matrix that defines the change of basis from the star-like to the chain-like environment is $U_n$, constituted by the eigenvectors of $H^\text{chain}$. In the code, we use the [`MPSDynamics.eigenchain`](@ref) function:
 
 ```julia
 omeg = eigenchain(cpars, nummodes=N).values
@@ -94,7 +94,7 @@ Therefore to calculate the number of modes of the environment associated to a sp
 \end{aligned}
 ```
 
-This is done in the code using the `measuremodes(X, cpars[1], cpars[2])` function, which outputs the vector of the diagonal elements of the operators, in the following way:
+This is done in the code using the [`MPSDynamics.measuremodes`](@ref) function, which outputs the vector of the diagonal elements of the operators, in the following way:
 
 ```julia
 bath_occup = mapslices(X -> measuremodes(X, cpars[1], cpars[2]), dat["data/cdagc"], dims = [1,2])
@@ -126,7 +126,7 @@ It is possible to invert the thermofield transformation (details in [^riva_therm
 \end{aligned}
 ```
 
-We remark that in the thermofield case, a negative frequency $\omega_{2k}$ is associated to each positive frequency $\omega_{1k}$. The sampling is therefore symmetric around zero. This marks a difference with T-TEDOPA, where the sampling of frequencies was obtained through the thermalized measure $d\mu(\beta) = \sqrt{J(\omega, \beta)}d\omega$, and was not symmetric. To recover the results for the physical bath of frequencies starting from the results of our simulations, that were conducted using the T-TEDOPA chain mapping, we need to do an extrapolation for all of the mean values, in order to have their values for each $\omega$ at $-\omega$ as well. This is done in the code with the `physical_occup` function:
+We remark that in the thermofield case, a negative frequency $\omega_{2k}$ is associated to each positive frequency $\omega_{1k}$. The sampling is therefore symmetric around zero. This marks a difference with T-TEDOPA, where the sampling of frequencies was obtained through the thermalized measure $d\mu(\beta) = \sqrt{J(\omega, \beta)}d\omega$, and was not symmetric. To recover the results for the physical bath of frequencies starting from the results of our simulations, that were conducted using the T-TEDOPA chain mapping, we need to do an extrapolation for all of the mean values, in order to have their values for each $\omega$ at $-\omega$ as well. This is done in the code with the [`MPSDynamics.physical_occup`](@ref) function:
 
 ```julia
 bath_occup_phys = physical_occup(cdagcdag_average[:,:,T], cc_average[:,:,T], omeg, bath_occup[:,:,T], β, N)
@@ -194,7 +194,7 @@ plot(p1, p2, p3, p4, layout = (2, 2), size = (1400, 1200))
 ```
 
 ___________________
-## References
+## Bibliography
 
 [^chin_exact_2010]:
     > Chin, A. W.; Rivas, Á.; Huelga, S. F.; Plenio, M. B. Exact Mapping between System-Reservoir Quantum Models and Semi-Infinite Discrete Chains Using Orthogonal Polynomials. Journal of Mathematical Physics 2010, 51 (9), 092109. https://doi.org/10.1063/1.3490188.

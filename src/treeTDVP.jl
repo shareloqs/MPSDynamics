@@ -27,7 +27,6 @@ end
 
 Return the physical dimensions of a tree-MPS or tree-MPO `M`.
 """
-
 function physdims(M::TreeNetwork)
     N = length(M)
     res = Vector{Int}(undef, N)
@@ -275,7 +274,6 @@ tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, F=nothing; verbose=false, kwargs
 
 Propagates the tree-MPS A with the tree-MPO M following the 1-site TDVP method. The sweep is done back and forth with a time step dt/2. F represents the merged left and right parts of the site being propagated.  
 """
-
 function tdvp1sweep!(dt, A::TreeNetwork, M::TreeNetwork, F::Vector, id::Int; verbose=false, kwargs...)
 
     children = A.tree[id].children
@@ -565,7 +563,6 @@ julia> H = spinbosonmpo(ω0, Δ, d, N, cpars, tree=true)
 julia> A = productstatemps(H.tree, physdims(H), state=[ψ, fill(unitcol(1,d), N)...]) # tree-MPS representation of |ψ>|Vacuum>
 ```
 """
-
 function productstatemps(tree_::Tree, physdims::Dims, Dmax::Int=1; state=:Vacuum)
     tree = deepcopy(tree_)
     hn = findheadnode(tree)
@@ -613,7 +610,6 @@ productstatemps(tree::Tree, physdims::Int, Dmax::Int; state=:Vacuum) =
 Embed tree-MPS `A` in manifold of max bond-dimension `Dmax`.
 
 """
-
 function mpsembed!(A::TreeNetwork, Dmax::Int)
     tree = deepcopy(A.tree)
     pdims = physdims(A)
@@ -645,7 +641,6 @@ end
 Return the bon-dimension of a tree-MPS `A`.
 
 """
-
 function bonddims(A::TreeNetwork)
     N = length(A)
     mat = zeros(Int, N, N)

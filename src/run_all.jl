@@ -26,8 +26,6 @@ function run_all(dt, tmax, A, H;
                 B, dat = run_1TDVP_LC(dt, tmax, A, H, cps...; obs=convobs, kwargs...)
             elseif method==:DTDVP
                 B, dat = run_DTDVP(dt, tmax, A, H, cps...; obs=convobs, kwargs...)
-            elseif method==:A1TDVP
-                B, dat = run_A1TDVP(dt, tmax, A, H, cps...; obs=convobs, kwargs...)
             elseif method==:hTDVP
                 error("method $method not recognised")
                 #B, dat = run_hTDVP(dt, tmax, A, H, cps...; obs=convobs, kwargs...)
@@ -53,8 +51,6 @@ function run_all(dt, tmax, A, H;
         B, dat = run_1TDVP_LC(dt, tmax, A, H, cps...; obs=obs, kwargs...)
     elseif method==:DTDVP
         B, dat = run_DTDVP(dt, tmax, A, H, cps...; obs=obs, kwargs...)
-    elseif method==:A1TDVP
-        B, dat = run_A1TDVP(dt, tmax, A, H, cps...; obs=obs, kwargs...)
     elseif method==:hTDVP
         error("method $method not recognised")
         #B, dat = run_hTDVP(dt, tmax, A, H, cps...; obs=obs, kwargs...)

@@ -1,10 +1,10 @@
 """
-    orthcentersmps(A)
+    orthcentersmps(A::Vector)
 
 Compute the orthoganality centres of MPS `A`.
 
 Return value is a list in which each element is the corresponding site tensor of `A` with the
-orthoganility centre on that site. Assumes `A` is right normalised.
+orthogonality centre on that site. Assumes `A` is right normalised.
 
 """
 function orthcentersmps(A::Vector)
@@ -542,7 +542,7 @@ apply1siteoperator!(A, O, site::Int) = apply1siteoperator!(A, O, [site])
 """
     applympo!(A, H)
 
-Apply an MPO H on the MPS A. H must have the same number of site than A. The resulting MPS A is the MPS modified by the mpo H.
+Apply an MPO H on the MPS A. H must have the same number of site than A. The resulting MPS A is the MPS modified by the MPO H.
 
 """
 function applympo!(A, H)
@@ -562,7 +562,6 @@ end
 Reverse the left and right dimensions of the MPS A. The resulting MPS A is the reversed MPS.
 
 """
-
 function reversemps!(A)
     N = length(A)
     reverse!(A)
@@ -577,7 +576,6 @@ end
 Reverse the left and right bond-dimensions of the MPS A.
 
 """
-
 function reversemps(A)
     N = length(A)
     Ar = Vector{Any}(undef, N)
@@ -593,7 +591,6 @@ end
 Reverse the left and right dimensions of the MPO M. The resulting MPO M is the reversed MPO.
 
 """
-
 function reversempo!(M)
     N = length(M)
     reverse!(M)
@@ -608,7 +605,6 @@ end
 Reverse the left and right dimensions of the MPO M.
 
 """
-
 function reversempo(M)
     N = length(M)
     Mr = Vector{Any}(undef, N)
@@ -697,10 +693,9 @@ function multiply(M1::Vector, M2::Vector)
 end
 
 """
-    mpsembed(A::Vector, Dmax::Int)
+    mpsembed!(A::Vector, Dmax::Int)
 
 Embed MPS `A` in manifold of max bond-dimension `Dmax`
-
 """
 function mpsembed!(A::Vector, Dmax::Int)
 
@@ -729,7 +724,7 @@ end
 """
     displacedchainmps(A::Vector{Any}, N::Int, Nm::Int, γ::Any)
 
-    Given a mps A, return a mps B where the `Nm`-long chain is displaced by `γ` without displacing the `N`-long system.
+Given a MPS A, return a MPS B where the `Nm`-long chain is displaced by `γ` without displacing the `N`-long system.
 """
 function displacedchainmps(A::Vector{Any}, N::Int, Nm::Int, γ::Any)
 

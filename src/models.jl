@@ -457,7 +457,7 @@ The spin is on site ``N_l + 1`` of the MPS, surrounded by the left chain modes a
 This Hamiltonain is unitarily equivalent (before the truncation to `N` sites) to the spin-boson Hamiltonian defined by
 
 ``
-H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{\\frac{J(ω)}{π}}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω ωb_ω^\\dagger b_ωi + σ_x\\int_0^∞ dω\\sqrt{\\frac{J^l(ω)}{π}}(d_ω^\\dagger+d_ω) + \\int_0^∞ dω ωd_ω^\\dagger d_ω
+H =  \\frac{ω_0}{2}σ_z + Δσ_x + σ_x\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω ωb_ω^\\dagger b_ωi + σ_x\\int_0^∞ dω\\sqrt{J^l(ω)}(d_ω^\\dagger+d_ω) + \\int_0^∞ dω ωd_ω^\\dagger d_ω
 ``.
 
 The chain parameters, supplied by `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature. The two chains can have a different spectral density.
@@ -511,8 +511,8 @@ function chaincoeffs_ohmic(nummodes, α, s; ωc=1, soft=false)
     else
         if s==0
             c0 = sqrt(2α)*ωc
-            e = fill(0,nummodes)
-            t = [ωc*(n+1)/(2n+1) for n in 0:(nummodes-2)]
+            e = fill(0.5*ωc,nummodes)
+            t = [ωc*(1+n)^2/((2+2n)*(3+2n))*sqrt((3+2n)/(1+2n)) for n in 0:(nummodes-2)]
         else
             c0 = sqrt(2α/(s+1))*ωc
             e = [(ωc/2)*(1 + (s^2)/((s+2n)*(2+s+2n))) for n in 0:(nummodes-1)]
@@ -521,24 +521,6 @@ function chaincoeffs_ohmic(nummodes, α, s; ωc=1, soft=false)
         return [e, t, c0]
     end
 end
-
-#Deprecated#
-function getchaincoeffs(nummodes, α, s, beta, ωc=1)
-    matlabdir = ENV["MATDIR"]
-    astr = paramstring(α, 2)
-    bstr = paramstring(beta, 3)
-    datfname = string("jacerg_","a",astr,"s$s","beta",bstr,".csv")
-    chaincoeffs = readdlm(string(matlabdir,datfname),',',Float64,'\n')
-    es = ωc .* chaincoeffs[:,1]
-    ts = ωc .* chaincoeffs[1:end-1,2]
-    c0 = ωc * sqrt(chaincoeffs[end,2]/pi)
-    Nmax = length(es)
-    if Nmax < nummodes
-        throw(ErrorException("no data for nummodes > $Nmax"))
-    end
-    return [es[1:nummodes], ts[1:nummodes-1], c0]
-end
-##
 
 """
     readchaincoeffs(fdir, params...)
@@ -582,7 +564,7 @@ The spin is on site 1 of the MPS and the bath modes are to the right.
 This Hamiltonain is unitarily equivalent (before the truncation to `N` sites) to the spin-boson Hamiltonian defined by
 
 ``
-H =  \\frac{ω_0}{2}σ_z + σ_z\\int_0^∞ dω\\sqrt{\\frac{J(ω)}{π}}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω ωb_ω^\\dagger b_ω
+H =  \\frac{ω_0}{2}σ_z + σ_z\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\int_0^∞ dω ωb_ω^\\dagger b_ω
 ``.
 
 The chain parameters, supplied by `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature.
@@ -708,17 +690,17 @@ end
 """
     puredephasingmpo(ΔE, dchain, Nchain, chainparams; tree=false)
 
-    Generate MPO for a pure dephasing model, defined by the Hamiltonian
-    ``H = \\frac{ΔE}{2} σ_z +  \\frac{σ_z}{2} c_0 (b_0^\\dagger + b_0) + \\sum_{i=0}^{N-1} t_i (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_i b_i^\\dagger b_i  ``
+Generate MPO for a pure dephasing model, defined by the Hamiltonian
+``H = \\frac{ΔE}{2} σ_z +  \\frac{σ_z}{2} c_0 (b_0^\\dagger + b_0) + \\sum_{i=0}^{N-1} t_i (b_{i+1}^\\dagger b_i +h.c.) + \\sum_{i=0}^{N-1} ϵ_i b_i^\\dagger b_i  ``
 
-    The spin is on site 1 of the MPS and the bath modes are to the right.
+The spin is on site 1 of the MPS and the bath modes are to the right.
 
-    ### Arguments
-    * `ΔE::Real`: energy splitting of the spin
-    * `dchain::Int`: physical dimension of the chain sites truncated Hilbert spaces
-    * `Nchain::Int`: number of sites in the chain
-    * `chainparams::Array{Real,1}`: chain parameters for the bath chain. The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
-    * `tree::Bool`: if true, return a `TreeNetwork` object, otherwise return a vector of MPO tensors
+### Arguments
+* `ΔE::Real`: energy splitting of the spin
+* `dchain::Int`: physical dimension of the chain sites truncated Hilbert spaces
+* `Nchain::Int`: number of sites in the chain
+* `chainparams::Array{Real,1}`: chain parameters for the bath chain. The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
+* `tree::Bool`: if true, return a `TreeNetwork` object, otherwise return a vector of MPO tensors
 """
 function puredephasingmpo(ΔE, dchain, Nchain, chainparams; tree=false)
     u = unitmat(2)
@@ -737,22 +719,18 @@ end
 """
     tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
-    Generate MPO for a tight-binding chain of N fermionic sites with a single impurity site (fermionic as well) 
-    of energy ϵd at the center. The impurity is coupled to two leads, each described by a set of chain parameters.
-    The interactions are nearest-neighbour, with the first N/2-1 sites corresponding to the first lead,
-    the Nth site corresponding to the impurity, and the rest of the sites corresponding to the second
-    lead.
+Generate MPO for a tight-binding chain of N fermionic sites with a single impurity site (fermionic as well) 
+of energy ϵd at the center. The impurity is coupled to two leads, each described by a set of chain parameters.
+The interactions are nearest-neighbour, with the first N/2-1 sites corresponding to the first lead, the Nth site corresponding to the impurity, and the rest of the sites corresponding to the second lead.
 
-    # Arguments
+# Arguments
 
-    * `N::Int`: number of sites in the chain
-    * `ϵd::Real`: energy of the impurity site at the center, as Ed - μ, where μ is the chemical potential
-    * chainparams1::Array{Real,1}: chain parameters for the first lead
-    * chainparams2::Array{Real,1}: chain parameters for the second lead
+* `N::Int`: number of sites in the chain
+* `ϵd::Real`: energy of the impurity site at the center, as Ed - μ, where μ is the chemical potential
+* `chainparams1::Array{Real,1}`: chain parameters for the first lead
+* `chainparams2::Array{Real,1}`: chain parameters for the second lead
 
-    The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
-
-
+The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
 """
 function tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
@@ -861,21 +839,20 @@ end
 """
     interleaved_tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
-    Generate MPO for a tight-binding chain of N fermionic sites with a single impurity site (fermionic as well)
-    of energy ϵd. The impurity is coupled to two leads, each described by a set of chain parameters. 
-    The interactions are next-nearest-neighbour, with the first site corresponding to the impurity, and the
-    two chains organised in an interleaved fashion.
+Generate MPO for a tight-binding chain of N fermionic sites with a single impurity site (fermionic as well)
+of energy ϵd. The impurity is coupled to two leads, each described by a set of chain parameters. 
+The interactions are next-nearest-neighbour, with the first site corresponding to the impurity, and the
+two chains organised in an interleaved fashion.
 
-    # Arguments
+# Arguments
 
-    * `N::Int`: number of sites in the chain
-    * `ϵd::Real`: energy of the impurity site at the first site, as Ed - μ, where μ is the chemical potential
-    * chainparams1::Array{Real,1}: chain parameters for the first lead
-    * chainparams2::Array{Real,1}: chain parameters for the second lead
+* `N::Int`: number of sites in the chain
+* `ϵd::Real`: energy of the impurity site at the first site, as Ed - μ, where μ is the chemical potential
+* chainparams1::Array{Real,1}: chain parameters for the first lead
+* chainparams2::Array{Real,1}: chain parameters for the second lead
 
-    The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
+The chain parameters are given in the standard form: `chainparams` ``=[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``.
 """
-
 function interleaved_tightbinding_mpo(N, ϵd, chainparams1, chainparams2)
 
     e1 = chainparams1[1]
@@ -996,7 +973,7 @@ end
 Generate a MPO for a one-dimensional bosonic bath spatially correlated to a multi-component system 
 
 ``
-H_B + H_int = \\int_{-∞}^{+∞} dk ω_k b_k^\\dagger b_k + ∑_j \\int_{-∞}^{+∞}dk \\sqrt{J(k)}(A_j b_k e^{i k R_j} + h.c.)
+H_B + H_{int} = \\int_{-∞}^{+∞} dk ω_k b_k^\\dagger b_k + ∑_j \\int_{-∞}^{+∞}dk \\sqrt{J(k)}(A_j b_k e^{i k R_j} + h.c.)
 ``.
 
 The interactions between the system and the chain-mapped bath are long range, i.e. each site interacts with all the chain modes. The spectral density is assumed to be Ohmic ``J(ω) = 2αωc(ω/ωc)^s``.
@@ -1336,33 +1313,123 @@ function correlatedenvironmentmpo(R::Vector, Nm::Int, d::Int; chainparams, fname
 end
 
 """
+	multisitempo(N::Int, E=[]::Vector, J=[]::Vector, As=[]::Vector)
+
+Generate a MPO for a N-site multi-component system to be coupled with a correlated environment.
+
+# Arguments:
+* `N`: number of sites
+* `E`: list of on-site energies
+* `J`: list of sites tunnelling energies
+* `As`: list of system operators coupling to the environment
+
+"""
+function multisitempo(N::Int, E=[]::Vector, J=[]::Vector, As=[]::Vector)
+
+    if length(E)<N
+        print("The on-site energies of the system sites where not all specified: zero energy will be assumed. \n")
+        E = vcat(E,zeros(N-length(E)))
+    end
+
+    if length(J)<N-1
+        print("The tunnelling energies of the system sites where not all specified: zero tunnelling will be assumed. \n")
+        J = vcat(J,zeros(N-length(J)))
+    end
+
+    if length(As)<N
+        print("The system operators of the interaction Hamiltonian where not all specified: absence of interaction be assumed. \n")
+        As = [As..., fill(zeros(ComplexF64, size(As[1])...))...]
+    end
+
+    # Construction of the MPO
+    W = Any[] # list of the MPO's tensors
+    d = 2 # Hilbert Space dimension of the sites operators
+    u = unitmat(d)
+    # Definition of the single excitation creation, anihilation operators
+    cd = crea(d)
+    c = anih(d)
+
+
+    if N==1
+        error("The number of sites N is too small.")
+    else
+        for x = 1:N-1
+            D = 2*(x+2) # Bond dimension
+            M = zeros(ComplexF64,D-2,D,d,d)
+            M[1,1,:,:] = M[D-2,D,:,:] = u
+
+            i = 2 # index counter
+            M[1,i,:,:] = J[x]*c # tunnelling terms
+            M[1,i+1,:,:] = J[x]*cd
+            M[1,i+2*x,:,:] = M[1,i+1+2*x,:,:] = As[x] # system operator coupled to the environment 
+            M[1,D,:,:] = 0.5*E[x]*sz # onsite energy
+
+            M[i,D,:,:] = cd
+            M[i+1,D,:,:] = c
+            i += 2
+
+            while i<D-2
+                M[i,i,:,:] = u
+                i += 1
+            end
+            if x==1
+                push!(W, reshape(M[1,:,:,:], 1,D,d,d))
+            else
+                push!(W, M)
+            end
+        end
+
+        ### Last site before the bath chain doesn't have any coupling with the rest of the sites, so is size is Dx(D-2)xNxN
+
+        D = 2*(N+1)
+        M = zeros(ComplexF64,D, D, d, d)
+        M[1,1,:,:] = M[D,D,:,:] = u
+        i = 2 # index counter
+        M[1,D-2,:,:] = M[1,D-1,:,:] = As[N]
+        M[1,D,:,:] = 0.5*E[N]*sz
+
+        M[i,D,:,:] = cd
+        M[i+1,D,:,:] = c
+
+        while i<D-2
+            M[i+2,i,:,:] = u
+            i += 1
+        end
+        push!(W, M)
+    end
+
+    return W
+end
+
+"""
     protontransfermpo(ω0e,ω0k,x0e,x0k, Δ, dRC, d, N, chainparams, RCparams, λreorg)
 
-Generate a MPO for a system described in space with a reaction coordinate (RC) tensor. The RC tensor is coupled to a bosonic bath, taking into account the induced reorganization energy. 
+Generate a MPO for a system described in space with a reaction coordinate (RC) tensor. The Hamiltonian of the two-level system and of the reaction coordinate tensor reads 
 
 ``
-H_S + H_RC + H_int^{S-RC} = \\omega^0_{e} |e\\rangle \\langle e| + \\omega^0_{k} |k\\rangle \\langle k| + \\Delta (|e\\rangle \\langle k| + |k\\rangle \\langle e|) + \\omega_{RC} (d^{\\dagger}d + \\frac{1}{2}) + g_{e} |e\\rangle \\langle e|( d + d^{\\dagger})+ g_{k} |k \\rangle \\langle k|( d + d^{\\dagger})
+H_S + H_{RC} + H_{int}^{S-RC} = \\omega^0_{e} |e\\rangle \\langle e| + \\omega^0_{k} |k\\rangle \\langle k| + \\Delta (|e\\rangle \\langle k| + |k\\rangle \\langle e|) + \\omega_{RC} (d^{\\dagger}d + \\frac{1}{2}) + g_{e} |e\\rangle \\langle e|( d + d^{\\dagger})+ g_{k} |k \\rangle \\langle k|( d + d^{\\dagger})
 ``
+The RC tensor is coupled to a bosonic bath, taking into account the induced reorganization energy
 ``
-H_B + H_int^{RC-B} = \\int_{-∞}^{+∞} dk ω_k b_k^\\dagger b_k - (d + d^{\\dagger})\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\lambda_{reorg}(d + d^{\\dagger})^2
-``.
+H_B + H_{int}^{RC-B} = \\int_{-∞}^{+∞} dk ω_k b_k^\\dagger b_k - (d + d^{\\dagger})\\int_0^∞ dω\\sqrt{J(ω)}(b_ω^\\dagger+b_ω) + \\lambda_{reorg}(d + d^{\\dagger})^2
 ``
-\\lambda_{reorg} = \\int \\frac{J(\\omega)}{\\omega}d\\omega
-``.
-
+with
+``
+\\lambda_{reorg} = \\int \\frac{J(\\omega)}{\\omega}d\\omega.
+``
 
 # Arguments
 
-* `ω0e`: enol energy at x=0 
-* `ω0k`: keto energy at x=0
+* `ω0e`: enol energy at reaction coordinate value x=0 
+* `ω0k`: keto energy at reaction coordinate value x=0
 * `x0e`: enol equilibrium displacement
 * `x0k`: keto equilibrium displacement 
 * `Δ`: direct coupling between enol and keto
 * `dRC`: fock space of the RC tensor 
 * `d`: number of Fock states of the chain modes
-* `N`: length of the chain
+* `N`: length of the bosonic chain
 * `chainparams`: chain parameters, of the form `chainparams`=``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]``, can be chosen to represent any arbitrary spectral density ``J(ω)`` at any temperature. 
-* `RCparams`: RC tensor parameter, of the form `RCparams`=``[ωRC,-g/x]`` 
+* `RCparams`: RC tensor parameter, of the form `RCparams`=``[ω_RC,-g/x]`` 
 * `λreorg`: reorganization energy
 """
 function protontransfermpo(ω0e,ω0k,x0e,x0k, Δ, dRC, d, N, chainparams, RCparams, λreorg)

@@ -23,7 +23,6 @@ Base.ndims(::FockError) = 0
 Return the measure of the observable obs on the MPS A. 
 
 """
-
 function measure(A, obs::FockError; t=0, kwargs...)
     d = physdims(A)[obs.sites[1]:obs.sites[2]][1]
     all(x->x==d, physdims(A)[obs.sites[1]:obs.sites[2]]) || error("MPS has non-uniform local Hilbert space dimensions")

@@ -7,7 +7,7 @@ In this section, we analyze the numerical accuracy of our simulations by outlini
 ### Chain length $N$
 In numerical simulations, a truncation on the number of chain modes (and therefore the chain length) is introduced to handle a finite chain instead of a semi-infinite one. This truncation, denoted as NN, corresponds to a sampling of the modes in the original environment.
 
-The chain length $N$ is directly connected to the simulation time as follows: excitations injected into the chain propagate as a wavefront traveling along the chain. Perturbations to the initial state outside this wavefront are exponentially suppressed. Therefore, truncating the chain basis beyond the expanding wavefront ensures that the resulting sampling error is also exponentially small.
+The chain length $N$ is directly connected to the simulation time as follows: excitations injected into the chain propagate as a wavefront traveling along the chain. Perturbations to the initial state outside this wavefront are exponentially suppressed. Therefore, truncating the chain basis beyond the expanding wavefront ensures that the resulting sampling error is also exponentially small  [^woods_simulating_2015][^DeVega_howto_2015].
 
 To optimize the chain length for a given simulation time and set of chain coefficients, the following procedure can be used:
 
@@ -23,7 +23,8 @@ N_opt = findchainlength(T, cpars; eps=10^-4, verbose=false)
 ```
 
 ### Local dimension $d$
-Another critical truncation is imposed on the local dimension $d$ of each tensor in the MPS that undergoes dynamic evolution. The local dimension dd corresponds to the number of Fock states retained in the Hilbert space of each chain mode. Since harmonic oscillators are, in principle, infinite-dimensional systems, truncating their Hilbert space to a finite $d$ is necessary for numerical computations. The choice of $d$ determines the maximum number of excitations per site in the MPS and must be carefully tuned to capture the relevant physics while ensuring numerical convergence.
+Another critical truncation is imposed on the local dimension $d$ of each tensor in the MPS that undergoes dynamic evolution. The local dimension $d$ corresponds to the number of Fock states retained in the Hilbert space of each chain mode. Since harmonic oscillators are, in principle, infinite-dimensional systems, truncating their Hilbert space to a finite $d$ is necessary for numerical computations. The choice of $d$ determines the maximum number of excitations per site in the MPS and must be carefully tuned to capture the relevant physics while ensuring numerical convergence.
+For a bath that initially contains only a finite number of particles, i.e. any bath in practice, the error originating from the local Hilbert space truncation vanishes exponentially as $d$ increases[^woods_simulating_2015]. 
 
 A practical guideline for choosing $d$ can be derived by considering the physical states being simulated. For example, for coherent states, the occupation number follows a Poisson distribution. In such cases, the average occupation number is given by the mean $\langle n \rangle$, and the probability of observing a state with occupation number $n$ decreases exponentially for $n \gg \langle n \rangle$. Thus, the truncation $d$ should be chosen such that the cumulative probability of truncation error is negligible.
 
@@ -40,3 +41,10 @@ Below are the main time-evolution algorithms and their corresponding convergence
 - Adaptive Time-Dependent Variational Principle (DTDVP):
   - Selected using: `method = :DTDVP`.
   - The convergence parameter is the target precision for the adaptive algorithm. Multiple precision values can be provided to test convergence: `convparams = [prec1, prec2, prec3]`
+=======
+### 
+
+
+# References
+[^woods_simulating_2015]: Woods, M. P.; Cramer, M.; Plenio, M. B. Simulating Bosonic Baths with Error Bars. Phys. Rev. Lett. 2015, 115 (13), 130401. https://doi.org/10.1103/PhysRevLett.115.130401.
+[^DeVega_howto_2015]: De Vega, I.; Schollwöck, U.; Wolf, F. A. How to Discretize a Quantum Bath for Real-Time Evolution. Phys. Rev. B 2015, 92 (15), 155126. https://doi.org/10.1103/PhysRevB.92.155126.
