@@ -275,7 +275,7 @@ plot(p2, p3, p4, p5, p1, layout = (3, 2), size = (1400, 1200))
 
 ```
 
-![Output of this program](double_output\.svg)
+![Output of this program](double_output.svg)
 
 
 #### Interleaved chain geometry
