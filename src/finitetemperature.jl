@@ -118,7 +118,7 @@ function chaincoeffs_finiteT(nummodes, β, ohmic=true; α=1, s=1, J=nothing, ωc
 end
 
 """
-    chaincoeffs_fermionic(nummodes, β, chain; ϵ=x, ωc=1, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=true)
+ chaincoeffs_fermionic(nummodes, β, chain; ϵ=nothing, J=nothing, ωc=1, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=true)
 
 Generate chain coefficients ``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`` for a fermionic bath at the inverse temperature β.
 

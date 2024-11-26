@@ -13,6 +13,7 @@ makedocs(
         "user-guide.md",
         "nutshell.md",
         "Examples" => ["./examples/sbm.md", "./examples/puredephasing.md", "./examples/timedep.md", "./examples/anderson-model.md", "./examples/bath-observables.md", "./examples/protontransfer.md"],
+        "convergence.md",
         "theory.md",
         "Methods" => "methods.md",
         "dev.md"

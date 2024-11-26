@@ -275,6 +275,8 @@ plot(p2, p3, p4, p5, p1, layout = (3, 2), size = (1400, 1200))
 
 ```
 
+![Output of this program](double_output.svg)
+
 
 #### Interleaved chain geometry
 The Hamiltonian is defined using the [`MPSDynamics.interleaved_tightbinding_mpo`](@ref) function, which takes as an input the number of modes of each chain `N`, the defect's energy `ϵd`, and the chain coefficients of the first `chainparams1` and second `chainparams2` chain. The MPS for the initial state is a factorized state (bond dimension 1) made of: a filled impurity, and 2N alternate filled-empty states. 
@@ -405,6 +407,8 @@ end
 # Display the plots
 plot(p2, p3, p4, p5, p1, layout = (3, 2), size = (1400, 1200))
 ```
+
+![Output of this program](interleaved_output.svg)
 
 ________________
 ## Bibliography
