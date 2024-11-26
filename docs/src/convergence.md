@@ -5,21 +5,25 @@ In this section, we analyze the numerical accuracy of our simulations by outlini
 ## Approximations
 
 ### Chain length $N$
-In numerical simulations, a truncation on the number of chain modes (and therefore the chain length) is introduced to handle a finite chain instead of a semi-infinite one. This truncation, denoted as NN, corresponds to a sampling of the modes in the original environment.
+In numerical simulations, a truncation on the number of chain modes (and therefore the chain length) is introduced to handle a finite chain instead of a semi-infinite one. This truncation, denoted as $N$, corresponds to a sampling of the modes in the original environment.
 
 The chain length $N$ is directly connected to the simulation time as follows: excitations injected into the chain propagate as a wavefront traveling along the chain. Perturbations to the initial state outside this wavefront are exponentially suppressed. Therefore, truncating the chain basis beyond the expanding wavefront ensures that the resulting sampling error is also exponentially small  [^woods_simulating_2015][^DeVega_howto_2015].
 
 To optimize the chain length for a given simulation time and set of chain coefficients, the following procedure can be used:
 
-1. Set the total simulation time and compute the chain coefficients for an intentionally oversized chain (longer than needed):
+1. Set the total simulation time `T` and compute the chain coefficients for an intentionally oversized chain `N_huge` (longer than needed):
 ```
 T = 100 
 N_huge = 1000
 cpars = chaincoeffs_flat(N_huge, αchain; ωc = 1.0)
 ```
-2. Use the built-in function `findchainlength` to determine the optimal chain length $N_opt$ based on the propagation speed of the wavefront (given by the hopping coefficients $t_n$):
+2. Use the built-in function [`findchainlength`](@ref) to determine the optimal chain length `N_opt` based on the propagation speed of the wavefront (given by the hopping coefficients $t_n$):
 ```
 N_opt = findchainlength(T, cpars; eps=10^-4, verbose=false)
+```
+2bis. A rule-of-thumb estimate `N_est` can also be obtained with [`findchainlength`](@ref) using universal asymptotic properties of chain mapped environment:
+```
+N_est = findchainlength(T, ωc, β)
 ```
 
 ### Local dimension $d$
@@ -29,14 +33,14 @@ For a bath that initially contains only a finite number of particles, i.e. any b
 A practical guideline for choosing $d$ can be derived by considering the physical states being simulated. For example, for coherent states, the occupation number follows a Poisson distribution. In such cases, the average occupation number is given by the mean $\langle n \rangle$, and the probability of observing a state with occupation number $n$ decreases exponentially for $n \gg \langle n \rangle$. Thus, the truncation $d$ should be chosen such that the cumulative probability of truncation error is negligible.
 
 ### Bond dimensions and time evolution
-Different time-evolution algorithms are implemented in MPSDynamics, and can be selected as options in the function `runsim`. Detailed descriptions of these algorithms are provided in the *Theoretical Background* section of this documentation. The key parameter for ensuring convergence in these methods is controlled via the `convparams` option, which accepts arrays of multiple parameter values to test until convergence is achieved.
+Different time-evolution algorithms are implemented in MPSDynamics, and can be selected as options in the function [`runsim`](@ref). Detailed descriptions of these algorithms are provided in the [Theoretical Background](@ref) section of this documentation. The key parameter for ensuring convergence in these methods is controlled via the `convparams` option, which accepts arrays of multiple parameter values to test until convergence is achieved.
 
 Below are the main time-evolution algorithms and their corresponding convergence parameters:
 - One-Site Time-Dependent Variational Principle (1TDVP):
-  - Selected using: `method = :1TDVP`.
+  - Selected using: `method = :TDVP1`.
   - The convergence parameter is the bond dimension of the MPS, which defines the manifold on which the time evolution is constrained. To ensure convergence, multiple bond dimensions can be tested: `convparams = [bond1, bond2, bond3]`.
-- Two-Sites Time-Dependent Variational Principle (2TDVP):
-  - Selected using: `method = :2TDVP`.
+- Two-Site Time-Dependent Variational Principle (2TDVP):
+  - Selected using: `method = :TDVP2`.
   - The convergence parameter is the SVD singular value truncation threshold, which determines the precision of the truncation during simulations. Multiple truncation thresholds can be tested: `convparams = [trunc1, trunc2, trunc3]`.
   - The bond dimensions at each chain-site and at each time-step can be saved by specifying `savebonddims = true`. The maximum allowed value of bond dimension can be chosen by setting the `Dlim` option.
 - Adaptive Time-Dependent Variational Principle (DTDVP):
@@ -54,7 +58,7 @@ The time step used in simulations must be small enough to accurately capture the
 The cutoff frequency $\omega_c$ in the spectral density function has to be selected in order to incorporate all of the relevant frequencies. It is to be noted that, for spectral densities belonging to the Szegö class[^chin_exact_2010], the cutoff frenquency $\omega_c$ also determines the asymptotic values to which the chain coefficients converge [^woods_mappings_2014]. Therefore, if we want to reach translational invariance (converged values) in the chain coefficients, then we need to specify a cutoff. To avoid ringing effects, it is a good choice to select a spectral density function that approaches zero before the cutoff frequency.
 
 
-# References
+## References
 [^woods_simulating_2015]: Woods, M. P.; Cramer, M.; Plenio, M. B. Simulating Bosonic Baths with Error Bars. Phys. Rev. Lett. 2015, 115 (13), 130401. https://doi.org/10.1103/PhysRevLett.115.130401.
 [^DeVega_howto_2015]: De Vega, I.; Schollwöck, U.; Wolf, F. A. How to Discretize a Quantum Bath for Real-Time Evolution. Phys. Rev. B 2015, 92 (15), 155126. https://doi.org/10.1103/PhysRevB.92.155126.
 [^woods_mappings_2014]: Woods,  M. P. et al. “Mappings of open quantum systems onto chain representations and Markovian embeddings”. In: Journal of Mathematical Physics 55.3 (Mar. 2014), p. 032101. issn: 0022-2488, 1089-7658. doi: 10.1063/1.4866769
