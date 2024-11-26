@@ -48,6 +48,8 @@ When filing an [issue](https://github.com/shareloqs/MPSDynamics/issues) use a cl
 2. What did you expect to see?
 3. What did you see instead?
 
+Make sure to provide a minimal reproducible example to demonstrate the bug.
+
 ## How to Suggest an Enhancement
 
 If you find yourself wishing for a feature that doesn't exist in `MPSDynamics.jl`, you are probably not alone. There might be others out there with similar needs. 
