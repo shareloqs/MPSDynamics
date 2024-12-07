@@ -46,6 +46,12 @@ end
 function rhoAAstar(ρ::Array{T1,2}, A::Array{T2,3}) where {T1,T2}
     return @tensoropt ρO[a,b] := ρ[a0,b0] * conj(A[a0,a,s]) * A[b0,b,s]
 end
+function rhoABstar(ρ::Array{T1,2}, A::Array{T2,2}, B::Array{T3,2}) where {T1,T2,T3}
+    @tensoropt ρO = tensorscalar(ρ[a0,b0] * conj(B[a0,s]) * A[b0,s])
+end
+function rhoABstar(ρ::Array{T1,2}, A::Array{T2,3}, B::Array{T3,3}) where {T1,T2,T3}
+    return @tensoropt ρO[a,b] := ρ[a0,b0] * conj(B[a0,a,s]) * A[b0,b,s]
+end
 
 function rhoAAstar(ρ::Array{T1,2}, A::Array{T2,4}, indir::Int, outdir::Int) where {T1,T2}
     indir==1 && outdir==2 && return @tensoropt ρO[a,b] := ρ[a0,b0] * conj(A[a0,a,c0,s]) * A[b0,b,c0,s]
