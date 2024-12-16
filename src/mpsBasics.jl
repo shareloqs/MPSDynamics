@@ -540,12 +540,12 @@ Apply an operator O on the MPS A. O is acting on only one site ::Int. The result
 apply1siteoperator!(A, O, site::Int) = apply1siteoperator!(A, O, [site])
 
 """
-    applympo!(A, H)
+    applympo!(A, H; SVD=false, kwargs...)
 
-Apply an MPO H on the MPS A. H must have the same number of site than A. The resulting MPS A is the MPS modified by the MPO H.
+Apply an MPO H on the MPS A. H must have the same number of site than A. The resulting MPS A is the MPS modified by the MPO H. The argument SVD can be set to true if one wants the MPS to recover the same dimensions after having applied the MPO H. Further parameters for the SVD truncation can be added with the kwargs.
 
 """
-function applympo!(A, H)
+function applympo!(A, H ; SVD=false, kwargs...)
     N = length(H)
     N == length(A) || throw(ArgumentError("MPO has $N site while MPS has $(length(A)) sites"))
     for i=1:N
@@ -553,6 +553,17 @@ function applympo!(A, H)
         Hl, Hr, d, d = size(H[i])
         @tensor X[a',a,b',b,s] := H[i][a',b',s,s'] * A[i][a,b,s']
         A[i] = reshape(X, Al*Hl, Ar*Hr, d)
+    end
+    if SVD
+        for i in 2:N
+            Dl, Dr, d = size(A[i-1])
+            U, S, Vt = svdtrunc(reshape(permutedims(A[i-1], [1,3,2]), Dl*d, Dr); kwargs...)
+            Dnew = size(S,1)
+            A[i-1] = permutedims(reshape(U, Dl, d, Dnew), [1,3,2])
+            R = Diagonal(S)*Vt
+            @tensor AC[:] := R[-1,1] * A[i][1,-2,-3]
+            A[i] = AC
+        end
     end
 end
 
