@@ -1,6 +1,6 @@
 module MPSDynamics
 
-using JLD, HDF5, Random, Dates, Plots, Printf, Distributed, LinearAlgebra, DelimitedFiles, KrylovKit, TensorOperations, GraphRecipes, SpecialFunctions, ITensors, Interpolations
+using JLD, HDF5, Random, Dates, Plots, Printf, Distributed, LinearAlgebra, DelimitedFiles, KrylovKit, TensorOperations, GraphRecipes, SpecialFunctions, ITensors, ITensorMPS, Interpolations
 
 include("fundamentals.jl")
 include("reshape.jl")
@@ -169,7 +169,7 @@ export println, print, show
 
 export @LogParams
 
-export MPOtoVector, MPStoVector
+export MPOtoVector
 
 export rhoreduced_2sites, rhoreduced_1site, protontransfermpo
 
