@@ -1,6 +1,6 @@
 using MPSDynamics, Plots, LaTeXStrings, QuadGK, LinearAlgebra, Interpolations, Revise
 
-import MPSDynamics: measuremodes, measurecorrs, mpsembed!, eigenchain, physical_occup
+import MPSDynamics: measuremodes, measurecorrs, mpsembed!, eigenchain, physical_occup, bath_occup_phys
 
 
 const ∞  = Inf
@@ -22,10 +22,10 @@ s = 1       # ohmicity
 # Simulation parameters
 #-----------------------
 
-method = :TDVP1         # time-evolution method
-conv = 3                # bond dimension for the TDVP1
+method = :TDVP2         # time-evolution method
+conv = 0.001            # Allowed SVD singular value truncation
 dt = 0.5                # time step
-tfinal = 50.0           # simulation time
+tfinal = 60.0           # simulation time
 
 #----------------------------
 # Ohmic spectral density
@@ -35,7 +35,8 @@ if β == ∞
     cpars = chaincoeffs_ohmic(N, α, s; ωc=ωc)  # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
 else
     cpars = chaincoeffs_finiteT(N, β; α=α, s=s, J=nothing, ωc=ωc, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=false)  # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
-    #=#If cpars is stored in "../ChainOhmT/ohmicT" 
+    #=
+    #If cpars is stored in "../ChainOhmT/ohmicT" 
     curdir = @__DIR__
     dir_chaincoeff = abspath(joinpath(curdir, "../ChainOhmT/ohmicT"))
     cpars  = readchaincoeffs("$dir_chaincoeff/chaincoeffs.h5", N, α, s, β) # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
@@ -81,6 +82,8 @@ A, dat = runsim(dt, tfinal, A, H, prec=1E-4;
                 convparams = conv,
                 reduceddensity = true,
                 verbose = false,
+                savebonddims = true,
+                Dlim = 100,
                 save = false,
                 plot = true,
                 );
@@ -115,7 +118,6 @@ correlations_cdag = [
 ]
 
 bath_occup_phys = physical_occup(cdagcdag_average[:,:,T], cc_average[:,:,T], omeg, bath_occup[:,:,T], β, N)
-
 #--------------------
 # Analytical results 
 #--------------------
@@ -165,6 +167,8 @@ p3 = heatmap(omeg, omeg, abs.(real.(correlations_cdag[:,:,T]) .+ im*imag.(correl
 
 Mhalf = Int(length(omeg)*0.5)+1
 M = length(omeg)
+
+
 
 p4 = plot(omeg[Mhalf:M], bath_occup_phys, lw=4,
             xlabel=L"\omega", ylabel=L"\langle n^b_\omega \rangle",

@@ -77,7 +77,7 @@ eps = [1e-3] # projection error threshol for DTDVP
 # MPO and initial state MPS
 #---------------------------
 
-Hs = multisitempo(N, E, J, As) # system Hamiltonian
+Hs = MPSDynamics.multisitempo(N, E, J, As) # system Hamiltonian
 
 Hc = correlatedenvironmentmpo(R, M, d; chainparams=cpars, fnamecc=fnamecc, s=s, α=α, ωc=ωc, c_phonon=c, β=β) # environment Hamiltonian
 
