@@ -6,7 +6,7 @@ include("../ChainOhmT/mcdis2.jl")
 """
     chaincoeffs_finiteT(nummodes, β, ohmic=true; α, s, J, ωc=1, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=true)
 
-Generate chain coefficients ``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`` for a harmonic bath at the inverse temperature β.
+Generate chain coefficients ``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`` for a harmonic bath at the inverse temperature β. It can also save the generated coefficients in ../ChainOhmT/ohmicT/
 
 By default a Ohmic spectral density ``J(ω) = 2αω_c (\\frac{ω}{ω_c})^s θ(ω-ω_c)`` is considered.
 Users can provide their own spectral density.
@@ -24,7 +24,7 @@ Users can provide their own spectral density.
 * iq: a parameter to be set equal to 1, if the user provides his or her own quadrature routine, and different from 1 otherwise
 * idelta: a parameter whose default value is 1, but is preferably set equal to 2, if iq=1 and the user provides Gauss-type quadrature routines
 * procedure: choice between the Stieltjes and the Lanczos procedure
-* AB: component intervals
+* AB: component intervals. The defaut intervals are [[-Inf -ωc];[-ωc 0];[0 ωc];[ωc Inf]].
 * Mmax: maximum number of integration points
 * save: if true the coefficients are saved
 """
@@ -32,6 +32,7 @@ function chaincoeffs_finiteT(nummodes, β, ohmic=true; α=1, s=1, J=nothing, ωc
 
     N = nummodes #Number of bath modes
 
+    # Set the interval for the spectral density
     if AB==nothing 
         if mc==4
             AB = [[-Inf -ωc];[-ωc 0];[0 ωc];[ωc Inf]]
@@ -41,7 +42,8 @@ function chaincoeffs_finiteT(nummodes, β, ohmic=true; α=1, s=1, J=nothing, ωc
     elseif length(AB) != 2*mc
         throw(ArgumentError("AB has a different number of intervals than mc = $mc."))             
     end
-
+    
+    # Express the spectral density according to the intervals
     if ohmic==true
         wf(x,i) = ohmicspectraldensity_finiteT(x,i,α,s,ωc,β)
     elseif J==nothing
@@ -50,7 +52,8 @@ function chaincoeffs_finiteT(nummodes, β, ohmic=true; α=1, s=1, J=nothing, ωc
         wf = J
     end
     
-    if procedure==:Lanczos  # choice between the Stieltjes (irout = 1) and the Lanczos procedure (irout != 1)
+    # Choose the procedure to calculate the chain coefficients
+    if procedure==:Lanczos  # choice between the Stieltjes and the Lanczos procedure
         irout = 2 
     elseif procedure==:Stieltjes
         irout = 1 
@@ -63,13 +66,14 @@ function chaincoeffs_finiteT(nummodes, β, ohmic=true; α=1, s=1, J=nothing, ωc
     jacerg = zeros(N,2)
 
     ab = 0.
-    ab, Mcap, kount, suc, uv = mcdis(N,eps0,quadfinT,Mmax,idelta,mc,AB,wf,mp,irout)
+    ab, Mcap, kount, suc, uv = mcdis(N,eps0,quadfinT,Mmax,idelta,mc,AB,wf,mp,irout) # Calculate the chain coefficients
     for m = 1:N-1
         jacerg[m,1] = ab[m,1] #site energy e
         jacerg[m,2] = sqrt(ab[m+1,2]) #hopping parameter t
     end
     jacerg[N,1] = ab[N,1]
 
+    # Calculate the integral of the spectral density to get system-chain coupling c
     eta = 0.
     for i = 1:mc
         xw = quadfinT(Mcap,i,uv,mc,AB,wf)
@@ -120,7 +124,8 @@ end
 """
  chaincoeffs_fermionic(nummodes, β, chain; ϵ=nothing, J=nothing, ωc=1, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=true)
 
-Generate chain coefficients ``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`` for a fermionic bath at the inverse temperature β.
+Generate chain coefficients ``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`` for a fermionic bath at the inverse temperature β. It can also save the generated coefficients in ../ChainOhmT/fermionicT/
+
 
 # Arguments
 * nummodes: Number of bath modes
@@ -128,13 +133,13 @@ Generate chain coefficients ``[[ϵ_0,ϵ_1,...],[t_0,t_1,...],c_0]`` for a fermio
 * chain: 1 if the chain modes are empty, 2 if the chain modes are filled
 * ϵ: user-provided dispersion relation. Should be a function f(x) where x is the wavenumber
 * J: user-provided spectral density. Should be a function f(x) where x is the wavenumber
-* ωc: the maximum frequency allowwed in the spectral density
+* ωc: the maximum frequency allowed in the spectral density
 * mc: the number of component intervals
 * mp: the number of points in the discrete part of the measure (mp=0 if there is none)
 * iq: a parameter to be set equal to 1, if the user provides his or her own quadrature routine, and different from 1 otherwise
 * idelta: a parameter whose default value is 1, but is preferably set equal to 2, if iq=1 and the user provides Gauss-type quadrature routines
 * procedure: choice between the Stieltjes and the Lanczos procedure
-* AB: component intervals
+* AB: component intervals. The defaut intervals are [[-Inf -ωc];[-ωc 0];[0 ωc];[ωc Inf]].
 * Mmax: maximum number of integration points
 * save: if true the coefficients are saved
 """
@@ -142,6 +147,7 @@ function chaincoeffs_fermionic(nummodes, β, chain; ϵ=nothing, J=nothing, ωc=1
 
     N = nummodes # Number of bath modes
 
+    # Set the interval for the spectral density
     if AB==nothing 
         if mc==4
             AB = [[-Inf -ωc];[-ωc 0];[0 ωc];[ωc Inf]]
@@ -152,6 +158,7 @@ function chaincoeffs_fermionic(nummodes, β, chain; ϵ=nothing, J=nothing, ωc=1
         throw(ArgumentError("AB has a different number of intervals than mc = $mc."))             
     end
 
+    # Express the spectral density according to the intervals
     if ϵ==nothing
         throw(ArgumentError("A dispersion relation should have been provided."))
     elseif J==nothing
@@ -160,6 +167,7 @@ function chaincoeffs_fermionic(nummodes, β, chain; ϵ=nothing, J=nothing, ωc=1
         wf(x,i) = fermionicspectraldensity_finiteT(x, i , β, chain, ϵ, J)
     end
 
+    # Choose the procedure to calculate the chain coefficients
     if procedure==:Lanczos  # choice between the Stieltjes (irout = 1) and the Lanczos procedure (irout != 1)
         irout = 2 
     elseif procedure==:Stieltjes
@@ -173,13 +181,14 @@ function chaincoeffs_fermionic(nummodes, β, chain; ϵ=nothing, J=nothing, ωc=1
     jacerg = zeros(N,2)
 
     ab = 0.
-    ab, Mcap, kount, suc, uv = mcdis(N,eps0,quadfinT,Mmax,idelta,mc,AB,wf,mp,irout)
+    ab, Mcap, kount, suc, uv = mcdis(N,eps0,quadfinT,Mmax,idelta,mc,AB,wf,mp,irout) # Calculate the chain coefficients
     for m = 1:N-1
         jacerg[m,1] = ab[m,1] #site energy e
         jacerg[m,2] = sqrt(ab[m+1,2]) #hopping parameter t
     end
     jacerg[N,1] = ab[N,1]
 
+    # Calculate the integral of the spectral density to get system-chain coupling c
     eta = 0.
     for i = 1:mc
         xw = quadfinT(Mcap,i,uv,mc,AB,wf)

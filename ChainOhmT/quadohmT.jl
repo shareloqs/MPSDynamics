@@ -61,13 +61,29 @@ function ltr(t,i,AB,wf)
     return s
 end
 
-function ohmicspectraldensity_finiteT(x,i,α,s,ωc,β)
+"""
+    ohmicspectraldensity_finiteT(x,i,α,s,ωc,β; smooth=false)
+
+    Ohmic spectral density at finite temperature β. A function f(x,i) where x is the frequency 
+    and i ∈ {1,...,mc} labels the intervals on which the SD is defined. If smooth is set to true, the SD is multiplied by a 
+    decreasing exponential instead of a Heaviside function.
+
+"""
+function ohmicspectraldensity_finiteT(x,i,α,s,ωc,β; smooth=false)
     if i==1
         y = 0
     elseif i==2
-        y = -2 .*( α*abs.(x).^s ./ ωc^(s-1)) .* (coth.((β/2).*x) .+ 1)./2 #.* exp(-abs(x)/wc)
+	if smooth
+	  y = -2 .*( α*abs.(x).^s ./ ωc^(s-1)) .* (coth.((β/2).*x) .+ 1)./2 .* exp(-abs(x)/wc)
+	else
+          y = -2 .*( α*abs.(x).^s ./ ωc^(s-1)) .* (coth.((β/2).*x) .+ 1)./2 
+	end
     elseif i==3
-        y = 2 .*( α*abs.(x).^s ./ ωc^(s-1)) .* (coth.((β/2).*x) .+ 1)./2 #.* exp(-abs(x)/wc)
+        if smooth
+          y = 2 .*( α*abs.(x).^s ./ ωc^(s-1)) .* (coth.((β/2).*x) .+ 1)./2 .* exp(-abs(x)/wc)
+        else
+          y = 2 .*( α*abs.(x).^s ./ ωc^(s-1)) .* (coth.((β/2).*x) .+ 1)./2 
+        end
     elseif i==4
         y = 0
     end
@@ -81,7 +97,6 @@ end
     and i ∈ {1,...,mc} labels the intervals on which the SD is defined.
 
 """
-
 function fermionicspectraldensity_finiteT(x, i, β, chain, ϵ, J)
     if i==1
         y = 0

@@ -11,17 +11,17 @@ The chain length $N$ is directly connected to the simulation time as follows: ex
 
 To optimize the chain length for a given simulation time and set of chain coefficients, the following procedure can be used:
 
-1. Set the total simulation time `T` and compute the chain coefficients for an intentionally oversized chain `N_huge` (longer than needed):
+1 Set the total simulation time `T` and compute the chain coefficients for an intentionally oversized chain `N_huge` (longer than needed):
 ```
 T = 100 
 N_huge = 1000
 cpars = chaincoeffs_flat(N_huge, αchain; ωc = 1.0)
 ```
-2. Use the built-in function [`findchainlength`](@ref) to determine the optimal chain length `N_opt` based on the propagation speed of the wavefront (given by the hopping coefficients $t_n$):
+2 Use the built-in function [`findchainlength`](@ref) to determine the optimal chain length `N_opt` based on the propagation speed of the wavefront (given by the hopping coefficients $t_n$):
 ```
 N_opt = findchainlength(T, cpars; eps=10^-4, verbose=false)
 ```
-2bis. A rule-of-thumb estimate `N_est` can also be obtained with [`findchainlength`](@ref) using universal asymptotic properties of chain mapped environment:
+2bis A rule-of-thumb estimate `N_est` can also be obtained with [`findchainlength`](@ref) using universal asymptotic properties of chain mapped environment:
 ```
 N_est = findchainlength(T, ωc, β)
 ```
@@ -55,7 +55,7 @@ The time step used in simulations must be small enough to accurately capture the
 ## Common pitfalls
 
 ### Hard cut-off in the spectral density function
-The cutoff frequency $\omega_c$ in the spectral density function has to be selected in order to incorporate all of the relevant frequencies. It is to be noted that, for spectral densities belonging to the Szegö class[^chin_exact_2010], the cutoff frenquency $\omega_c$ also determines the asymptotic values to which the chain coefficients converge [^woods_mappings_2014]. Therefore, if we want to reach translational invariance (converged values) in the chain coefficients, then we need to specify a cutoff. To avoid ringing effects, it is a good choice to select a spectral density function that approaches zero before the cutoff frequency.
+The cutoff frequency $\omega_c$ in the spectral density function has to be selected in order to incorporate all of the relevant frequencies. It is to be noted that, for spectral densities belonging to the Szegö class[^chin_exact_2010], the cutoff frenquency $\omega_c$ also determines the asymptotic values to which the chain coefficients converge [^woods_mappings_2014]. Therefore, if we want to reach translational invariance (converged values) in the chain coefficients, then we need to specify a cutoff. To avoid boundary effects, it is a good choice to select cutoff frequency such that the frequency range covers well the different frequencies of the system.
 
 
 ## References
