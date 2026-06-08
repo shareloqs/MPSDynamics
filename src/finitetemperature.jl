@@ -28,8 +28,9 @@ Users can provide their own spectral density.
 * Mmax: maximum number of integration points
 * save: if true the coefficients are saved
 * smooth: if true the spectral density is multiplied by a decreasing exponential instead of a Heaviside function.
+* jacobi: Jacobi weight function parameters for each interval of AB. Can help with integration of diverging SDs. If the (thermalized) SD behaves as ``\\sim ω^s`` at the left and as ``\\sim ω^q`` to the right of an interval i, the mc-by-2 matrix `jacobi` should have `jacobi[i,:] = [s, q]` (all other entries should be 0). 
 """
-function chaincoeffs_finiteT(nummodes, β, ohmic=true; α=1, s=1, J=nothing, ωc=1, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=true, smooth=false)
+function chaincoeffs_finiteT(nummodes, β, ohmic=true; α=1, s=1, J=nothing, ωc=1, mc=4, mp=0, AB=nothing, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=true, smooth=false, jacobi=nothing)
 
     N = nummodes #Number of bath modes
 
@@ -37,20 +38,26 @@ function chaincoeffs_finiteT(nummodes, β, ohmic=true; α=1, s=1, J=nothing, ωc
     if AB==nothing 
         if mc==4
             AB = [[-Inf -ωc];[-ωc 0];[0 ωc];[ωc Inf]]
+            smooth && @warn "It is advised to specify the AB intervals with smooth=true, current segments imply a hard cutoff at ωc=$ωc. \
+            Example use: AB=[[-Inf -5*ωc];[-5*ωc 0];[0 5*ωc];[5*ωc Inf]]"
         else
             throw(ArgumentError("An interval AB with mc = $mc components should have been provided."))
         end
     elseif size(AB)[1] != mc
         throw(ArgumentError("AB has a different number of intervals than mc = $mc."))             
     end
-    
+ 
     # Express the spectral density according to the intervals
     if ohmic==true
-        wf(x,i) = ohmicspectraldensity_finiteT(x,i,α,s,ωc,β; smooth=smooth)
-    elseif J==nothing
+        jacobi = [[0 0];[0 s-1];[s-1 0];[0 0]]
+        wf = (x,i) -> ohmicspectraldensity_finiteT(x,i,α,s,ωc,β; smooth=smooth, jacobi=true) 
+    elseif isnothing(J)
         throw(ArgumentError("A spectral density should have been provided."))
     else
-        wf = J
+        jacobi = isnothing(jacobi) ? zeros(mc, 2) : jacobi
+        @assert size(jacobi) == (mc, 2) "jacobi should be a mc=$mc by 2 matrix with the 2 Jacobi weight parameters for each interval of AB"
+        @assert !any(any(jacobi .!= 0, dims=2) .&& any(isinf, AB, dims=2)) "non-zero jacobi can only be used on finite intervals"
+        wf = (x,i) -> J(x,i)./jacweight(x,i,AB,jacobi) 
     end
     
     # Choose the procedure to calculate the chain coefficients
@@ -67,7 +74,7 @@ function chaincoeffs_finiteT(nummodes, β, ohmic=true; α=1, s=1, J=nothing, ωc
     jacerg = zeros(N,2)
 
     ab = 0.
-    ab, Mcap, kount, suc, uv = mcdis(N,eps0,quadfinT,Mmax,idelta,mc,AB,wf,mp,irout) # Calculate the chain coefficients
+    ab, Mcap, kount, suc, uv = mcdis(N,eps0,quadfinT,Mmax,idelta,mc,AB,wf,mp,irout,jacobi) # Calculate the chain coefficients
     for m = 1:N-1
         jacerg[m,1] = ab[m,1] #site energy e
         jacerg[m,2] = sqrt(ab[m+1,2]) #hopping parameter t
@@ -77,7 +84,7 @@ function chaincoeffs_finiteT(nummodes, β, ohmic=true; α=1, s=1, J=nothing, ωc
     # Calculate the integral of the spectral density to get system-chain coupling c
     eta = 0.
     for i = 1:mc
-        xw = quadfinT(Mcap,i,uv,mc,AB,wf)
+        xw = quadfinT(Mcap,i,uv[i],mc,AB,wf)
         eta += sum(xw[:,2])
     end
     jacerg[N,2] = sqrt(eta) # system-chain coupling c

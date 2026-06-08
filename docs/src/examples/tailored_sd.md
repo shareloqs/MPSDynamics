@@ -140,3 +140,24 @@ end
 ```
 
 Next, similarly to the spin-boson example, the simulation parameters are set with the initial MPO and MPS in order to carry out the dynamics propagation. Therefore, this modified example shows an easy way to tailor the spectral density for any system and Hamiltonian.
+
+## Dealing with diverging spectral densities
+
+Here, we explain how the `jacobi` parameter of [`MPSDynamics.chaincoeffs_finiteT`](@ref) can help in the case of diverging (but integrable) spectral densities. The most commonly encountered case is for sub-Ohmic (``s<1``) spectral densities at finite temperature, where due to the ``\coth(\beta\omega/2)`` term, the temperature-dependent spectral density scales a ``J_\beta(\omega) \sim |\omega|^{s-1}`` near ``\omega=0``. The `jacobi` parameter allows you to use a specific integrator that performs better for these types of divergences.
+
+The `jacobi` parameter takes in a matrix with the same shape as `AB`. Each row of `jacobi` corresponds to an interval of `AB`, and the first and second column correspond to the scaling exponent of the spectral density near the left and right interval boundary respectively (should be 0 otherwise). This is only available for finite intervals, so it might be necessary to further split the spectral density support in more `AB` intervals.
+
+Taking the same spectral density as the continuous case of [The code to define a specific spectral density](@ref), it scales as ``\sim \omega^{s-1}`` both near the right boundary of the interval `AB[2]=[-ωc 0]` and near the left boundary of interval `AB[3]=[0 ωc]`. Thus the code to generate the chain coefficients is slightly modified as such.
+
+```julia
+#-----------------------
+# Calculation of chain parameters
+#-----------------------
+
+@assert Jω_type==:Continuous "use the continuous spectral density"
+@assert !isinf(β) "should be the finite-temperature case (use a finite β)"
+
+jacobi = [[0 0];[0 s-1];[s-1 0];[0 0]]
+
+cpars = chaincoeffs_finiteT(N, β, false; α=α, s=s, J=Jω_fct, ωc=ωc, mc=size(AB)[1], mp=0, AB=AB, iq=1, idelta=2, procedure=:Lanczos, Mmax=5000, save=false, jacobi=jacobi)  # chain parameters, i.e. on-site energies ϵ_i, hopping energies t_i, and system-chain coupling c_0
+```

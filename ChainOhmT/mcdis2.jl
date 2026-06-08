@@ -69,8 +69,7 @@ MCDIS Multiple-component discretization procedure.
     in multi-component form.
 """
 
-function mcdis(N,eps0,quad::Function,Nmax,idelta,mc,AB,wf,mp,irout)
-
+function mcdis(N,eps0,quad::Function,Nmax,idelta,mc,AB,wf,mp,irout,jacobi=zeros(mc, 2))
     suc = true
     f = "Ncap exceeds Nmax in mcdis with irout = "
     if N<1
@@ -97,14 +96,13 @@ function mcdis(N,eps0,quad::Function,Nmax,idelta,mc,AB,wf,mp,irout)
         return [ab,Ncap,kount,suc,uv]
       end
       mtNcap = mc*Ncap
-
-      jacs = r_jacobi(Ncap,0,0.0)
-      uv = gauss(Ncap,jacs)
+      jacs = [r_jacobi(Ncap,jacobi[i,2],jacobi[i,1]) for i in 1:mc]
+      uv = [gauss(Ncap,j) for j in jacs]
 
       xwm = Array{Float64}(undef, mc*Ncap, 2)
       for i=1:mc
         im1tn = (i-1)*Ncap
-        xw = quad(Ncap,i,uv,mc,AB,wf)
+        xw = quad(Ncap,i,uv[i],mc,AB,wf)
         xwm[im1tn+1:im1tn+Ncap,:] = xw
       end
 

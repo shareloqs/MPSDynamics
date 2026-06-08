@@ -69,7 +69,8 @@ end
     decreasing exponential instead of a Heaviside function.
 
 """
-function ohmicspectraldensity_finiteT(x,i,α,s,ωc,β; smooth=false)
+function ohmicspectraldensity_finiteT(x,i,α,s,ωc,β; smooth=false, jacobi=true)
+    jweight = @. (abs(x)*2/ωc)^(s-1)
     if i==1
         y = 0
     elseif i==2
@@ -87,7 +88,7 @@ function ohmicspectraldensity_finiteT(x,i,α,s,ωc,β; smooth=false)
     elseif i==4
         y = 0
     end
-    return y
+    return jacobi ? y ./ jweight : y
 end
 
 """
@@ -110,4 +111,9 @@ function fermionicspectraldensity_finiteT(x, i, β, chain, ϵ, J)
         y = 0
     end
     return y
+end
+
+
+function jacweight(x, i, AB, jacobi)
+    return @. ((AB[i, 2]-x)*2/(AB[i, 2]-AB[i, 1]))^jacobi[i, 2]*((x-AB[i, 1])*2/(AB[i, 2]-AB[i, 1]))^jacobi[i, 1]
 end
